@@ -33,6 +33,9 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@08eba0b27e820071cde6df949e0beb9ba4906955 # v4.3.0
+        with:
+          # https://github.com/tj-actions/changed-files#usage-
+          fetch-depth: 2
       - name: Determine changed files
         # This step checks whether any files have changed that should
         # cause the next jobs to run. We do it this way rather than
