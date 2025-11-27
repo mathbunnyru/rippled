@@ -43,6 +43,8 @@ class Xrpl(ConanFile):
 
     tool_requires = [
         "protobuf/3.21.12",
+        # m4 1.4.19 doesn't build with GCC 15
+        "m4/1.4.20",
     ]
 
     default_options = {
