@@ -1213,8 +1213,8 @@ TEST(json_value, iterator)
         --i2;
 
         // key(), index(), and memberName() on an array iterator.
-        EXPECT_NE(b, e);
-        EXPECT_NE(b, e);
+        EXPECT_TRUE(b != e);
+        EXPECT_FALSE(b == e);
         EXPECT_EQ(i1.key(), 0);
         EXPECT_EQ(i2.key(), 3);
         EXPECT_EQ(i1.index(), 0);
@@ -1250,8 +1250,8 @@ TEST(json_value, iterator)
         --i2;
 
         // key(), index(), and memberName() on an object iterator.
-        EXPECT_NE(i1, i2);
-        EXPECT_NE(i1, i2);
+        EXPECT_TRUE(i1 != i2);
+        EXPECT_FALSE(i1 == i2);
         EXPECT_EQ(i1.key(), "0");
         EXPECT_EQ(i2.key(), "3");
         EXPECT_EQ(i1.index(), -1);
