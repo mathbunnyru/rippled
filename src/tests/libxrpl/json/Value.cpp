@@ -1272,12 +1272,12 @@ TEST(json_value, iterator)
     {
         // Iterating a non-const null object.
         Json::Value nul{};
-        EXPECT_TRUE(nul.begin() == nul.end());
+        EXPECT_EQ(nul.begin(), nul.end());
     }
     {
         // Iterating a const Int.
         Json::Value const i{-3};
-        EXPECT_TRUE(i.begin() == i.end());
+        EXPECT_EQ(i.begin(), i.end());
     }
 }
 
