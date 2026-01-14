@@ -250,9 +250,9 @@ TEST(HTTPClient, case_insensitive_Content_Length)
 
         // Verify results
         EXPECT_TRUE(test_completed);
-        EXPECT_TRUE(!result_error);
-        EXPECT_TRUE(result_status == 200);
-        EXPECT_TRUE(result_data == test_body);
+        EXPECT_FALSE(result_error);
+        EXPECT_EQ(result_status, 200);
+        EXPECT_EQ(result_data, test_body);
     }
 }
 
@@ -272,9 +272,9 @@ TEST(HTTPClient, basic_HTTP_request)
         server, "/basic", completed, result_status, result_data, result_error);
 
     EXPECT_TRUE(test_completed);
-    EXPECT_TRUE(!result_error);
-    EXPECT_TRUE(result_status == 200);
-    EXPECT_TRUE(result_data == test_body);
+    EXPECT_FALSE(result_error);
+    EXPECT_EQ(result_status, 200);
+    EXPECT_EQ(result_data, test_body);
 }
 
 TEST(HTTPClient, empty_response)
@@ -292,8 +292,8 @@ TEST(HTTPClient, empty_response)
         server, "/empty", completed, result_status, result_data, result_error);
 
     EXPECT_TRUE(test_completed);
-    EXPECT_TRUE(!result_error);
-    EXPECT_TRUE(result_status == 200);
+    EXPECT_FALSE(result_error);
+    EXPECT_EQ(result_status, 200);
     EXPECT_TRUE(result_data.empty());
 }
 
@@ -321,7 +321,7 @@ TEST(HTTPClient, different_status_codes)
             result_error);
 
         EXPECT_TRUE(test_completed);
-        EXPECT_TRUE(!result_error);
-        EXPECT_TRUE(result_status == static_cast<int>(status));
+        EXPECT_FALSE(result_error);
+        EXPECT_EQ(result_status, static_cast<int>(status));
     }
 }

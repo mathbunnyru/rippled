@@ -109,25 +109,25 @@ TEST(tagged_integer, comparison_operators)
     TagInt const zero(0);
     TagInt const one(1);
 
-    EXPECT_TRUE(one == one);
-    EXPECT_FALSE(one == zero);
+    EXPECT_EQ(one, one);
+    EXPECT_NE(one, zero);
 
-    EXPECT_TRUE(one != zero);
-    EXPECT_FALSE(one != one);
+    EXPECT_NE(one, zero);
+    EXPECT_EQ(one, one);
 
-    EXPECT_TRUE(zero < one);
-    EXPECT_FALSE(one < zero);
+    EXPECT_LT(zero, one);
+    EXPECT_GE(one, zero);
 
-    EXPECT_TRUE(one > zero);
-    EXPECT_FALSE(zero > one);
+    EXPECT_GT(one, zero);
+    EXPECT_LE(zero, one);
 
-    EXPECT_TRUE(one >= one);
-    EXPECT_TRUE(one >= zero);
-    EXPECT_FALSE(zero >= one);
+    EXPECT_GE(one, one);
+    EXPECT_GE(one, zero);
+    EXPECT_LT(zero, one);
 
-    EXPECT_TRUE(zero <= one);
-    EXPECT_TRUE(zero <= zero);
-    EXPECT_FALSE(one <= zero);
+    EXPECT_LE(zero, one);
+    EXPECT_LE(zero, zero);
+    EXPECT_GT(one, zero);
 }
 
 TEST(tagged_integer, increment_decrement_operators)
