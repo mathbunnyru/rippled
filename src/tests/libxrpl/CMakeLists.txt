@@ -1,7 +1,7 @@
 include(XrplAddTest)
 
 # Test requirements.
-find_package(gtest REQUIRED)
+find_package(GTest REQUIRED)
 
 # Custom target for all tests defined in this file
 add_custom_target(xrpl.tests)
