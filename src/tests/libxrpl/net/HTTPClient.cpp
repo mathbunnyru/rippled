@@ -217,7 +217,7 @@ runHTTPTest(
 
 }  // anonymous namespace
 
-TEST(HTTPClient, case_insensitive_Content_Length)
+TEST(HTTPClient, case_insensitive_content_length)
 {
     // Test different cases of Content-Length header
     std::vector<std::string> header_cases = {
@@ -256,7 +256,7 @@ TEST(HTTPClient, case_insensitive_Content_Length)
     }
 }
 
-TEST(HTTPClient, basic_HTTP_request)
+TEST(HTTPClient, basic_http_request)
 {
     TestHTTPServer server;
     std::string test_body = "Test response body";
