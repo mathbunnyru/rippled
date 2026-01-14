@@ -1256,8 +1256,8 @@ TEST(json_value, iterator)
         EXPECT_EQ(i2.key(), "3");
         EXPECT_EQ(i1.index(), -1);
         EXPECT_EQ(i2.index(), -1);
-        EXPECT_EQ(std::strcmp(i1.memberName(), "0"), 0);
-        EXPECT_EQ(std::strcmp(i2.memberName(), "3"), 0);
+        EXPECT_STREQ(i1.memberName(), "0");
+        EXPECT_STREQ(i2.memberName(), "3");
 
         // Pre and post increment and decrement.
         EXPECT_EQ(*i1++, 0);
