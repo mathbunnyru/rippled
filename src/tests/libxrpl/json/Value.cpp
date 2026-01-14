@@ -781,39 +781,39 @@ TEST(json_value, comparisons)
 {
     Json::Value a, b;
     auto testEquals = [&](std::string const& name) {
-        EXPECT_EQ(a, b);
-        EXPECT_LE(a, b);
-        EXPECT_GE(a, b);
+        EXPECT_TRUE(a == b);
+        EXPECT_TRUE(a <= b);
+        EXPECT_TRUE(a >= b);
 
-        EXPECT_EQ(a, b);
-        EXPECT_GE(a, b);
-        EXPECT_LE(a, b);
+        EXPECT_FALSE(a != b);
+        EXPECT_FALSE(a < b);
+        EXPECT_FALSE(a > b);
 
-        EXPECT_EQ(b, a);
-        EXPECT_LE(b, a);
-        EXPECT_GE(b, a);
+        EXPECT_TRUE(b == a);
+        EXPECT_TRUE(b <= a);
+        EXPECT_TRUE(b >= a);
 
-        EXPECT_EQ(b, a);
-        EXPECT_GE(b, a);
-        EXPECT_LE(b, a);
+        EXPECT_FALSE(b != a);
+        EXPECT_FALSE(b < a);
+        EXPECT_FALSE(b > a);
     };
 
     auto testGreaterThan = [&](std::string const& name) {
-        EXPECT_NE(a, b);
-        EXPECT_GT(a, b);
-        EXPECT_GE(a, b);
+        EXPECT_FALSE(a == b);
+        EXPECT_FALSE(a <= b);
+        EXPECT_TRUE(a >= b);
 
-        EXPECT_NE(a, b);
-        EXPECT_GT(a, b);
-        EXPECT_GT(a, b);
+        EXPECT_TRUE(a != b);
+        EXPECT_FALSE(a < b);
+        EXPECT_TRUE(a > b);
 
-        EXPECT_NE(b, a);
-        EXPECT_LE(b, a);
-        EXPECT_LT(b, a);
+        EXPECT_FALSE(b == a);
+        EXPECT_TRUE(b <= a);
+        EXPECT_FALSE(b >= a);
 
-        EXPECT_NE(b, a);
-        EXPECT_LT(b, a);
-        EXPECT_LT(b, a);
+        EXPECT_TRUE(b != a);
+        EXPECT_TRUE(b < a);
+        EXPECT_FALSE(b > a);
     };
 
     a["a"] = Json::UInt(0);
