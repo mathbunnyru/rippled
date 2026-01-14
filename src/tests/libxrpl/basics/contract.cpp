@@ -15,7 +15,7 @@ TEST(contract, contract)
     }
     catch (std::runtime_error const& e1)
     {
-        EXPECT_EQ(std::string(e1.what()), "Throw test");
+        EXPECT_STREQ(e1.what(), "Throw test");
 
         try
         {
@@ -23,7 +23,7 @@ TEST(contract, contract)
         }
         catch (std::runtime_error const& e2)
         {
-            EXPECT_EQ(std::string(e2.what()), "Throw test");
+            EXPECT_STREQ(e2.what(), "Throw test");
         }
         catch (...)
         {
