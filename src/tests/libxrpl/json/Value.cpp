@@ -140,18 +140,18 @@ TEST(json_value, different_types)
             EXPECT_EQ(staticStrV.type(), Json::stringValue);
             EXPECT_EQ(cpy.type(), Json::stringValue);
         }
-        EXPECT_TRUE(!staticStrV.isNull());
-        EXPECT_TRUE(!staticStrV.isBool());
-        EXPECT_TRUE(!staticStrV.isInt());
-        EXPECT_TRUE(!staticStrV.isUInt());
-        EXPECT_TRUE(!staticStrV.isIntegral());
-        EXPECT_TRUE(!staticStrV.isDouble());
-        EXPECT_TRUE(!staticStrV.isNumeric());
+        EXPECT_FALSE(staticStrV.isNull());
+        EXPECT_FALSE(staticStrV.isBool());
+        EXPECT_FALSE(staticStrV.isInt());
+        EXPECT_FALSE(staticStrV.isUInt());
+        EXPECT_FALSE(staticStrV.isIntegral());
+        EXPECT_FALSE(staticStrV.isDouble());
+        EXPECT_FALSE(staticStrV.isNumeric());
         EXPECT_TRUE(staticStrV.isString());
-        EXPECT_TRUE(!staticStrV.isArray());
-        EXPECT_TRUE(!staticStrV.isArrayOrNull());
-        EXPECT_TRUE(!staticStrV.isObject());
-        EXPECT_TRUE(!staticStrV.isObjectOrNull());
+        EXPECT_FALSE(staticStrV.isArray());
+        EXPECT_FALSE(staticStrV.isArrayOrNull());
+        EXPECT_FALSE(staticStrV.isObject());
+        EXPECT_FALSE(staticStrV.isObjectOrNull());
     }
     {
         Json::Value const boolV{testCopy(Json::booleanValue)};
@@ -1212,7 +1212,7 @@ TEST(json_value, iterator)
         Json::ValueIterator i2 = e;
         --i2;
 
-        // key(), index(), and memberName() on an object iterator.
+        // key(), index(), and memberName() on an array iterator.
         EXPECT_NE(b, e);
         EXPECT_NE(b, e);
         EXPECT_EQ(i1.key(), 0);
