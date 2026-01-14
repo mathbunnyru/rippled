@@ -159,9 +159,9 @@ TEST(json_value, different_types)
         EXPECT_TRUE(boolV.isBool());
         EXPECT_FALSE(boolV.isInt());
         EXPECT_FALSE(boolV.isUInt());
-        EXPECT_FALSE(boolV.isIntegral());
+        EXPECT_TRUE(boolV.isIntegral());
         EXPECT_FALSE(boolV.isDouble());
-        EXPECT_FALSE(boolV.isNumeric());
+        EXPECT_TRUE(boolV.isNumeric());
         EXPECT_FALSE(boolV.isString());
         EXPECT_FALSE(boolV.isArray());
         EXPECT_FALSE(boolV.isArrayOrNull());
@@ -753,7 +753,7 @@ TEST(json_value, copy)
 
     v1 = v2;
     EXPECT_TRUE(v1.isDouble());
-    EXPECT_EQ(v1.asDouble(), 3.5);
+    EXPECT_EQ(v1.asDouble(), 2.5);
     EXPECT_TRUE(v2.isDouble());
     EXPECT_EQ(v2.asDouble(), 2.5);
     EXPECT_TRUE(v1 == v2);
@@ -786,35 +786,35 @@ TEST(json_value, comparisons)
         EXPECT_TRUE(a <= b);
         EXPECT_TRUE(a >= b);
 
-        EXPECT_TRUE(!(a != b));
-        EXPECT_TRUE(!(a < b));
-        EXPECT_TRUE(!(a > b));
+        EXPECT_FALSE(a != b);
+        EXPECT_FALSE(a < b);
+        EXPECT_FALSE(a > b);
 
         EXPECT_TRUE(b == a);
         EXPECT_TRUE(b <= a);
         EXPECT_TRUE(b >= a);
 
-        EXPECT_TRUE(!(b != a));
-        EXPECT_TRUE(!(b < a));
-        EXPECT_TRUE(!(b > a));
+        EXPECT_FALSE(b != a);
+        EXPECT_FALSE(b < a);
+        EXPECT_FALSE(b > a);
     };
 
     auto testGreaterThan = [&](std::string const& name) {
-        EXPECT_TRUE(!(a == b));
-        EXPECT_TRUE(!(a <= b));
-        EXPECT_TRUE(a == b);
+        EXPECT_FALSE(a == b);
+        EXPECT_FALSE(a <= b);
+        EXPECT_TRUE(a >= b);
 
-        EXPECT_TRUE(a == b);
-        EXPECT_TRUE(!(a < b));
-        EXPECT_TRUE(a == b);
+        EXPECT_TRUE(a != b);
+        EXPECT_FALSE(a < b);
+        EXPECT_TRUE(a > b);
 
-        EXPECT_TRUE(!(b == a));
+        EXPECT_FALSE(b == a);
         EXPECT_TRUE(b <= a);
-        EXPECT_TRUE(!(b >= a));
+        EXPECT_FALSE(b >= a);
 
         EXPECT_TRUE(b != a);
         EXPECT_TRUE(b < a);
-        EXPECT_TRUE(!(b > a));
+        EXPECT_FALSE(b > a);
     };
 
     a["a"] = Json::UInt(0);
@@ -1130,7 +1130,7 @@ TEST(json_value, access_members)
     static Json::StaticString const staticThree("three");
     val[staticThree] = 3;
     val["two"] = 2;
-    EXPECT_EQ(val.size(), 8);
+    EXPECT_EQ(val.size(), 2);
     EXPECT_TRUE(val.isValidIndex(1));
     EXPECT_TRUE(!val.isValidIndex(2));
     EXPECT_TRUE(val[staticThree] == 3);
@@ -1172,7 +1172,8 @@ TEST(json_value, access_members)
 TEST(json_value, remove_members)
 {
     Json::Value val;
-    EXPECT_TRUE(val.removeMember(std::string("member")).type() == Json::nullValue);
+    EXPECT_TRUE(
+        val.removeMember(std::string("member")).type() == Json::nullValue);
 
     val = Json::Value(Json::objectValue);
     static Json::StaticString const staticThree("three");
@@ -1215,7 +1216,7 @@ TEST(json_value, iterator)
 
         // key(), index(), and memberName() on an object iterator.
         EXPECT_TRUE(b != e);
-        EXPECT_TRUE(!(b == e));
+        EXPECT_FALSE(b == e);
         EXPECT_TRUE(i1.key() == 0);
         EXPECT_TRUE(i2.key() == 3);
         EXPECT_TRUE(i1.index() == 0);
@@ -1252,7 +1253,7 @@ TEST(json_value, iterator)
 
         // key(), index(), and memberName() on an object iterator.
         EXPECT_TRUE(i1 != i2);
-        EXPECT_TRUE(!(i1 == i2));
+        EXPECT_FALSE(i1 == i2);
         EXPECT_TRUE(i1.key() == "0");
         EXPECT_TRUE(i2.key() == "3");
         EXPECT_TRUE(i1.index() == -1);
@@ -1358,6 +1359,5 @@ TEST(json_value, memory_leak)
         EXPECT_TRUE(temp.type() == Json::nullValue);
     }
 }
-
 
 }  // namespace xrpl
