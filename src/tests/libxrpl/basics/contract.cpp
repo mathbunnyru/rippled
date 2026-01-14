@@ -27,11 +27,11 @@ TEST(contract, contract)
         }
         catch (...)
         {
-            FAIL() << "Should not reach here";
+            FAIL() << "std::runtime_error should have been re-caught";
         }
     }
     catch (...)
     {
-        FAIL() << "Should not reach here";
+        FAIL() << "std::runtime_error should have been caught the first time";
     }
 }
