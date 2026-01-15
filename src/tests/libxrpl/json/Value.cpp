@@ -848,12 +848,12 @@ TEST(json_value, compact)
     {
         std::stringstream ss;
         ss << j;
-        EXPECT_TRUE(countLines(ss.str()) > 1);
+        EXPECT_GT(countLines(ss.str()), 1);
     }
     {
         std::stringstream ss;
         ss << Json::Compact(std::move(j));
-        EXPECT_TRUE(countLines(ss.str()) == 1);
+        EXPECT_EQ(countLines(ss.str()), 1);
     }
 }
 
