@@ -62,20 +62,34 @@ if (MSVC)
 
   target_compile_options(
     common
-    INTERFACE -bigobj # Increase object file max size
-              -fp:precise # Floating point behavior
-              -Gd # __cdecl calling convention
-              -Gm- # Minimal rebuild: disabled
-              -Gy- # Function level linking: disabled
-              -MP # Multiprocessor compilation
-              -openmp- # pragma omp: disabled
-              -errorReport:none # No error reporting to Internet
-              -nologo # Suppress login banner
-              -wd4018 # Disable signed/unsigned comparison warnings
-              -wd4244 # Disable float to int possible loss of data warnings
-              -wd4267 # Disable size_t to T possible loss of data warnings
-              -wd4800 # Disable C4800(int to bool performance)
-              -wd4503 # Decorated name length exceeded, name was truncated
+    INTERFACE # Increase object file max size
+              -bigobj
+              # Floating point behavior
+              -fp:precise
+              # __cdecl calling convention
+              -Gd
+              # Minimal rebuild: disabled
+              -Gm-
+              # Function level linking: disabled
+              -Gy-
+              # Multiprocessor compilation
+              -MP
+              # pragma omp: disabled
+              -openmp-
+              # No error reporting to Internet
+              -errorReport:none
+              # Suppress login banner
+              -nologo
+              # Disable signed/unsigned comparison warnings
+              -wd4018
+              # Disable float to int possible loss of data warnings
+              -wd4244
+              # Disable size_t to T possible loss of data warnings
+              -wd4267
+              # Disable C4800(int to bool performance)
+              -wd4800
+              # Decorated name length exceeded, name was truncated
+              -wd4503
               $<$<COMPILE_LANGUAGE:CXX>:
               -EHa
               -GR
