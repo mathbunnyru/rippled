@@ -36,7 +36,8 @@ if (NOT DEFINED OPENSSL_ROOT_DIR)
     find_program(homebrew brew)
     if (homebrew)
       execute_process(
-        COMMAND ${homebrew} --prefix openssl OUTPUT_VARIABLE OPENSSL_ROOT_DIR OUTPUT_STRIP_TRAILING_WHITESPACE
+        COMMAND ${homebrew} --prefix openssl OUTPUT_VARIABLE OPENSSL_ROOT_DIR
+        OUTPUT_STRIP_TRAILING_WHITESPACE
       )
     endif ()
   endif ()
@@ -51,5 +52,7 @@ find_dependency(OpenSSL REQUIRED)
 find_dependency(ZLIB)
 find_dependency(date)
 if (TARGET ZLIB::ZLIB)
-  set_target_properties(OpenSSL::Crypto PROPERTIES INTERFACE_LINK_LIBRARIES ZLIB::ZLIB)
+  set_target_properties(
+    OpenSSL::Crypto PROPERTIES INTERFACE_LINK_LIBRARIES ZLIB::ZLIB
+  )
 endif ()

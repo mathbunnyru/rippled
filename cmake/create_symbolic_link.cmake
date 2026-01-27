@@ -1,4 +1,5 @@
-# file(CREATE_SYMLINK) only works on Windows with administrator privileges. https://stackoverflow.com/a/61244115/618906
+# file(CREATE_SYMLINK) only works on Windows with administrator privileges.
+# https://stackoverflow.com/a/61244115/618906
 function (create_symbolic_link target link)
   if (WIN32)
     if (NOT IS_SYMLINK "${link}")

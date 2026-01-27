@@ -23,10 +23,12 @@ include(CompilationEnv)
 if (is_gcc)
   # GCC-specific fixes
   add_compile_options(-Wno-unknown-pragmas -Wno-subobject-linkage)
-  # -Wno-subobject-linkage can be removed when we upgrade GCC version to at least 13.3
+  # -Wno-subobject-linkage can be removed when we upgrade GCC version to at
+  # least 13.3
 elseif (is_clang)
   # Clang-specific fixes
-  add_compile_options(-Wno-unknown-warning-option) # Ignore unknown warning options
+  add_compile_options(-Wno-unknown-warning-option) # Ignore unknown warning
+                                                   # options
 elseif (is_msvc)
   # MSVC-specific fixes
   add_compile_options(/wd4068) # Ignore unknown pragmas
@@ -39,8 +41,8 @@ include(Ccache)
 find_package(Git)
 if (Git_FOUND)
   execute_process(
-    COMMAND ${GIT_EXECUTABLE} --git-dir=${CMAKE_CURRENT_SOURCE_DIR}/.git rev-parse HEAD OUTPUT_STRIP_TRAILING_WHITESPACE
-    OUTPUT_VARIABLE gch
+    COMMAND ${GIT_EXECUTABLE} --git-dir=${CMAKE_CURRENT_SOURCE_DIR}/.git
+            rev-parse HEAD OUTPUT_STRIP_TRAILING_WHITESPACE OUTPUT_VARIABLE gch
   )
   if (gch)
     set(GIT_COMMIT_HASH "${gch}")
@@ -49,8 +51,9 @@ if (Git_FOUND)
   endif ()
 
   execute_process(
-    COMMAND ${GIT_EXECUTABLE} --git-dir=${CMAKE_CURRENT_SOURCE_DIR}/.git rev-parse --abbrev-ref HEAD
-    OUTPUT_STRIP_TRAILING_WHITESPACE OUTPUT_VARIABLE gb
+    COMMAND ${GIT_EXECUTABLE} --git-dir=${CMAKE_CURRENT_SOURCE_DIR}/.git
+            rev-parse --abbrev-ref HEAD OUTPUT_STRIP_TRAILING_WHITESPACE
+    OUTPUT_VARIABLE gb
   )
   if (gb)
     set(GIT_BRANCH "${gb}")
@@ -61,7 +64,8 @@ endif () # git
 
 if (thread_safety_analysis)
   add_compile_options(
-    -Wthread-safety -D_LIBCPP_ENABLE_THREAD_SAFETY_ANNOTATIONS -DXRPL_ENABLE_THREAD_SAFETY_ANNOTATIONS
+    -Wthread-safety -D_LIBCPP_ENABLE_THREAD_SAFETY_ANNOTATIONS
+    -DXRPL_ENABLE_THREAD_SAFETY_ANNOTATIONS
   )
   add_compile_options("-stdlib=libc++")
   add_link_options("-stdlib=libc++")
@@ -70,18 +74,26 @@ endif ()
 include(CheckCXXCompilerFlag)
 include(FetchContent)
 include(ExternalProject)
-include(CMakeFuncs) # must come *after* ExternalProject b/c it overrides one function in EP
+include(CMakeFuncs) # must come *after* ExternalProject b/c it overrides one
+                    # function in EP
 if (target)
-  message(FATAL_ERROR "The target option has been removed - use native cmake options to control build")
+  message(
+    FATAL_ERROR
+      "The target option has been removed - use native cmake options to control build"
+  )
 endif ()
 
 include(XrplSanity)
 include(XrplVersion)
 include(XrplSettings)
-# this check has to remain in the top-level cmake because of the early return statement
+# this check has to remain in the top-level cmake because of the early return
+# statement
 if (packages_only)
   if (NOT TARGET rpm)
-    message(FATAL_ERROR "packages_only requested, but targets were not created - is docker installed?")
+    message(
+      FATAL_ERROR
+        "packages_only requested, but targets were not created - is docker installed?"
+    )
   endif ()
   return()
 endif ()
@@ -126,7 +138,10 @@ target_link_libraries(
 option(rocksdb "Enable RocksDB" ON)
 if (rocksdb)
   find_package(RocksDB REQUIRED)
-  set_target_properties(RocksDB::rocksdb PROPERTIES INTERFACE_COMPILE_DEFINITIONS XRPL_ROCKSDB_AVAILABLE=1)
+  set_target_properties(
+    RocksDB::rocksdb PROPERTIES INTERFACE_COMPILE_DEFINITIONS
+                                XRPL_ROCKSDB_AVAILABLE=1
+  )
   target_link_libraries(xrpl_libs INTERFACE RocksDB::rocksdb)
 endif ()
 
