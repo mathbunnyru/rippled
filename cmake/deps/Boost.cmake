@@ -30,7 +30,6 @@ target_link_libraries(
             Boost::process
             Boost::program_options
             Boost::regex
-            Boost::system
             Boost::thread
 )
 if (Boost_COMPILER)
