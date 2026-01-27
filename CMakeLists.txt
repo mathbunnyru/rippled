@@ -107,8 +107,6 @@ if (only_docs)
   return()
 endif ()
 
-#
-
 include(deps/Boost)
 
 add_subdirectory(external/antithesis-sdk)
