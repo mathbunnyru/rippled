@@ -74,8 +74,8 @@ format:
   _help_dangle_align:
     - If the trailing parenthesis must be 'dangled' on its on
     - "line, then align it to this reference: `prefix`: the start"
-    - "of the statement,  `prefix-indent`: the start of the"
-    - "statement, plus one indentation  level, `child`: align to"
+    - "of the statement, `prefix-indent`: the start of the"
+    - "statement, plus one indentation level, `child`: align to"
     - the column of the arguments
   dangle_align: prefix
   _help_min_prefix_chars:
