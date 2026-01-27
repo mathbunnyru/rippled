@@ -118,7 +118,7 @@ _help_markup: Options affecting comment reflow and formatting.
 markup:
   _help_bullet_char:
     - What character to use for bulleted lists
-  bullet_char: "*"
+  bullet_char: "-"
   _help_enum_char:
     - What character to use as punctuation after numerals in an
     - enumerated list
