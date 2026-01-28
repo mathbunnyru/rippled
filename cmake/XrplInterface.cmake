@@ -29,14 +29,12 @@ target_compile_definitions(
               $<$<BOOL:${beast_no_unit_test_inline}>:BEAST_NO_UNIT_TEST_INLINE=1>
               $<$<BOOL:${beast_disable_autolink}>:BEAST_DONT_AUTOLINK_TO_WIN32_LIBRARIES=1>
               $<$<BOOL:${single_io_service_thread}>:XRPL_SINGLE_IO_SERVICE_THREAD=1>
-              $<$<BOOL:${voidstar}>:ENABLE_VOIDSTAR>
-)
+              $<$<BOOL:${voidstar}>:ENABLE_VOIDSTAR>)
 target_compile_options(
     opts
     INTERFACE $<$<AND:$<BOOL:${is_gcc}>,$<COMPILE_LANGUAGE:CXX>>:-Wsuggest-override>
               $<$<BOOL:${is_gcc}>:-Wno-maybe-uninitialized> $<$<BOOL:${perf}>:-fno-omit-frame-pointer>
-              $<$<BOOL:${profile}>:-pg> $<$<AND:$<BOOL:${is_gcc}>,$<BOOL:${profile}>>:-p>
-)
+              $<$<BOOL:${profile}>:-pg> $<$<AND:$<BOOL:${is_gcc}>,$<BOOL:${profile}>>:-p>)
 
 target_link_libraries(opts INTERFACE $<$<BOOL:${profile}>:-pg> $<$<AND:$<BOOL:${is_gcc}>,$<BOOL:${profile}>>:-p>)
 
@@ -72,8 +70,7 @@ target_link_libraries(
               crypt32
               >
               $<$<NOT:$<BOOL:${is_msvc}>>:dl>
-              $<$<NOT:$<OR:$<BOOL:${is_msvc}>,$<BOOL:${is_macos}>>>:rt>
-)
+              $<$<NOT:$<OR:$<BOOL:${is_msvc}>,$<BOOL:${is_macos}>>>:rt>)
 
 if (NOT is_msvc)
     set(THREADS_PREFER_PTHREAD_FLAG ON)

@@ -17,13 +17,11 @@ function (git_branch branch_val)
         return()
     endif ()
     set(_branch "")
-    execute_process(
-        COMMAND ${GIT_EXECUTABLE} "rev-parse" "--abbrev-ref" "HEAD"
-        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-        RESULT_VARIABLE _git_exit_code
-        OUTPUT_VARIABLE _temp_branch
-        OUTPUT_STRIP_TRAILING_WHITESPACE ERROR_QUIET
-    )
+    execute_process(COMMAND ${GIT_EXECUTABLE} "rev-parse" "--abbrev-ref" "HEAD"
+                    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+                    RESULT_VARIABLE _git_exit_code
+                    OUTPUT_VARIABLE _temp_branch
+                    OUTPUT_STRIP_TRAILING_WHITESPACE ERROR_QUIET)
     if (_git_exit_code EQUAL 0)
         set(_branch ${_temp_branch})
     endif ()

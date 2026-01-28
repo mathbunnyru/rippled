@@ -1,19 +1,17 @@
 include(CompilationEnv)
 include(XrplSanitizers)
 
-find_package(
-    Boost REQUIRED
-    COMPONENTS chrono
-               container
-               coroutine
-               date_time
-               filesystem
-               json
-               program_options
-               regex
-               system
-               thread
-)
+find_package(Boost REQUIRED
+             COMPONENTS chrono
+                        container
+                        coroutine
+                        date_time
+                        filesystem
+                        json
+                        program_options
+                        regex
+                        system
+                        thread)
 
 add_library(xrpl_boost INTERFACE)
 add_library(Xrpl::boost ALIAS xrpl_boost)
@@ -30,8 +28,7 @@ target_link_libraries(
               Boost::process
               Boost::program_options
               Boost::regex
-              Boost::thread
-)
+              Boost::thread)
 if (Boost_COMPILER)
     target_link_libraries(xrpl_boost INTERFACE Boost::disable_autolinking)
 endif ()
@@ -42,8 +39,6 @@ if (SANITIZERS_ENABLED AND is_clang)
     endif ()
     message(STATUS "Adding [${Boost_INCLUDE_DIRS}] to sanitizer blacklist")
     file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/san_bl.txt "src:${Boost_INCLUDE_DIRS}/*")
-    target_compile_options(
-        opts INTERFACE # ignore boost headers for sanitizing
-                       -fsanitize-blacklist=${CMAKE_CURRENT_BINARY_DIR}/san_bl.txt
-    )
+    target_compile_options(opts INTERFACE # ignore boost headers for sanitizing
+                                          -fsanitize-blacklist=${CMAKE_CURRENT_BINARY_DIR}/san_bl.txt)
 endif ()

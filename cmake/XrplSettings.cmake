@@ -98,11 +98,9 @@ option(local_grpc "Force a local build of gRPC instead of looking for an install
 # the remaining options are obscure and rarely used
 option(beast_no_unit_test_inline "Prevents unit test definitions from being inserted into global table" OFF)
 option(single_io_service_thread "Restricts the number of threads calling io_context::run to one. \
-  This can be useful when debugging." OFF
-)
+  This can be useful when debugging." OFF)
 option(boost_show_deprecated "Allow boost to fail on deprecated usage. Only useful if you're trying\
-  to find deprecated calls." OFF
-)
+  to find deprecated calls." OFF)
 
 if (WIN32)
     option(beast_disable_autolink "Disables autolinking of system libraries on WIN32" OFF)

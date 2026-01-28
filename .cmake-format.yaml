@@ -61,7 +61,7 @@ format:
   _help_dangle_parens:
     - If a statement is wrapped to more than one line, than dangle
     - the closing parenthesis on its own line.
-  dangle_parens: true
+  dangle_parens: false
   _help_dangle_align:
     - If the trailing parenthesis must be 'dangled' on its on
     - "line, then align it to this reference: `prefix`: the start"
@@ -73,7 +73,7 @@ format:
     - If the statement spelling length (including space and
     - parenthesis) is smaller than this amount, then force reject
     - nested layouts.
-  min_prefix_chars: 4
+  min_prefix_chars: 18
   _help_max_prefix_chars:
     - If the statement spelling length (including space and
     - parenthesis) is larger than the tab width by more than this

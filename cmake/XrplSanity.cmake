@@ -30,12 +30,9 @@ endif ()
 
 # check for in-source build and fail
 if ("${CMAKE_CURRENT_SOURCE_DIR}" STREQUAL "${CMAKE_BINARY_DIR}")
-    message(
-        FATAL_ERROR
-            "Builds (in-source) are not allowed in "
-            "${CMAKE_CURRENT_SOURCE_DIR}. Please remove CMakeCache.txt and the CMakeFiles "
-            "directory from ${CMAKE_CURRENT_SOURCE_DIR} and try building in a separate directory."
-    )
+    message(FATAL_ERROR "Builds (in-source) are not allowed in "
+                        "${CMAKE_CURRENT_SOURCE_DIR}. Please remove CMakeCache.txt and the CMakeFiles "
+                        "directory from ${CMAKE_CURRENT_SOURCE_DIR} and try building in a separate directory.")
 endif ()
 
 if (MSVC AND CMAKE_GENERATOR_PLATFORM STREQUAL "Win32")

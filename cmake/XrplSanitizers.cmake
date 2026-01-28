@@ -59,8 +59,7 @@ endif ()
 # Sanitizers are not supported on Windows/MSVC
 if (is_msvc)
     message(FATAL_ERROR "Sanitizers are not supported on Windows/MSVC. "
-                        "Please unset the SANITIZERS environment variable."
-    )
+                        "Please unset the SANITIZERS environment variable.")
 endif ()
 
 message(STATUS "Configuring sanitizers: ${SANITIZERS}")
@@ -84,16 +83,14 @@ foreach (san IN LISTS san_list)
         set(enable_ubsan TRUE)
     else ()
         message(FATAL_ERROR "Unsupported sanitizer type: ${san}"
-                            "Supported: address, thread, undefinedbehavior and their combinations."
-        )
+                            "Supported: address, thread, undefinedbehavior and their combinations.")
     endif ()
 endforeach ()
 
 # Validate sanitizer compatibility
 if (enable_asan AND enable_tsan)
     message(FATAL_ERROR "AddressSanitizer and ThreadSanitizer are incompatible and cannot be enabled simultaneously. "
-                        "Use 'address' or 'thread', optionally with 'undefinedbehavior'."
-    )
+                        "Use 'address' or 'thread', optionally with 'undefinedbehavior'.")
 endif ()
 
 # Frame pointer is required for meaningful stack traces. Sanitizers recommend minimum of -O1 for reasonable performance
@@ -176,10 +173,8 @@ message(STATUS "  Compile flags: ${SANITIZERS_COMPILE_FLAGS}")
 message(STATUS "  Link flags: ${SANITIZERS_LINK_FLAGS}")
 
 # Apply the sanitizer flags to the 'common' interface library This is the same library used by XrplCompiler.cmake
-target_compile_options(
-    common INTERFACE $<$<COMPILE_LANGUAGE:CXX>:${SANITIZERS_COMPILE_FLAGS}>
-                     $<$<COMPILE_LANGUAGE:C>:${SANITIZERS_COMPILE_FLAGS}>
-)
+target_compile_options(common INTERFACE $<$<COMPILE_LANGUAGE:CXX>:${SANITIZERS_COMPILE_FLAGS}>
+                                        $<$<COMPILE_LANGUAGE:C>:${SANITIZERS_COMPILE_FLAGS}>)
 
 # Apply linker flags
 target_link_options(common INTERFACE ${SANITIZERS_LINK_FLAGS})

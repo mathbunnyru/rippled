@@ -23,12 +23,9 @@ if ("${CCACHE_PATH}" MATCHES "chocolatey")
         return()
     endif ()
 
-    execute_process(
-        COMMAND
-            bash -c
-            "export LC_ALL='en_US.UTF-8'; ${CCACHE_PATH} --shimgen-noop | grep -oP 'path to executable: \\K.+' | head -c -1"
-        OUTPUT_VARIABLE CCACHE_PATH
-    )
+    execute_process(COMMAND bash -c
+                            "export LC_ALL='en_US.UTF-8'; ${CCACHE_PATH} --shimgen-noop | grep -oP 'path to executable: \\K.+' | head -c -1"
+                    OUTPUT_VARIABLE CCACHE_PATH)
 
     if (NOT CCACHE_PATH)
         message(WARNING "Could not find ccache target.")
@@ -41,8 +38,7 @@ message(STATUS "Found ccache: ${CCACHE_PATH}")
 # Tell cmake to use ccache for compiling with Visual Studio.
 file(COPY_FILE ${CCACHE_PATH} ${CMAKE_BINARY_DIR}/cl.exe ONLY_IF_DIFFERENT)
 set(CMAKE_VS_GLOBALS "CLToolExe=cl.exe" "CLToolPath=${CMAKE_BINARY_DIR}" "TrackFileAccess=false"
-                     "UseMultiToolTask=true"
-)
+                     "UseMultiToolTask=true")
 
 # By default Visual Studio generators will use /Zi to capture debug information, which is not compatible with ccache, so
 # tell it to use /Z7 instead.

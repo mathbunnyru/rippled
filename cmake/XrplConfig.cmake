@@ -12,20 +12,18 @@ if (static OR MSVC)
 else ()
     set(Boost_USE_STATIC_RUNTIME OFF)
 endif ()
-find_dependency(
-    Boost
-    COMPONENTS
-    chrono
-    container
-    context
-    coroutine
-    date_time
-    filesystem
-    program_options
-    regex
-    system
-    thread
-)
+find_dependency(Boost
+                COMPONENTS
+                chrono
+                container
+                context
+                coroutine
+                date_time
+                filesystem
+                program_options
+                regex
+                system
+                thread)
 #[=========================================================[
   OpenSSL
 #]=========================================================]
@@ -35,9 +33,8 @@ if (NOT DEFINED OPENSSL_ROOT_DIR)
     elseif (APPLE)
         find_program(homebrew brew)
         if (homebrew)
-            execute_process(
-                COMMAND ${homebrew} --prefix openssl OUTPUT_VARIABLE OPENSSL_ROOT_DIR OUTPUT_STRIP_TRAILING_WHITESPACE
-            )
+            execute_process(COMMAND ${homebrew} --prefix openssl OUTPUT_VARIABLE OPENSSL_ROOT_DIR
+                            OUTPUT_STRIP_TRAILING_WHITESPACE)
         endif ()
     endif ()
     file(TO_CMAKE_PATH "${OPENSSL_ROOT_DIR}" OPENSSL_ROOT_DIR)

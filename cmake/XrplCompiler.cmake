@@ -31,8 +31,7 @@ target_compile_definitions(
     ]===]
               $<$<AND:$<BOOL:${profile}>,$<NOT:$<BOOL:${assert}>>>:NDEBUG>
               # TODO: Remove once we have migrated functions from OpenSSL 1.x to 3.x.
-              OPENSSL_SUPPRESS_DEPRECATED
-)
+              OPENSSL_SUPPRESS_DEPRECATED)
 
 if (MSVC)
     # remove existing exception flag since we set it to -EHa
@@ -95,8 +94,7 @@ if (MSVC)
                   # static runtime
                   $<$<CONFIG:Debug>:-MTd>
                   $<$<NOT:$<CONFIG:Debug>>:-MT>
-                  $<$<BOOL:${werr}>:-WX>
-    )
+                  $<$<BOOL:${werr}>:-WX>)
     target_compile_definitions(
         common
         INTERFACE _WIN32_WINNT=0x6000
@@ -107,8 +105,7 @@ if (MSVC)
                   NOMINMAX
                   # TODO: Resolve these warnings, don't just silence them
                   _SILENCE_ALL_CXX17_DEPRECATION_WARNINGS
-                  $<$<AND:$<COMPILE_LANGUAGE:CXX>,$<CONFIG:Debug>>:_CRTDBG_MAP_ALLOC>
-    )
+                  $<$<AND:$<COMPILE_LANGUAGE:CXX>,$<CONFIG:Debug>>:_CRTDBG_MAP_ALLOC>)
     target_link_libraries(common INTERFACE -errorreport:none -machine:X64)
 else ()
     target_compile_options(
@@ -126,8 +123,7 @@ else ()
                   # tweak gcc optimization for debug
                   $<$<AND:$<BOOL:${is_gcc}>,$<CONFIG:Debug>>:-O0>
                   # Add debug symbols to release config
-                  $<$<CONFIG:Release>:-g>
-    )
+                  $<$<CONFIG:Release>:-g>)
     target_link_libraries(
         common
         INTERFACE -rdynamic
@@ -137,8 +133,7 @@ else ()
                   $<$<AND:$<BOOL:${static}>,$<NOT:$<BOOL:${APPLE}>>,$<NOT:$<BOOL:${SANITIZERS_ENABLED}>>>:
                   -static-libstdc++
                   -static-libgcc
-                  >
-    )
+                  >)
 endif ()
 
 # Antithesis instrumentation will only be built and deployed using machines running Linux.
@@ -186,8 +181,7 @@ elseif (use_gold AND is_gcc)
            dependencies (of which boost has a few) - so just
            switch to DT_RPATH if doing dynamic linking with gold
         #]=========================================================]
-                      $<$<NOT:$<BOOL:${static}>>:-Wl,--disable-new-dtags>
-        )
+                      $<$<NOT:$<BOOL:${static}>>:-Wl,--disable-new-dtags>)
     endif ()
     unset(LD_VERSION)
 elseif (use_lld)

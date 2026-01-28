@@ -25,16 +25,14 @@ if (NOT GCOVR_ADDITIONAL_ARGS STREQUAL "")
     separate_arguments(GCOVR_ADDITIONAL_ARGS)
 endif ()
 
-list(
-    APPEND
-    GCOVR_ADDITIONAL_ARGS
-    --exclude-throw-branches
-    --exclude-noncode-lines
-    --exclude-unreachable-branches
-    -s
-    -j
-    ${PROCESSOR_COUNT}
-)
+list(APPEND
+     GCOVR_ADDITIONAL_ARGS
+     --exclude-throw-branches
+     --exclude-noncode-lines
+     --exclude-unreachable-branches
+     -s
+     -j
+     ${PROCESSOR_COUNT})
 
 setup_target_for_coverage_gcovr(
     NAME
@@ -49,7 +47,6 @@ setup_target_for_coverage_gcovr(
     "${CMAKE_BINARY_DIR}/pb-xrpl.libpb"
     DEPENDENCIES
     xrpld
-    xrpl.tests
-)
+    xrpl.tests)
 
 add_code_coverage_to_target(opts INTERFACE)
