@@ -1,8 +1,7 @@
 # Shared detection of compiler, operating system, and architecture.
 #
-# This module centralizes environment detection so that other CMake modules can
-# use the same variables instead of repeating checks on CMAKE_* and built-in
-# platform variables.
+# This module centralizes environment detection so that other CMake modules can use the same variables instead of
+# repeating checks on CMAKE_* and built-in platform variables.
 
 # Only run once per configure step.
 include_guard(GLOBAL)

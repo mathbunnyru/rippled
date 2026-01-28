@@ -7,10 +7,7 @@ if (NOT coverage)
 endif ()
 
 if (CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
-  message(
-    WARNING
-      "Code coverage on Windows is not supported, ignoring 'coverage' flag"
-  )
+  message(WARNING "Code coverage on Windows is not supported, ignoring 'coverage' flag")
   return()
 endif ()
 
@@ -19,9 +16,9 @@ ProcessorCount(PROCESSOR_COUNT)
 
 include(CodeCoverage)
 
-# The instructions for these commands come from the `CodeCoverage` module, which
-# was copied from https://github.com/bilke/cmake-modules, commit fb7d2a3, then
-# locally changed (see CHANGES: section in `CodeCoverage.cmake`)
+# The instructions for these commands come from the `CodeCoverage` module, which was copied from
+# https://github.com/bilke/cmake-modules, commit fb7d2a3, then locally changed (see CHANGES: section in
+# `CodeCoverage.cmake`)
 
 set(GCOVR_ADDITIONAL_ARGS ${coverage_extra_args})
 if (NOT GCOVR_ADDITIONAL_ARGS STREQUAL "")
