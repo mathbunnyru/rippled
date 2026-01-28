@@ -1674,7 +1674,7 @@ BEAST_DEFINE_TESTSUITE_MANUAL(NegativeUNLVoteScoreTable, consensus, xrpl);
 BEAST_DEFINE_TESTSUITE_PRIO(NegativeUNLVoteGoodScore, consensus, xrpl, 1);
 BEAST_DEFINE_TESTSUITE(NegativeUNLVoteOffline, consensus, xrpl);
 BEAST_DEFINE_TESTSUITE(NegativeUNLVoteMaxListed, consensus, xrpl);
-BEAST_DEFINE_TESTSUITE_PRIO(NegativeUNLVoteRetiredValidator, consensus, ripple, 1);
+BEAST_DEFINE_TESTSUITE_PRIO(NegativeUNLVoteRetiredValidator, consensus, xrpl, 1);
 BEAST_DEFINE_TESTSUITE(NegativeUNLVoteNewValidator, consensus, xrpl);
 BEAST_DEFINE_TESTSUITE(NegativeUNLVoteFilterValidations, consensus, xrpl);
 
