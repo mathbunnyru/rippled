@@ -12,6 +12,7 @@ parse:
         LANGUAGE: cpp
         IMPORT_DIRS: "*"
         GENERATE_EXTENSIONS: "*"
+        PLUGIN: "*"
   _help_override_spec:
     - Override configurations per-command where available
   override_spec: {}

@@ -19,7 +19,8 @@ target_protobuf_sources(
     xrpl.libpb xrpl/proto
     LANGUAGE grpc
     IMPORT_DIRS include/xrpl/proto
-    PROTOS "${protos}" PLUGIN protoc-gen-grpc=$<TARGET_FILE:gRPC::grpc_cpp_plugin>
+    PROTOS "${protos}"
+    PLUGIN protoc-gen-grpc=$<TARGET_FILE:gRPC::grpc_cpp_plugin>
     GENERATE_EXTENSIONS .grpc.pb.h .grpc.pb.cc)
 
 target_compile_options(
