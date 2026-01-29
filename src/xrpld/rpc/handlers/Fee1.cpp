@@ -14,6 +14,7 @@ doFee(RPC::JsonContext& context)
     if (result.type() == Json::objectValue)
         return result;
 
+    // comment to trigger build
     // LCOV_EXCL_START
     UNREACHABLE("xrpl::doFee : invalid result type");
     RPC::inject_error(rpcINTERNAL, context.params);
