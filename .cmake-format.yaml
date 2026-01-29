@@ -2,6 +2,16 @@ _help_parse: Options affecting listfile parsing
 parse:
   _help_additional_commands:
     - Specify structure for custom cmake functions
+  additional_commands:
+    target_protobuf_sources:
+      pargs:
+        - target
+        - prefix
+      kwargs:
+        PROTOS: "*"
+        LANGUAGE: cpp
+        IMPORT_DIRS: "*"
+        GENERATE_EXTENSIONS: "*"
   _help_override_spec:
     - Override configurations per-command where available
   override_spec: {}
