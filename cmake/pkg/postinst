@@ -1,0 +1,59 @@
+#!/bin/sh
+
+set -e
+
+USER_NAME=rippled
+GROUP_NAME="${USER_NAME}"
+XRPLD_EXECUTABLE="xrpld"
+XRPLD_PREFIX="/opt/xrpl"
+XRPLD_BIN="$XRPLD_PREFIX/bin/${XRPLD_EXECUTABLE}"
+XRPLD_CONFIG="$XRPLD_PREFIX/etc/xrpld.cfg"
+VALIDATORS_FILE="$XRPLD_PREFIX/etc/validators.txt"
+
+case "$1" in
+    configure)
+        if ! id -u "$USER_NAME" >/dev/null 2>&1; then
+            # Users who should not have a home directory should have their home directory set to /nonexistent
+            # https://www.debian.org/doc/debian-policy/ch-opersys.html#non-existent-home-directories
+            useradd \
+                --system \
+                --home-dir /nonexistent \
+                --no-create-home \
+                --shell /usr/sbin/nologin \
+                --comment "system user for ${XRPLD_EXECUTABLE}" \
+                --user-group \
+                "${USER_NAME}"
+        fi
+
+        # Create log directory
+        install -d -o "$USER_NAME" -g "$GROUP_NAME" /var/log/xrpld
+
+        # Create data directory
+        install -d -o "$USER_NAME" -g "$GROUP_NAME" /var/lib/xrpld
+
+        # Set ownership of config files if they exist
+        if [ -f "$XRPLD_CONFIG" ]; then
+            chown "$USER_NAME:$GROUP_NAME" "$XRPLD_CONFIG"
+        fi
+
+        if [ -f "$VALIDATORS_FILE" ]; then
+            chown "$USER_NAME:$GROUP_NAME" "$VALIDATORS_FILE"
+        fi
+
+        # Set ownership of installation directory
+        chown -R "$USER_NAME:$GROUP_NAME" "$XRPLD_PREFIX"
+
+        # Create symlinks for both xrpld and rippled in /usr/bin
+        ln -sf "$XRPLD_BIN" "/usr/bin/${XRPLD_EXECUTABLE}"
+        ln -sf "$XRPLD_BIN" "/usr/bin/rippled"
+
+        ;;
+    abort-upgrade|abort-remove|abort-deconfigure)
+        ;;
+    *)
+        echo "postinst called with unknown argument \`$1'" >&2
+        exit 1
+        ;;
+esac
+
+exit 0

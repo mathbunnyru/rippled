@@ -145,6 +145,11 @@ include(XrplCore)
 include(XrplInstall)
 include(XrplValidatorKeys)
 
+option(package "Build package" OFF)
+if (package)
+    include(XrplPackage)
+endif ()
+
 if (tests)
     include(CTest)
     add_subdirectory(src/tests/libxrpl)

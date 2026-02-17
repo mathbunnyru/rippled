@@ -19,6 +19,7 @@ class Xrpl(ConanFile):
         "coverage": [True, False],
         "fPIC": [True, False],
         "jemalloc": [True, False],
+        "package": [True, False],
         "rocksdb": [True, False],
         "shared": [True, False],
         "static": [True, False],
@@ -51,6 +52,7 @@ class Xrpl(ConanFile):
         "coverage": False,
         "fPIC": True,
         "jemalloc": False,
+        "package": False,
         "rocksdb": True,
         "shared": False,
         "static": True,
@@ -165,6 +167,7 @@ class Xrpl(ConanFile):
         tc.variables["assert"] = self.options.assertions
         tc.variables["coverage"] = self.options.coverage
         tc.variables["jemalloc"] = self.options.jemalloc
+        tc.variables["package"] = self.options.package
         tc.variables["rocksdb"] = self.options.rocksdb
         tc.variables["BUILD_SHARED_LIBS"] = self.options.shared
         tc.variables["static"] = self.options.static

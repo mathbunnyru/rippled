@@ -81,6 +81,11 @@ elif ! grep -q '"rippled"' cmake/XrplCore.cmake; then
   mv cmake.tmp cmake/XrplCore.cmake
 fi
 
+# Ensure URL and email address in the CMake package config file remain unchanged.
+${SED_COMMAND} -i 's@xrpld@rippled@g' cmake/pkg/deb.cmake
+${SED_COMMAND} -i 's@Xrpl@Ripple@g' cmake/pkg/deb.cmake
+${SED_COMMAND} -i 's@xrpl@ripple@g' cmake/pkg/deb.cmake
+
 # Restore the symlink from 'xrpld' to 'rippled'.
 ${SED_COMMAND} -i -E 's@create_symbolic_link\(xrpld@create_symbolic_link(rippled@' cmake/XrplInstall.cmake
 

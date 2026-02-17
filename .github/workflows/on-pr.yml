@@ -137,6 +137,22 @@ jobs:
     secrets:
       CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
 
+  package:
+    needs: should-run
+    if: ${{ needs.should-run.outputs.go == 'true' }}
+    uses: ./.github/workflows/reusable-build-test-config.yml
+    with:
+      build_only: true
+      build_type: Release
+      ccache_enabled: false
+      cmake_args: "-Dstatic=ON"
+      cmake_target: package
+      runs_on: '["self-hosted", "Linux", "X64", "heavy"]'
+      image: ghcr.io/xrplf/ci/debian-bookworm:gcc-15-sha-53033a2
+      config_name: package
+    secrets:
+      CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+
   upload-recipe:
     needs:
       - should-run
@@ -172,6 +188,7 @@ jobs:
       - check-rename
       - clang-tidy
       - build-test
+      - package
       - upload-recipe
       - notify-clio
     runs-on: ubuntu-latest

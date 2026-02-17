@@ -138,6 +138,7 @@ jobs:
           # amount of logs. For other OSes, the "verbose" logs are more useful.
           log_verbosity: ${{ runner.os == 'Windows' && 'quiet' || 'verbose' }}
           sanitizers: ${{ inputs.sanitizers }}
+          package: ${{ inputs.cmake_target == 'package' }}
 
       - name: Configure CMake
         working-directory: ${{ env.BUILD_DIR }}
@@ -175,12 +176,12 @@ jobs:
             curl ${CCACHE_REMOTE_STORAGE%|*}/status || true
           fi
 
-      - name: Upload the binary (Linux)
+      - name: Upload build artifacts (Linux)
         if: ${{ github.repository_owner == 'XRPLF' && runner.os == 'Linux' }}
         uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
         with:
-          name: xrpld-${{ inputs.config_name }}
-          path: ${{ env.BUILD_DIR }}/xrpld
+          name: xrpld-${{ inputs.cmake_target == 'package' && 'deb-' || '' }}${{ inputs.config_name }}
+          path: ${{ env.BUILD_DIR }}/${{ inputs.cmake_target == 'package' && '*.deb' || 'xrpld' }}
           retention-days: 3
           if-no-files-found: error
 

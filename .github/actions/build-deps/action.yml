@@ -22,6 +22,10 @@ inputs:
     description: "The sanitizers to enable."
     required: false
     default: ""
+  package:
+    description: 'Whether to generate Debian package ("true", "false").'
+    required: false
+    default: "false"
 
 runs:
   using: composite
@@ -34,15 +38,17 @@ runs:
         BUILD_TYPE: ${{ inputs.build_type }}
         LOG_VERBOSITY: ${{ inputs.log_verbosity }}
         SANITIZERS: ${{ inputs.sanitizers }}
+        PACKAGE: ${{ inputs.package == 'true' && 'True' || 'False' }}
       run: |
         echo 'Installing dependencies.'
         conan install \
           --profile ci \
           --build="${BUILD_OPTION}" \
-          --options:host='&:tests=True' \
-          --options:host='&:xrpld=True' \
+          --options:host="&:tests=True" \
+          --options:host="&:xrpld=True" \
+          --options:host="&:package=${PACKAGE}" \
           --settings:all build_type="${BUILD_TYPE}" \
-          --conf:all tools.build:jobs=${BUILD_NPROC} \
+          --conf:all tools.build:jobs="${BUILD_NPROC}" \
           --conf:all tools.build:verbosity="${LOG_VERBOSITY}" \
           --conf:all tools.compilation:verbosity="${LOG_VERBOSITY}" \
           .

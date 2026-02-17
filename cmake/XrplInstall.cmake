@@ -2,6 +2,12 @@
    install stuff
 #]===================================================================]
 
+set(XRPL_INSTALL_DIR "/opt/xrpl")
+if (CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
+    set(CMAKE_INSTALL_PREFIX "${XRPL_INSTALL_DIR}" CACHE PATH "Install prefix" FORCE)
+endif ()
+
+include(GNUInstallDirs)
 include(create_symbolic_link)
 
 # If no suffix is defined for executables (e.g. Windows uses .exe but Linux
@@ -50,7 +56,7 @@ write_basic_package_version_file(XrplConfigVersion.cmake VERSION ${xrpld_version
                                  COMPATIBILITY SameMajorVersion)
 
 if (is_root_project AND TARGET xrpld)
-    install(TARGETS xrpld RUNTIME DESTINATION bin)
+    install(TARGETS xrpld RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
     set_target_properties(xrpld PROPERTIES INSTALL_RPATH_USE_LINK_PATH ON)
     # sample configs should not overwrite existing files
     # install if-not-exists workaround as suggested by
