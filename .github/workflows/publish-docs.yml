@@ -23,7 +23,9 @@ defaults:
 
 env:
   BUILD_DIR: build
-  NPROC_SUBTRACT: 2
+  # ubuntu-latest has only 2 CPUs for private repositories
+  # https://docs.github.com/en/actions/reference/runners/github-hosted-runners#standard-github-hosted-runners-for--private-repositories
+  NPROC_SUBTRACT: ${{ github.event.repository.private && '1' || '2' }}
 
 jobs:
   publish:
