@@ -23,11 +23,8 @@ char const* const versionString = "3.2.0-b0"
 // clang-format on
 
 #if defined(DEBUG) || defined(SANITIZERS)
-    "+"
-#ifdef GIT_COMMIT_HASH
-    GIT_COMMIT_HASH
-    "."
-#endif
+    "+" +
+    xrpl::git::getCommitHash() + "." +
 #ifdef DEBUG
     "DEBUG"
 #ifdef SANITIZERS

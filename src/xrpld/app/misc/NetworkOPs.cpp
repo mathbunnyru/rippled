@@ -40,6 +40,7 @@
 #include <xrpl/core/PerfLog.h>
 #include <xrpl/crypto/RFC1751.h>
 #include <xrpl/crypto/csprng.h>
+#include <xrpl/git/Git.h>
 #include <xrpl/ledger/AmendmentTable.h>
 #include <xrpl/ledger/OrderBookDB.h>
 #include <xrpl/protocol/BuildInfo.h>
@@ -2593,17 +2594,11 @@ NetworkOPsImp::getServerInfo(bool human, bool admin, bool counters)
             }
         }
 
-#if defined(GIT_COMMIT_HASH) || defined(GIT_BRANCH)
         {
             auto& x = (info[jss::git] = Json::objectValue);
-#ifdef GIT_COMMIT_HASH
-            x[jss::hash] = GIT_COMMIT_HASH;
-#endif
-#ifdef GIT_BRANCH
-            x[jss::branch] = GIT_BRANCH;
-#endif
+            x[jss::hash] = xrpl::git::getCommitHash();
+            x[jss::branch] = xrpl::git::getBuildBranch();
         }
-#endif
     }
     info[jss::io_latency_ms] = static_cast<Json::UInt>(registry_.app().getIOLatency().count());
 
