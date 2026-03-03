@@ -1,6 +1,7 @@
 #include <xrpl/basics/contract.h>
 #include <xrpl/beast/core/LexicalCast.h>
 #include <xrpl/beast/core/SemanticVersion.h>
+#include <xrpl/git/Git.h>
 #include <xrpl/protocol/BuildInfo.h>
 
 #include <boost/preprocessor/stringize.hpp>
