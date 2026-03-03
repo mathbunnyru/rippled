@@ -20,7 +20,7 @@ namespace BuildInfo {
 //  and follow the format described at http://semver.org/
 //------------------------------------------------------------------------------
 // clang-format off
-char const* const versionString = "3.2.0-b0"
+static std::string const versionString = "3.2.0-b0"
 // clang-format on
 
 #if defined(DEBUG) || defined(SANITIZERS)
@@ -49,11 +49,10 @@ std::string const&
 getVersionString()
 {
     static std::string const value = [] {
-        std::string const s = versionString;
         beast::SemanticVersion v;
-        if (!v.parse(s) || v.print() != s)
-            LogicError(s + ": Bad server version string");
-        return s;
+        if (!v.parse(versionString) || v.print() != versionString)
+            LogicError(versionString + ": Bad server version string");
+        return versionString;
     }();
     return value;
 }
@@ -69,13 +68,13 @@ static constexpr std::uint64_t implementationVersionIdentifier = 0x183B'0000'000
 static constexpr std::uint64_t implementationVersionIdentifierMask = 0xFFFF'0000'0000'0000LLU;
 
 std::uint64_t
-encodeSoftwareVersion(char const* const versionStr)
+encodeSoftwareVersion(std::string_view versionStr)
 {
     std::uint64_t c = implementationVersionIdentifier;
 
     beast::SemanticVersion v;
 
-    if (v.parse(std::string(versionStr)))
+    if (v.parse(versionStr))
     {
         if (v.majorVersion >= 0 && v.majorVersion <= 255)
             c |= static_cast<std::uint64_t>(v.majorVersion) << 40;
