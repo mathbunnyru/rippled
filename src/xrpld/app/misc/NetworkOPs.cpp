@@ -2594,10 +2594,13 @@ NetworkOPsImp::getServerInfo(bool human, bool admin, bool counters)
             }
         }
 
+        if (!xrpl::git::getCommitHash().empty() || !xrpl::git::getBuildBranch().empty())
         {
             auto& x = (info[jss::git] = Json::objectValue);
-            x[jss::hash] = xrpl::git::getCommitHash();
-            x[jss::branch] = xrpl::git::getBuildBranch();
+            if (!xrpl::git::getCommitHash().empty())
+                x[jss::hash] = xrpl::git::getCommitHash();
+            if (!xrpl::git::getBuildBranch().empty())
+                x[jss::branch] = xrpl::git::getBuildBranch();
         }
     }
     info[jss::io_latency_ms] = static_cast<Json::UInt>(registry_.app().getIOLatency().count());

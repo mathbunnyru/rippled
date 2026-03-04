@@ -1,14 +1,21 @@
 include_guard()
 
-find_package(Git REQUIRED)
+set(GIT_BUILD_BRANCH "")
+set(GIT_COMMIT_HASH "")
 
-set(GIT_COMMAND branch --show-current)
-execute_process(COMMAND ${GIT_EXECUTABLE} ${GIT_COMMAND} WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
-                OUTPUT_VARIABLE GIT_BUILD_BRANCH OUTPUT_STRIP_TRAILING_WHITESPACE)
+find_package(Git)
+if (NOT Git_FOUND)
+    message(WARNING "Git not found. Git branch and commit hash will be empty.")
+    return()
+endif ()
 
-set(GIT_COMMAND rev-parse HEAD)
-execute_process(COMMAND ${GIT_EXECUTABLE} ${GIT_COMMAND} WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
-                OUTPUT_VARIABLE GIT_COMMIT_HASH OUTPUT_STRIP_TRAILING_WHITESPACE)
+set(GIT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/.git)
+
+execute_process(COMMAND ${GIT_EXECUTABLE} --git-dir=${GIT_DIRECTORY} rev-parse HEAD
+                OUTPUT_STRIP_TRAILING_WHITESPACE OUTPUT_VARIABLE GIT_BUILD_BRANCH)
+
+execute_process(COMMAND ${GIT_EXECUTABLE} --git-dir=${GIT_DIRECTORY} rev-parse --abbrev-ref HEAD
+                OUTPUT_STRIP_TRAILING_WHITESPACE OUTPUT_VARIABLE GIT_COMMIT_HASH)
 
 message(STATUS "Git branch: ${GIT_BUILD_BRANCH}")
 message(STATUS "Git commit hash: ${GIT_COMMIT_HASH}")
