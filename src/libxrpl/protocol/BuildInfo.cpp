@@ -48,7 +48,7 @@ buildVersionString()
 #endif
 
     if (!metadata.empty())
-        version += "+" + metadata;
+        versionString += "+" + metadata;
 #endif
 
     return versionString;
