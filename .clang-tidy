@@ -38,6 +38,7 @@ Checks: "-*,
   bugprone-signal-handler,
   bugprone-signed-char-misuse,
   bugprone-sizeof-container,
+  bugprone-sizeof-expression,
   bugprone-spuriously-wake-up-functions,
   bugprone-standalone-empty,
   bugprone-string-constructor,
@@ -84,7 +85,7 @@ Checks: "-*,
   performance-trivially-destructible
   "
 # ---
-# checks that have some issues that need to be resolved:
+# more checks that have some issues that need to be resolved:
 #
 # bugprone-crtp-constructor-accessibility,
 # bugprone-inc-dec-in-conditions,
@@ -92,7 +93,6 @@ Checks: "-*,
 # bugprone-move-forwarding-reference,
 # bugprone-unused-local-non-trivial-variable,
 # bugprone-switch-missing-default-case,
-# bugprone-sizeof-expression,
 # bugprone-suspicious-stringview-data-usage,
 # bugprone-suspicious-missing-comma,
 # bugprone-pointer-arithmetic-on-polymorphic-object,
