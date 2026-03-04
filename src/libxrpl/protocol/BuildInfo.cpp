@@ -30,7 +30,7 @@ char const* const versionString = "3.2.0-b0"
 // Don't touch anything below this line
 //
 
-static std::string
+std::string
 buildVersionString()
 {
     std::string version = versionString;
