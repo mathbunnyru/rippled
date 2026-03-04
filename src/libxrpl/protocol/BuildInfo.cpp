@@ -15,18 +15,25 @@ namespace xrpl {
 
 namespace BuildInfo {
 
+namespace {
+
+//--------------------------------------------------------------------------
+//  The build version number. You must edit this for each release
+//  and follow the format described at http://semver.org/
+//------------------------------------------------------------------------------
+// clang-format off
+char const* const versionString = "3.2.0-b0"
+    // clang-format on
+    ;
+
+//
+// Don't touch anything below this line
+//
+
 static std::string
 buildVersionString()
 {
-    //--------------------------------------------------------------------------
-    //  The build version number. You must edit this for each release
-    //  and follow the format described at http://semver.org/
-    //------------------------------------------------------------------------------
-    std::string versionString = "3.2.0-b0";
-
-    //
-    // Don't touch anything below this line
-    //
+    std::string version = versionString;
 
 #if defined(DEBUG) || defined(SANITIZERS)
     std::string metadata;
@@ -48,11 +55,13 @@ buildVersionString()
 #endif
 
     if (!metadata.empty())
-        versionString += "+" + metadata;
+        version += "+" + metadata;
 #endif
 
-    return versionString;
+    return version;
 }
+
+}  // namespace
 
 std::string const&
 getVersionString()
