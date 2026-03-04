@@ -58,6 +58,7 @@ include(target_link_modules)
 add_module(xrpl beast)
 target_link_libraries(xrpl.libxrpl.beast PUBLIC xrpl.imports.main)
 
+include(GitInfo)
 add_module(xrpl git)
 target_compile_definitions(xrpl.libxrpl.git PRIVATE GIT_COMMIT_HASH="${GIT_COMMIT_HASH}"
                                                     GIT_BUILD_BRANCH="${GIT_BUILD_BRANCH}")

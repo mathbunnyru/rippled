@@ -36,8 +36,6 @@ endif ()
 # Enable ccache to speed up builds.
 include(Ccache)
 
-include(GitInfo)
-
 if (thread_safety_analysis)
     add_compile_options(-Wthread-safety -D_LIBCPP_ENABLE_THREAD_SAFETY_ANNOTATIONS
                         -DXRPL_ENABLE_THREAD_SAFETY_ANNOTATIONS)
