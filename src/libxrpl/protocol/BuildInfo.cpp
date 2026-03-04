@@ -58,12 +58,12 @@ std::string const&
 getVersionString()
 {
     static std::string const value = [] {
-        std::string const versionString = buildVersionString();
+        std::string const s = buildVersionString();
 
         beast::SemanticVersion v;
-        if (!v.parse(versionString) || v.print() != versionString)
-            LogicError(versionString + ": Bad server version string");
-        return versionString;
+        if (!v.parse(s) || v.print() != s)
+            LogicError(s + ": Bad server version string");
+        return s;
     }();
     return value;
 }
