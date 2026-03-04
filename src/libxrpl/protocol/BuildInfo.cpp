@@ -15,40 +15,51 @@ namespace xrpl {
 
 namespace BuildInfo {
 
-//--------------------------------------------------------------------------
-//  The build version number. You must edit this for each release
-//  and follow the format described at http://semver.org/
-//------------------------------------------------------------------------------
-// clang-format off
-static std::string const versionString = "3.2.0-b0"
-// clang-format on
+static std::string
+buildVersionString()
+{
+    //--------------------------------------------------------------------------
+    //  The build version number. You must edit this for each release
+    //  and follow the format described at http://semver.org/
+    //------------------------------------------------------------------------------
+    std::string versionString = "3.2.0-b0";
+
+    //
+    // Don't touch anything below this line
+    //
 
 #if defined(DEBUG) || defined(SANITIZERS)
-    "+" +
-    xrpl::git::getCommitHash() + "." +
+    std::string metadata;
+
+    std::string const& commitHash = xrpl::git::getCommitHash();
+    if (!commitHash.empty())
+        metadata += commitHash + ".";
+
 #ifdef DEBUG
-    "DEBUG"
-#ifdef SANITIZERS
-    "."
+    metadata += "DEBUG";
 #endif
+
+#if defined(DEBUG) && defined(SANITIZERS)
+    metadata += ".";
 #endif
 
 #ifdef SANITIZERS
-    BOOST_PP_STRINGIZE(SANITIZERS)  // cspell: disable-line
-#endif
+    metadata += BOOST_PP_STRINGIZE(SANITIZERS);  // cspell: disable-line
 #endif
 
-    //--------------------------------------------------------------------------
-    ;
+    if (!metadata.empty())
+        version += "+" + metadata;
+#endif
 
-//
-// Don't touch anything below this line
-//
+    return versionString;
+}
 
 std::string const&
 getVersionString()
 {
     static std::string const value = [] {
+        std::string const versionString = buildVersionString();
+
         beast::SemanticVersion v;
         if (!v.parse(versionString) || v.print() != versionString)
             LogicError(versionString + ": Bad server version string");
@@ -134,7 +145,7 @@ encodeSoftwareVersion(std::string_view versionStr)
 std::uint64_t
 getEncodedVersion()
 {
-    static std::uint64_t const cookie = {encodeSoftwareVersion(versionString)};
+    static std::uint64_t const cookie = {encodeSoftwareVersion(getVersionString())};
     return cookie;
 }
 
