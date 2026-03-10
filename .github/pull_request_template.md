@@ -29,22 +29,6 @@ If a refactor, how is this better than the previous implementation?
 If there is a spec or design document for this feature, please link it here.
 -->
 
-### Type of Change
-
-<!--
-Please check [x] relevant options, delete irrelevant ones.
--->
-
-- [ ] Bug fix (non-breaking change which fixes an issue)
-- [ ] New feature (non-breaking change which adds functionality)
-- [ ] Breaking change (fix or feature that would cause existing functionality to not work as expected)
-- [ ] Refactor (non-breaking change that only restructures code)
-- [ ] Performance (increase or change in throughput and/or latency)
-- [ ] Tests (you added tests for code that already exists, or your new feature included in this PR)
-- [ ] Documentation update
-- [ ] Chore (no impact to binary, e.g. `.gitignore`, formatting, dropping support for older tooling)
-- [ ] Release
-
 ### API Impact
 
 <!--
@@ -83,3 +67,22 @@ This section may not be needed if your change includes thoroughly commented unit
 ## Future Tasks
 For future tasks related to PR.
 -->
+
+### Type of Change
+
+<details>
+
+<summary>We support the following types of changes:</summary>
+
+- `build`: Change that affects the build system
+- `feat`: New feature (change which adds functionality)
+- `fix`: Bug fix (fixes an issue)
+- `docs`: Documentation update
+- `test`: Tests (adds or updates tests)
+- `ci`: Continuous Integration (changes to our CI configuration files and scripts)
+- `style`: Code style (formatting)
+- `refactor`: Refactor (restructures code without changing functionality)
+- `perf`: Performance (increase or change in throughput and/or latency)
+- `chore`: Chore (no impact to binary, e.g. `.gitignore`, formatting, dropping support for older tooling)
+
+</details>
