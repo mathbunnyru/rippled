@@ -1178,10 +1178,9 @@ getPseudoAccountFields()
         if (!ar)
         {
             // LCOV_EXCL_START
-            LogicError(
+            Throw<std::logic_error>(
                 "ripple::getPseudoAccountFields : unable to find account root "
-                "ledger "
-                "format");
+                "ledger format");
             // LCOV_EXCL_STOP
         }
         auto const& soTemplate = ar->getSOTemplate();
