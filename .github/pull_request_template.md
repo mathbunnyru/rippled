@@ -67,22 +67,3 @@ This section may not be needed if your change includes thoroughly commented unit
 ## Future Tasks
 For future tasks related to PR.
 -->
-
-### Type of Change
-
-<details>
-
-<summary>We support the following types of changes:</summary>
-
-- `build`: Change that affects the build system
-- `feat`: New feature (change which adds functionality)
-- `fix`: Bug fix (fixes an issue)
-- `docs`: Documentation update
-- `test`: Tests (adds or updates tests)
-- `ci`: Continuous Integration (changes to our CI configuration files and scripts)
-- `style`: Code style (formatting)
-- `refactor`: Refactor (restructures code without changing functionality)
-- `perf`: Performance (increase or change in throughput and/or latency)
-- `chore`: Chore (`.gitignore`, `clang-tidy`, removing dead code, dropping support for older tooling)
-
-</details>
