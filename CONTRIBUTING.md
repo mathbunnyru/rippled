@@ -179,6 +179,8 @@ In addition to those guidelines, please start your PR title with one of the foll
 - `perf:` - The primary purpose is performance improvements.
 - `chore:` - Other tasks that don't affect the binary, but don't fit any of the other cases. e.g. `git` settings, `clang-tidy`, removing dead code, dropping support for older tooling.
 
+First letter after the type prefix should be capitalized, and the type prefix should be followed by a colon and a space. e.g. `feat: Add support for Borrowing Protocol`.
+
 ### "Ready to merge"
 
 A pull request should only have the "Ready to merge" label added when it
