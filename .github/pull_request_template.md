@@ -83,6 +83,6 @@ For future tasks related to PR.
 - `style`: Code style (formatting)
 - `refactor`: Refactor (restructures code without changing functionality)
 - `perf`: Performance (increase or change in throughput and/or latency)
-- `chore`: Chore (no impact to binary, e.g. `.gitignore`, formatting, dropping support for older tooling)
+- `chore`: Chore (`.gitignore`, `clang-tidy`, removing dead code, dropping support for older tooling)
 
 </details>
