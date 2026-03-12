@@ -160,10 +160,6 @@ credibility of the existing approvals is insufficient.
 Pull requests must be merged by [squash-and-merge][squash]
 to preserve a linear history for the `develop` branch.
 
-Whenever possible, when updating commits after the PR is open, please
-add the PR number to the end of the subject line. e.g. `test: Add
-unit tests for Feature X (#1234)`.
-
 ### Type of Change
 
 In addition to those guidelines, please start your PR title with one of the following:
