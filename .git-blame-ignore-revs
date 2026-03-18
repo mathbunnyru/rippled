@@ -59,14 +59,14 @@ b13370ac0d207217354f1fc1c29aef87769fb8a1
 97f0747e103f13e26e45b731731059b32f7679ac
 # Reformat code with clang-format-18
 552377c76f55b403a1c876df873a23d780fcc81c
-# Recompute loops
-9a93577314e6a8d4b4a8368cc9d2b15a5d8303e8
-# Rewrite includes
-fe9a5365b8a52d4acc42eb27369247e6f238a4f9
-# Rearrange sources
-b9d007813378ad0ff45660dc07285b823c7e9855
-# Move CMake directory
-2189cc950c0cebb89e4e2fa3b2d8817205bf7cef
+# Recompute loops (#4997)
+d028005aa6319338b0adae1aebf8abe113162960
+# Rewrite includes (#4997)
+1d23148e6dd53957fcb6205c07a5c6cd7b64d50c
+# Rearrange sources (#4997)
+e416ee72ca26fa0c09d2aee1b68bdfb2b7046eed
+# Move CMake directory (#4997)
+2e902dee53aab2a8f27f32971047bb81e022f94f
 # Rewrite includes
 0eebe6a5f4246fced516d52b83ec4e7f47373edd
 # Format formerly .hpp files
