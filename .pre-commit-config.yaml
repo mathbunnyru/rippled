@@ -1,7 +1,7 @@
 # To run pre-commit hooks, first install pre-commit:
 # - `pip install pre-commit==${PRE_COMMIT_VERSION}`
 #
-# Then, run the following command to install the git hook scripts:
+# Then run the following command to install the git hook scripts:
 # - `pre-commit install`
 # You can run all configured hooks against all files with:
 # - `pre-commit run --all-files`
