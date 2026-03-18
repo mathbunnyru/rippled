@@ -1,20 +1,18 @@
 #pragma once
 
+#include <xrpl/protocol/TxFlags.h>
 #include <xrpl/tx/Transactor.h>
 
 namespace xrpl {
 
-class DepositPreauth : public Transactor
+class OfferCancel : public Transactor
 {
 public:
     static constexpr ConsequencesFactoryType ConsequencesFactory{Normal};
 
-    explicit DepositPreauth(ApplyContext& ctx) : Transactor(ctx)
+    explicit OfferCancel(ApplyContext& ctx) : Transactor(ctx)
     {
     }
-
-    static bool
-    checkExtraFeatures(PreflightContext const& ctx);
 
     static NotTEC
     preflight(PreflightContext const& ctx);
@@ -24,10 +22,6 @@ public:
 
     TER
     doApply() override;
-
-    // Interface used by AccountDelete
-    static TER
-    removeFromLedger(ApplyView& view, uint256 const& delIndex, beast::Journal j);
 };
 
 }  // namespace xrpl

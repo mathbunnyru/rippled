@@ -4,12 +4,21 @@
 
 namespace xrpl {
 
-class DelegateSet : public Transactor
+/**
+    Price Oracle is a system that acts as a bridge between
+    a blockchain network and the external world, providing off-chain price data
+    to decentralized applications (dApps) on the blockchain. This implementation
+    conforms to the requirements specified in the XLS-47d.
+
+    The OracleDelete transactor implements the deletion of Oracle objects.
+*/
+
+class OracleDelete : public Transactor
 {
 public:
     static constexpr ConsequencesFactoryType ConsequencesFactory{Normal};
 
-    explicit DelegateSet(ApplyContext& ctx) : Transactor(ctx)
+    explicit OracleDelete(ApplyContext& ctx) : Transactor(ctx)
     {
     }
 
@@ -22,9 +31,8 @@ public:
     TER
     doApply() override;
 
-    // Interface used by AccountDelete
     static TER
-    deleteDelegate(
+    deleteOracle(
         ApplyView& view,
         std::shared_ptr<SLE> const& sle,
         AccountID const& account,

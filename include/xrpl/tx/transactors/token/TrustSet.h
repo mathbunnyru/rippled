@@ -1,33 +1,33 @@
 #pragma once
 
+#include <xrpl/protocol/TxFlags.h>
 #include <xrpl/tx/Transactor.h>
 
 namespace xrpl {
 
-class DepositPreauth : public Transactor
+class TrustSet : public Transactor
 {
 public:
     static constexpr ConsequencesFactoryType ConsequencesFactory{Normal};
 
-    explicit DepositPreauth(ApplyContext& ctx) : Transactor(ctx)
+    explicit TrustSet(ApplyContext& ctx) : Transactor(ctx)
     {
     }
 
-    static bool
-    checkExtraFeatures(PreflightContext const& ctx);
+    static std::uint32_t
+    getFlagsMask(PreflightContext const& ctx);
 
     static NotTEC
     preflight(PreflightContext const& ctx);
+
+    static NotTEC
+    checkPermission(ReadView const& view, STTx const& tx);
 
     static TER
     preclaim(PreclaimContext const& ctx);
 
     TER
     doApply() override;
-
-    // Interface used by AccountDelete
-    static TER
-    removeFromLedger(ApplyView& view, uint256 const& delIndex, beast::Journal j);
 };
 
 }  // namespace xrpl

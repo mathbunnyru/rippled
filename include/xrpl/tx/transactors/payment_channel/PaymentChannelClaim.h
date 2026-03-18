@@ -4,17 +4,20 @@
 
 namespace xrpl {
 
-class DepositPreauth : public Transactor
+class PaymentChannelClaim : public Transactor
 {
 public:
     static constexpr ConsequencesFactoryType ConsequencesFactory{Normal};
 
-    explicit DepositPreauth(ApplyContext& ctx) : Transactor(ctx)
+    explicit PaymentChannelClaim(ApplyContext& ctx) : Transactor(ctx)
     {
     }
 
     static bool
     checkExtraFeatures(PreflightContext const& ctx);
+
+    static std::uint32_t
+    getFlagsMask(PreflightContext const& ctx);
 
     static NotTEC
     preflight(PreflightContext const& ctx);
@@ -24,10 +27,6 @@ public:
 
     TER
     doApply() override;
-
-    // Interface used by AccountDelete
-    static TER
-    removeFromLedger(ApplyView& view, uint256 const& delIndex, beast::Journal j);
 };
 
 }  // namespace xrpl
