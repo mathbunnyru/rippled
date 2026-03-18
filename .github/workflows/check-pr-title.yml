@@ -10,4 +10,4 @@ on:
 
 jobs:
   check_title:
-    uses: XRPLF/actions/.github/workflows/check-pr-title.yml@c6311685db43aa07971c4a6764320fecbc2acdcd
+    uses: XRPLF/actions/.github/workflows/check-pr-title.yml@f9c2b57a7ac30d70555b5de6e627005f62e933f3
