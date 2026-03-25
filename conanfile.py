@@ -1,5 +1,5 @@
-import re
 import os
+import re
 
 from conan.tools.cmake import CMake, CMakeToolchain, cmake_layout
 
@@ -35,7 +35,7 @@ class Xrpl(ConanFile):
         "nudb/2.0.9",
         "openssl/3.5.5",
         "secp256k1/0.7.1",
-        "soci/4.0.3",
+        "soci/4.1.2",
         "zlib/1.3.1",
     ]
 
