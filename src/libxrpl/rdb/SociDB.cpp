@@ -10,6 +10,7 @@
 
 #include <boost/filesystem.hpp>
 
+#define SOCI_SQLITE3_SOURCE
 #include <soci/sqlite3/soci-sqlite3.h>
 
 #include <memory>
@@ -132,7 +133,7 @@ convert(soci::blob& from, std::vector<std::uint8_t>& to)
     to.resize(from.get_len());
     if (to.empty())
         return;
-    from.read(0, reinterpret_cast<char*>(&to[0]), from.get_len());
+    from.read_from_start(reinterpret_cast<char*>(&to[0]), from.get_len());
 }
 
 void
@@ -148,7 +149,7 @@ convert(std::vector<std::uint8_t> const& from, soci::blob& to)
 {
     if (!from.empty())
     {
-        to.write(0, reinterpret_cast<char const*>(&from[0]), from.size());
+        to.write_from_start(reinterpret_cast<char const*>(&from[0]), from.size());
     }
     else
     {
