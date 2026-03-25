@@ -136,6 +136,7 @@ class Xrpl(ConanFile):
                 self.default_options["fPIC"] = False
 
     def requirements(self):
+        # Change the first way
         self.requires("boost/1.90.0", force=True, transitive_headers=True)
         self.requires("date/3.0.4", transitive_headers=True)
         self.requires("lz4/1.10.0", force=True)
