@@ -18,5 +18,5 @@ jobs:
         with:
           dirtyLabel: "PR: has conflicts"
           repoToken: "${{ secrets.GITHUB_TOKEN }}"
-          commentOnDirty: "This pull request has conflicts, please resolve those before we can evaluate the Pull Request."
+          commentOnDirty: "This Pull Request has conflicts, please resolve those before we can evaluate the Pull Request."
           commentOnClean: "Conflicts have been resolved. A maintainer will review the Pull Request shortly."
