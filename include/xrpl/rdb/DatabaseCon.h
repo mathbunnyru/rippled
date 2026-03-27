@@ -110,7 +110,7 @@ public:
               setup.standAlone && setup.startUp != StartUpType::LOAD &&
                       setup.startUp != StartUpType::LOAD_FILE &&
                       setup.startUp != StartUpType::REPLAY
-                  ? ""
+                  ? ":memory:"
                   : (setup.dataDir / dbName),
               setup.commonPragma(),
               pragma,
