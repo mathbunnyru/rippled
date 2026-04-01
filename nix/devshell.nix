@@ -8,13 +8,13 @@ let
     git
     gnumake
     llvmPackages_21.clang-tools
-    mold
+    # mold
     ninja
     perl # needed for openssl
     pkg-config
     pre-commit
     python314
-    rustc
+    # rustc
   ];
 
   # Supported compiler versions

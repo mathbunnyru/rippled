@@ -7,7 +7,7 @@ COPY flake.nix /tmp/build/
 COPY flake.lock /tmp/build/
 WORKDIR /tmp/build
 
-# Build our Nix environment
+# Build our Nix CI environment (all build tools in a single store path)
 RUN nix \
     --extra-experimental-features "nix-command flakes" \
     --option filter-syscalls false \
@@ -15,11 +15,10 @@ RUN nix \
 
 # Copy the Nix store closure into a directory. The Nix store closure is the
 # entire set of Nix store values that we need for our build.
-RUN mkdir /tmp/nix-store-closure
-RUN cp -R $(nix-store -qR result/) /tmp/nix-store-closure
+RUN mkdir /tmp/nix-store-closure && \
+    cp -R $(nix-store -qR result/) /tmp/nix-store-closure
 
-# Final image is based on scratch. We copy a bunch of Nix dependencies
-# but they're fully self-contained so we don't need Nix anymore.
+# Final image
 FROM ubuntu:20.04
 
 # Use Bash as the default shell for RUN commands, using the options
@@ -27,8 +26,8 @@ FROM ubuntu:20.04
 SHELL ["/bin/bash", "-e", "-o", "pipefail", "-c"]
 ENTRYPOINT ["/bin/bash"]
 
-RUN mkdir -p
-
-# Copy /nix/store
+# Copy /nix/store and the env symlink tree
 COPY --from=builder /tmp/nix-store-closure /nix/store
-COPY --from=builder /tmp/build/result /app
+COPY --from=builder /tmp/build/result /nix/ci-env
+
+ENV PATH="/nix/ci-env/bin:$PATH"
