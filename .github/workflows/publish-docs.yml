@@ -36,7 +36,7 @@ env:
   BUILD_DIR: build
   # ubuntu-latest has only 2 CPUs for private repositories
   # https://docs.github.com/en/actions/reference/runners/github-hosted-runners#standard-github-hosted-runners-for--private-repositories
-  NPROC_SUBTRACT: ${{ (github.repository_owner == 'XRPLF' || github.event.repository.visibility == 'public') && '2' || '1' }}
+  NPROC_SUBTRACT: ${{ github.event.repository.visibility == 'public' && '2' || '1' }}
   STORAGE_AVAILABLE: ${{ github.repository_owner == 'XRPLF' || github.event.repository.visibility == 'public' }}
 
 jobs:
