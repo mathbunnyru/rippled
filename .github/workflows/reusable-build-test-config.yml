@@ -70,7 +70,6 @@ env:
   # Conan installs the generators in the build/generators directory, see the
   # layout() method in conanfile.py. We then run CMake from the build directory.
   BUILD_DIR: build
-  STORAGE_AVAILABLE: ${{ github.repository_owner == 'XRPLF' || github.event.repository.visibility == 'public' }}
 
 jobs:
   build-and-test:
@@ -200,7 +199,7 @@ jobs:
           fi
 
       - name: Upload the binary (Linux)
-        if: ${{ env.STORAGE_AVAILABLE == 'true' && runner.os == 'Linux' }}
+        if: ${{ (github.repository_owner == 'XRPLF' || github.event.repository.visibility == 'public') && runner.os == 'Linux' }}
         uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7.0.0
         with:
           name: xrpld-${{ inputs.config_name }}
