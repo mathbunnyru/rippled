@@ -13,7 +13,7 @@ let
     perl # needed for openssl
     pkg-config
     pre-commit
-    python314
+    python3
     # rustc
   ];
 
