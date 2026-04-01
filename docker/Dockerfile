@@ -1,43 +1,34 @@
-ARG BASE_IMAGE=ubuntu:20.04
-FROM ${BASE_IMAGE}
+# Nix builder
+FROM nixos/nix:latest AS builder
+
+# Copy our source and setup our working dir.
+COPY nix/ /tmp/build/nix/
+COPY flake.nix /tmp/build/
+COPY flake.lock /tmp/build/
+WORKDIR /tmp/build
+
+# Build our Nix environment
+RUN nix \
+    --extra-experimental-features "nix-command flakes" \
+    --option filter-syscalls false \
+    build
+
+# Copy the Nix store closure into a directory. The Nix store closure is the
+# entire set of Nix store values that we need for our build.
+RUN mkdir /tmp/nix-store-closure
+RUN cp -R $(nix-store -qR result/) /tmp/nix-store-closure
+
+# Final image is based on scratch. We copy a bunch of Nix dependencies
+# but they're fully self-contained so we don't need Nix anymore.
+FROM ubuntu:20.04
 
 # Use Bash as the default shell for RUN commands, using the options
 # `set -o errexit -o pipefail`, and as the entrypoint.
 SHELL ["/bin/bash", "-e", "-o", "pipefail", "-c"]
 ENTRYPOINT ["/bin/bash"]
 
-# Ensure any packages installed directly or indirectly via dpkg do not require manual interaction.
-ARG DEBIAN_FRONTEND=noninteractive
+RUN mkdir -p
 
-RUN <<EOF
-pkgs=()
-pkgs+=(ca-certificates) # Enable TLS verification for HTTPS connections by providing trusted root certificates.
-pkgs+=(curl)            # Required to install nix
-pkgs+=(xz-utils)        # Required to install nix
-apt-get update
-apt-get install -y --no-install-recommends "${pkgs[@]}"
-apt-get clean
-rm -rf /var/lib/apt/lists/*
-EOF
-
-# Install nix
-RUN sh <(curl --proto '=https' --tlsv1.2 -L https://nixos.org/nix/install) --daemon --yes
-
-# Add nix to PATH and set NIX environment variables so nix is available in all
-# shells including non-interactive shells (e.g., GitHub Actions).
-ENV PATH="/nix/var/nix/profiles/default/bin:${PATH}"
-ENV NIX_PROFILES="/nix/var/nix/profiles/default"
-ENV NIX_SSL_CERT_FILE="/nix/var/nix/profiles/default/etc/ssl/certs/ca-bundle.crt"
-
-RUN <<EOF
-mkdir -p ~/.config/nix
-echo "experimental-features = nix-command flakes" >> ~/.config/nix/nix.conf
-EOF
-
-COPY nix/ /tmp/nix/
-COPY flake.nix /tmp/
-COPY flake.lock /tmp/
-
-WORKDIR /tmp
-
-RUN nix develop
+# Copy /nix/store
+COPY --from=builder /tmp/nix-store-closure /nix/store
+COPY --from=builder /tmp/build/result /app
