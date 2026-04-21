@@ -93,7 +93,7 @@ jobs:
       - name: Generate git diff
         if: ${{ steps.run_clang_tidy.outcome != 'success' }}
         run: |
-          git diff > clang-tidy-git-diff.txt
+          git diff | tee clang-tidy-git-diff.txt
 
       - name: Upload clang-tidy diff output
         if: ${{ github.event.repository.visibility == 'public' && steps.run_clang_tidy.outcome != 'success' }}
