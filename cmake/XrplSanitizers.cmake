@@ -9,12 +9,6 @@
    - SANITIZERS_LINKER_FLAGS:   Space-separated linker flags.
 
    The flags are applied to the 'common' interface library which is linked to all targets in the project.
-
-   In addition, this module appends -fsanitize-ignorelist=<path> for Clang builds.
-
-   For GCC builds, mold, gold, and lld linkers are disabled due to incompatibility with sanitizers.
-
-   Finally, a SANITIZERS macro is defined for BuildInfo.cpp to report the active sanitizers at runtime.
 #]===================================================================]
 
 include_guard(GLOBAL)
@@ -32,7 +26,7 @@ message(STATUS "  Compile flags: ${SANITIZERS_COMPILER_FLAGS}")
 message(STATUS "  Link flags: ${SANITIZERS_LINKER_FLAGS}")
 
 # GCC with sanitizers is incompatible with mold, gold, and lld linkers.
-# The instrumented binary exceeds size limits imposed by these linkers.
+# Namely, the instrumented binary exceeds size limits imposed by these linkers.
 if(is_gcc)
     set(use_mold OFF CACHE BOOL "Use mold linker" FORCE)
     set(use_gold OFF CACHE BOOL "Use gold linker" FORCE)
@@ -63,8 +57,9 @@ target_compile_options(
 )
 target_link_options(common INTERFACE ${sanitizers_linker_flags})
 
-# The ignorelist path contains CMAKE_SOURCE_DIR, so it must be set here rather
-# than in the Conan profile. GCC does not support -fsanitize-ignorelist.
+# This module appends -fsanitize-ignorelist=<path> for Clang builds.
+# The ignorelist path contains CMAKE_SOURCE_DIR, so it must be set here, rather than in the Conan profile.
+# GCC does not support -fsanitize-ignorelist.
 if(is_clang)
     set(ignorelist_path
         "${CMAKE_SOURCE_DIR}/sanitizers/suppressions/sanitizer-ignorelist.txt"
