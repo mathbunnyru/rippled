@@ -8,8 +8,6 @@ Corresponding suppression files are located in the `sanitizers/suppressions` dir
     - [Summary](#summary)
     - [Build steps:](#build-steps)
       - [Install dependencies](#install-dependencies)
-      - [Call CMake](#call-cmake)
-      - [Build](#build)
   - [Running Tests with Sanitizers](#running-tests-with-sanitizers)
     - [AddressSanitizer (ASAN)](#addresssanitizer-asan)
     - [ThreadSanitizer (TSan)](#threadsanitizer-tsan)
