@@ -66,7 +66,6 @@ jobs:
             .github/workflows/reusable-build-test-config.yml
             .github/workflows/reusable-build-test.yml
             .github/workflows/reusable-clang-tidy.yml
-            .github/workflows/reusable-clang-tidy-files.yml
             .github/workflows/reusable-strategy-matrix.yml
             .github/workflows/reusable-test.yml
             .github/workflows/reusable-upload-recipe.yml
@@ -176,4 +175,4 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Fail
-        run: false
+        run: exit 1
