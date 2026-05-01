@@ -156,7 +156,7 @@ std::vector<std::pair<std::string, std::string>>
 Logs::partitionSeverities() const
 {
     std::vector<std::pair<std::string, std::string>> list;
-    std::scoped_lock const lock(mutex_);
+    std::lock_guard const lock(mutex_);
     list.reserve(sinks_.size());
     for (auto const& [name, sink] : sinks_)
         list.emplace_back(name, toString(fromSeverity(sink->threshold())));
