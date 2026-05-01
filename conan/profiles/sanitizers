@@ -12,21 +12,18 @@ include(default)
 {% endif %}
 
 {% set known_sanitizers = ["address", "thread", "undefinedbehavior"] %}
-{% set san_tokens = [] %}
-{% for token in sanitizers.split(",") %}
-    {% set stripped = token.strip() %}
-    {% if stripped == "" %}
-        {{ "Empty token in SANITIZERS" }}
-    {% elif stripped not in known_sanitizers %}
-        {{ "Unknown sanitizer in SANITIZERS: " ~ stripped }}
+{% set provided_sanitizers = [] %}
+{% for san in sanitizers.split(",") %}
+    {% set san = san.strip() %}
+    {% if san not in known_sanitizers %}
+        {{ "Unknown sanitizer in SANITIZERS: " ~ san }}
     {% endif %}
-    {% set _ = san_tokens.append(stripped) %}
+    {% set _ = provided_sanitizers.append(san) %}
 {% endfor %}
 
-[conf]
-{% set enable_asan = "address" in san_tokens %}
-{% set enable_tsan = "thread" in san_tokens %}
-{% set enable_ubsan = "undefinedbehavior" in san_tokens %}
+{% set enable_asan = "address" in provided_sanitizers %}
+{% set enable_tsan = "thread" in provided_sanitizers %}
+{% set enable_ubsan = "undefinedbehavior" in provided_sanitizers %}
 
 {% if enable_asan and enable_tsan %}
     {{ "AddressSanitizer and ThreadSanitizer are incompatible and cannot be enabled simultaneously." }}
@@ -56,11 +53,12 @@ include(default)
 
 {# Frame pointer required for meaningful stack traces; -O1 for reasonable performance #}
 {% set compile_flags = ["-fno-omit-frame-pointer", "-O1"] %}
-{% set relocation_flags = [] %}
 
 {% if compiler == "gcc" %}
     {# Suppress false positive warnings with GCC #}
     {% set _ = compile_flags.append("-Wno-stringop-overflow") %}
+
+    {% set relocation_flags = [] %}
 
     {% if arch == "x86_64" and enable_asan %}
         {# Large code model prevents relocation errors in instrumented ASAN binaries #}
@@ -82,7 +80,6 @@ include(default)
 
     {% set sanitizer_compiler_flags = " ".join(compile_flags) %}
     {% set sanitizer_linker_flags = " ".join(relocation_flags) %}
-
 {% elif compiler == "clang" or compiler == "apple-clang" %}
     {% set fsanitize = "-fsanitize=" ~ ",".join(sanitizer_types) %}
     {% set _ = compile_flags.append(fsanitize) %}
@@ -91,6 +88,7 @@ include(default)
     {% set sanitizer_linker_flags = fsanitize %}
 {% endif %}
 
+[conf]
 tools.build:defines+={{defines}}
 tools.build:cxxflags+=['{{sanitizer_compiler_flags}}']
 tools.build:sharedlinkflags+=['{{sanitizer_linker_flags}}']
