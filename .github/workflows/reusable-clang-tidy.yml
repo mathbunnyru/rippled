@@ -193,7 +193,7 @@ jobs:
 
       - name: Create GitHub issue
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ github.token }}
         run: |
           # Create the issue
           gh issue create \
