@@ -25,12 +25,12 @@ jobs:
     if: ${{ inputs.check_only_changed }}
     permissions:
       contents: read
-    uses: mathbunnyru/actions/.github/workflows/determine-tidy-files.yml@ddcccb47a2747d25017bd318759d91f2c31f9526
+    uses: XRPLF/actions/.github/workflows/determine-tidy-files.yml@12f5dbc98a2260259a66970e57fa4d26fb7f285c
 
   run-clang-tidy:
     name: Run clang tidy
     needs: [determine-files]
-    if: ${{ always() && (!inputs.check_only_changed || needs.determine-files.outputs.any_cpp_changed == 'true' || needs.determine-files.outputs.clang_tidy_config_changed == 'true') }}
+    if: ${{ always() && (!inputs.check_only_changed || needs.determine-files.outputs.cpp_changed_files != '' || needs.determine-files.outputs.clang_tidy_config_changed == 'true') }}
     runs-on: ["self-hosted", "Linux", "X64", "heavy"]
     container: "ghcr.io/xrplf/ci/debian-trixie:clang-21-sha-53033a2"
     permissions:
@@ -83,7 +83,7 @@ jobs:
         id: run_clang_tidy
         continue-on-error: true
         env:
-          TARGETS: ${{ (needs.determine-files.outputs.clang_tidy_config_changed != 'true' && inputs.check_only_changed) && needs.determine-files.outputs.all_changed_files || 'src tests' }}
+          TARGETS: ${{ (needs.determine-files.outputs.clang_tidy_config_changed != 'true' && inputs.check_only_changed) && needs.determine-files.outputs.cpp_changed_files || 'src tests' }}
         run: |
           set -o pipefail
           run-clang-tidy -j ${{ steps.nproc.outputs.nproc }} -p "${BUILD_DIR}" -quiet -fix -allow-no-checks ${TARGETS} 2>&1 | tee clang-tidy-output.txt
