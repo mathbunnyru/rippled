@@ -15,7 +15,6 @@ on:
 
       # Keep the paths below in sync with those in `on-pr.yml`.
       - ".github/actions/build-deps/**"
-      - ".github/actions/build-test/**"
       - ".github/actions/generate-version/**"
       - ".github/actions/setup-conan/**"
       - ".github/scripts/strategy-matrix/**"
