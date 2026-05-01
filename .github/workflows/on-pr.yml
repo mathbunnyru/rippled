@@ -62,7 +62,6 @@ jobs:
             .github/actions/generate-version/**
             .github/actions/setup-conan/**
             .github/scripts/strategy-matrix/**
-            .github/workflows/reusable-build.yml
             .github/workflows/reusable-build-test-config.yml
             .github/workflows/reusable-build-test.yml
             .github/workflows/reusable-clang-tidy.yml
