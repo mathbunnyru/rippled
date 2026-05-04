@@ -34,7 +34,7 @@ jobs:
   run-clang-tidy:
     name: Run clang tidy
     needs: [determine-files]
-    if: ${{ always() && (!inputs.check_only_changed || needs.determine-files.outputs.cpp_changed_files != '' || needs.determine-files.outputs.clang_tidy_config_changed == 'true') }}
+    if: ${{ always() && !cancelled() && (!inputs.check_only_changed || needs.determine-files.outputs.cpp_changed_files != '' || needs.determine-files.outputs.clang_tidy_config_changed == 'true') }}
     runs-on: ["self-hosted", "Linux", "X64", "heavy"]
     container: "ghcr.io/xrplf/ci/debian-trixie:clang-21-sha-53033a2"
     permissions:
@@ -185,7 +185,7 @@ jobs:
     name: Create GitHub issue on failure
     runs-on: ubuntu-latest
     needs: [run-clang-tidy]
-    if: ${{ always() && inputs.create_issue_on_failure && needs.run-clang-tidy.result == 'failure' && github.event.repository.visibility == 'public' }}
+    if: ${{ always() && !cancelled() && inputs.create_issue_on_failure && needs.run-clang-tidy.result == 'failure' && github.event.repository.visibility == 'public' }}
     permissions:
       issues: write
       contents: read
