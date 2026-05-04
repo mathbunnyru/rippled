@@ -18,7 +18,7 @@ defaults:
 
 env:
   BUILD_DIR: build
-  BUILD_TYPE: Release
+  BUILD_TYPE: Debug # Debug so that ASSERTS and such participate in clang-tidy check
 
 jobs:
   determine-files:
