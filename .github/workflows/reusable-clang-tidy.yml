@@ -20,6 +20,10 @@ env:
   BUILD_DIR: build
   BUILD_TYPE: Debug # Debug so that ASSERTS and such participate in clang-tidy check
 
+  OUTPUT_FILE: clang-tidy-output.txt
+  DIFF_FILE: clang-tidy-git-diff.txt
+  ISSUE_FILE: clang-tidy-issue.md
+
 jobs:
   determine-files:
     if: ${{ inputs.check_only_changed }}
@@ -86,26 +90,26 @@ jobs:
           TARGETS: ${{ (needs.determine-files.outputs.clang_tidy_config_changed != 'true' && inputs.check_only_changed) && needs.determine-files.outputs.cpp_changed_files || 'src tests' }}
         run: |
           set -o pipefail
-          run-clang-tidy -j ${{ steps.nproc.outputs.nproc }} -p "${BUILD_DIR}" -quiet -fix -allow-no-checks ${TARGETS} 2>&1 | tee clang-tidy-output.txt
+          run-clang-tidy -j ${{ steps.nproc.outputs.nproc }} -p "${BUILD_DIR}" -quiet -fix -allow-no-checks ${TARGETS} 2>&1 | tee "${OUTPUT_FILE}"
 
       - name: Upload clang-tidy output
         if: ${{ github.event.repository.visibility == 'public' && steps.run_clang_tidy.outcome != 'success' }}
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
-          path: clang-tidy-output.txt
+          path: ${{ env.OUTPUT_FILE }}
           archive: false
           retention-days: 30
 
       - name: Generate git diff
         if: ${{ steps.run_clang_tidy.outcome != 'success' }}
         run: |
-          git diff | tee clang-tidy-git-diff.txt
+          git diff | tee "${DIFF_FILE}"
 
       - name: Upload clang-tidy diff output
         if: ${{ github.event.repository.visibility == 'public' && steps.run_clang_tidy.outcome != 'success' }}
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
-          path: clang-tidy-git-diff.txt
+          path: ${{ env.DIFF_FILE }}
           archive: false
           retention-days: 30
 
@@ -113,7 +117,7 @@ jobs:
         if: ${{ steps.run_clang_tidy.outcome != 'success' }}
         run: |
           # Prepare issue body with clang-tidy output
-          cat > clang-tidy-issue.md <<EOF
+          cat > "${ISSUE_FILE}" <<EOF
           ## Clang-tidy Check Failed
 
           **Workflow:** ${{ github.workflow }}
@@ -130,31 +134,31 @@ jobs:
         if: ${{ steps.run_clang_tidy.outcome != 'success' }}
         run: |
           # Append clang-tidy output (filter for errors and warnings)
-          if [ -f clang-tidy-output.txt ]; then
+          if [ -f "${OUTPUT_FILE}" ]; then
             # Extract lines containing 'error:', 'warning:', or 'note:'
-            grep -E '(error:|warning:|note:)' clang-tidy-output.txt > filtered-output.txt || true
+            grep -E '(error:|warning:|note:)' "${OUTPUT_FILE}" > filtered-output.txt || true
 
             # If filtered output is empty, use original (might be a different error format)
             if [ ! -s filtered-output.txt ]; then
-              cp clang-tidy-output.txt filtered-output.txt
+              cp "${OUTPUT_FILE}" filtered-output.txt
             fi
 
             # Truncate if too large
-            head -c 60000 filtered-output.txt >> clang-tidy-issue.md
+            head -c 60000 filtered-output.txt >> "${ISSUE_FILE}"
             if [ "$(wc -c < filtered-output.txt)" -gt 60000 ]; then
-              echo "" >> clang-tidy-issue.md
-              echo "... (output truncated, see artifacts for full output)" >> clang-tidy-issue.md
+              echo "" >> "${ISSUE_FILE}"
+              echo "... (output truncated, see artifacts for full output)" >> "${ISSUE_FILE}"
             fi
 
             rm filtered-output.txt
           else
-            echo "No output file found" >> clang-tidy-issue.md
+            echo "No output file found" >> "${ISSUE_FILE}"
           fi
 
       - name: Append issue footer
         if: ${{ steps.run_clang_tidy.outcome != 'success' }}
         run: |
-          cat >> clang-tidy-issue.md <<EOF
+          cat >> "${ISSUE_FILE}" <<EOF
           \`\`\`
 
           **Workflow run:** ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
@@ -167,7 +171,7 @@ jobs:
         if: ${{ github.event.repository.visibility == 'public' && steps.run_clang_tidy.outcome != 'success' }}
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
-          path: clang-tidy-issue.md
+          path: ${{ env.ISSUE_FILE }}
           archive: false
           retention-days: 30
 
@@ -189,7 +193,7 @@ jobs:
       - name: Download clang-tidy-issue.md
         uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
         with:
-          name: clang-tidy-issue.md
+          name: ${{ env.ISSUE_FILE }}
 
       - name: Create GitHub issue
         env:
@@ -199,7 +203,7 @@ jobs:
           gh issue create \
             --label "Bug,Clang-tidy" \
             --title "Clang-tidy check failed" \
-            --body-file ./clang-tidy-issue.md \
+            --body-file ./"${ISSUE_FILE}" \
             > create_issue.log
 
       - name: Output created issue number
