@@ -3,6 +3,10 @@
 This document explains how to properly configure and run sanitizers (`AddressSanitizer`, `UndefinedBehaviorSanitizer`, `ThreadSanitizer`) with the xrpld project.
 Corresponding suppression files are located in the `sanitizers/suppressions` directory.
 
+> [!CAUTION]
+> Do not mix Address and Thread sanitizers - they are incompatible.
+> Also, we don't yet support MSVC sanitizers, so this is only for Clang/GCC builds.
+
 - [Sanitizer Configuration for Xrpld](#sanitizer-configuration-for-xrpld)
   - [Building with Sanitizers](#building-with-sanitizers)
     - [Summary](#summary)
