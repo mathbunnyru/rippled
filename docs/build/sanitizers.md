@@ -37,7 +37,10 @@ Follow the same instructions as mentioned in [BUILD.md](../../BUILD.md) but with
 1. Make sure you have a clean build directory.
 2. Set the `SANITIZERS` environment variable before calling `conan install`. Only set it once.
    Example: `export SANITIZERS=address,undefinedbehavior`
-3. Use `--profile:all sanitizers` with Conan to build dependencies with sanitizer instrumentation. [!NOTE]Building with sanitizer-instrumented dependencies is slower but produces fewer false positives.
+3. Use `--profile:all sanitizers` with Conan to build dependencies with sanitizer instrumentation.
+
+   > [!NOTE]
+   > Building with sanitizer-instrumented dependencies is slower but produces fewer false positives.
 4. Set `ASAN_OPTIONS`, `LSAN_OPTIONS`, `UBSAN_OPTIONS` and `TSAN_OPTIONS` environment variables to configure sanitizer behavior when running executables. [More details below](#running-tests-with-sanitizers).
 
 ---
