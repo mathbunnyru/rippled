@@ -93,6 +93,11 @@ jobs:
           set -o pipefail
           run-clang-tidy -j ${{ steps.nproc.outputs.nproc }} -p "${BUILD_DIR}" -quiet -fix -allow-no-checks ${TARGETS} 2>&1 | tee "${OUTPUT_FILE}"
 
+      - name: Print errors
+        if: ${{ steps.run_clang_tidy.outcome != 'success' }}
+        run: |
+          sed '/error\||/!d' "${OUTPUT_FILE}"
+
       - name: Upload clang-tidy output
         if: ${{ github.event.repository.visibility == 'public' && steps.run_clang_tidy.outcome != 'success' }}
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
