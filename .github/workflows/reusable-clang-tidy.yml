@@ -113,7 +113,7 @@ jobs:
           pre-commit run --all-files || true
 
       - name: Generate git diff
-        if: ${{ steps.files_changed.outcome != 'success }}
+        if: ${{ steps.files_changed.outcome != 'success' }}
         run: |
           git diff | tee "${DIFF_FILE}"
 
