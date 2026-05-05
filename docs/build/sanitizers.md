@@ -41,6 +41,7 @@ Follow the same instructions as mentioned in [BUILD.md](../../BUILD.md) but with
 
    > [!NOTE]
    > Building with sanitizer-instrumented dependencies is slower but produces fewer false positives.
+
 4. Set `ASAN_OPTIONS`, `LSAN_OPTIONS`, `UBSAN_OPTIONS` and `TSAN_OPTIONS` environment variables to configure sanitizer behavior when running executables. [More details below](#running-tests-with-sanitizers).
 
 ---
