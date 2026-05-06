@@ -7,14 +7,13 @@ let
     gcovr
     git
     gnumake
-    llvmPackages_21.clang-tools
-    # mold
+    llvmPackages_22.clang-tools
+    mold
     ninja
     perl # needed for openssl
     pkg-config
     pre-commit
     python3
-    # rustc
   ];
 
   # Supported compiler versions

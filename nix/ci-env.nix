@@ -15,7 +15,7 @@ let
       "/include"
       "/share"
     ];
-    ignoreCollisions = true;
+    ignoreCollisions = false;
   };
 in
 {
