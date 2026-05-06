@@ -1,3 +1,5 @@
+ARG BASE_IMAGE=ubuntu:20.04
+
 # Nix builder
 FROM nixos/nix:latest AS builder
 
@@ -18,7 +20,6 @@ RUN nix \
 RUN mkdir /tmp/nix-store-closure && \
     cp -R $(nix-store -qR result/) /tmp/nix-store-closure
 
-ARG BASE_IMAGE=ubuntu:20.04
 # Final image
 FROM ${BASE_IMAGE}
 
