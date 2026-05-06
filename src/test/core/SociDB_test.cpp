@@ -8,7 +8,6 @@
 #include <boost/algorithm/string/predicate.hpp>
 #include <boost/filesystem/operations.hpp>
 #include <boost/filesystem/path.hpp>
-#include <boost/optional/optional.hpp>
 
 #include <soci/into.h>
 #include <soci/session.h>
