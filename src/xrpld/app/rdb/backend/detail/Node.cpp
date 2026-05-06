@@ -39,6 +39,7 @@
 
 #include <boost/filesystem/operations.hpp>
 #include <boost/format/free_funcs.hpp>
+#include <boost/optional/optional.hpp>
 #include <boost/system/detail/error_code.hpp>
 
 #include <soci/blob.h>

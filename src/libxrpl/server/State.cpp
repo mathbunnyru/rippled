@@ -5,6 +5,8 @@
 #include <xrpl/protocol/Protocol.h>
 #include <xrpl/rdb/SociDB.h>
 
+#include <boost/optional/optional.hpp>
+
 #include <soci/into.h>
 #include <soci/session.h>
 #include <soci/use.h>

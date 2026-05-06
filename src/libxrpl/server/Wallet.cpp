@@ -17,6 +17,7 @@
 #include <xrpl/server/Manifest.h>
 
 #include <boost/format/free_funcs.hpp>
+#include <boost/optional/optional.hpp>
 
 #include <soci/blob.h>
 #include <soci/into.h>

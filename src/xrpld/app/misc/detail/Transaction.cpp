@@ -20,6 +20,8 @@
 #include <xrpl/protocol/jss.h>
 #include <xrpl/rdb/RelationalDatabase.h>
 
+#include <boost/optional/optional.hpp>
+
 #include <cstdint>
 #include <exception>
 #include <memory>

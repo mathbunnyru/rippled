@@ -19,6 +19,7 @@
 #include <boost/asio/strand.hpp>
 #include <boost/asio/streambuf.hpp>
 #include <boost/asio/write.hpp>
+#include <boost/optional/optional.hpp>
 #include <boost/system/detail/error_code.hpp>
 
 #include <cassert>
