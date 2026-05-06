@@ -17,3 +17,18 @@ RUN nix \
 # entire set of Nix store values that we need for our build.
 RUN mkdir /tmp/nix-store-closure && \
     cp -R $(nix-store -qR result/) /tmp/nix-store-closure
+
+ARG BASE_IMAGE=ubuntu:20.04
+# Final image
+FROM ${BASE_IMAGE}
+
+# Use Bash as the default shell for RUN commands, using the options
+# `set -o errexit -o pipefail`, and as the entrypoint.
+SHELL ["/bin/bash", "-e", "-o", "pipefail", "-c"]
+ENTRYPOINT ["/bin/bash"]
+
+# Copy /nix/store and the env symlink tree
+COPY --from=builder /tmp/nix-store-closure /nix/store
+COPY --from=builder /tmp/build/result /nix/ci-env
+
+ENV PATH="/nix/ci-env/bin:$PATH"
