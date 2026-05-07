@@ -4,7 +4,9 @@ ARG BASE_IMAGE=ubuntu:20.04
 FROM nixos/nix:latest AS builder
 
 # Copy our source and setup our working dir.
-COPY nix/ /tmp/build/nix/
+COPY nix/ci-env.nix /tmp/build/nix/ci-env.nix
+COPY nix/packages.nix /tmp/build/nix/packages.nix
+COPY nix/utils.nix /tmp/build/nix/utils.nix
 COPY flake.nix /tmp/build/
 COPY flake.lock /tmp/build/
 WORKDIR /tmp/build

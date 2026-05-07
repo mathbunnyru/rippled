@@ -1,14 +1,9 @@
 { pkgs, ... }:
 let
-  devshell = import ./devshell.nix { inherit pkgs; };
-  # Extract the packages list from the default shell's inputs
+  inherit (import ./packages.nix { inherit pkgs; }) commonPackages;
   env = pkgs.buildEnv {
     name = "xrpld-ci-env";
-    paths =
-      devshell.default.nativeBuildInputs
-      ++ devshell.default.buildInputs
-      ++ (devshell.default.propagatedBuildInputs or [ ])
-      ++ [ devshell.default.stdenv.cc ];
+    paths = commonPackages ++ [ pkgs.gcc15Stdenv.cc ];
     pathsToLink = [
       "/bin"
       "/lib"
