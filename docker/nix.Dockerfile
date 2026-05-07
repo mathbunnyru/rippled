@@ -33,3 +33,19 @@ COPY --from=builder /tmp/nix-store-closure /nix/store
 COPY --from=builder /tmp/build/result /nix/ci-env
 
 ENV PATH="/nix/ci-env/bin:$PATH"
+
+RUN <<EOF
+ccache --version
+cmake --version
+conan --version
+gcovr --version
+git --version
+make --version
+clang-format --version
+mold --version
+ninja --version
+perl --version
+pkg-config --version
+pre-commit --version
+python3 --version
+EOF
