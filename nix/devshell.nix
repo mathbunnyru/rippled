@@ -1,5 +1,11 @@
 { pkgs, ... }:
 let
+  # In LLVM 22, run-clang-tidy.py moved from share/clang/ to bin/, so nixpkgs
+  # clang-tools no longer links it. Wrap it manually.
+  runClangTidy = pkgs.writeShellScriptBin "run-clang-tidy" ''
+    exec ${pkgs.python3}/bin/python3 ${pkgs.llvmPackages_22.clang-unwrapped}/bin/run-clang-tidy "$@"
+  '';
+
   commonPackages = with pkgs; [
     ccache
     cmake
@@ -14,6 +20,7 @@ let
     pkg-config
     pre-commit
     python3
+    runClangTidy
   ];
 
   # Supported compiler versions

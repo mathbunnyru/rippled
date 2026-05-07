@@ -48,4 +48,5 @@ perl --version
 pkg-config --version
 pre-commit --version
 python3 --version
+run-clang-tidy --help
 EOF
