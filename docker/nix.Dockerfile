@@ -3,6 +3,9 @@ ARG BASE_IMAGE=ubuntu:20.04
 # Nix builder
 FROM nixos/nix:latest AS builder
 
+RUN mkdir -p ~/.config/nix && \
+    echo "experimental-features = nix-command flakes" >> ~/.config/nix/nix.conf
+
 # Copy our source and setup our working dir.
 COPY nix/ci-env.nix /tmp/build/nix/ci-env.nix
 COPY nix/packages.nix /tmp/build/nix/packages.nix
@@ -13,7 +16,6 @@ WORKDIR /tmp/build
 
 # Build our Nix CI environment (all build tools in a single store path)
 RUN nix \
-    --extra-experimental-features "nix-command flakes" \
     --option filter-syscalls false \
     build
 
