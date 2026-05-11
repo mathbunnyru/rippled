@@ -1,18 +1,21 @@
 ARG BASE_IMAGE=ubuntu:20.04
 
 # Nix builder
-FROM nixos/nix:latest AS builder
+FROM nixos/nix:latest AS builder-source
 
 RUN mkdir -p ~/.config/nix && \
     echo "experimental-features = nix-command flakes" >> ~/.config/nix/nix.conf
 
 # Copy our source and setup our working dir.
 COPY nix/ci-env.nix /tmp/build/nix/ci-env.nix
+COPY nix/glibc231.nix /tmp/build/nix/glibc231.nix
 COPY nix/packages.nix /tmp/build/nix/packages.nix
 COPY nix/utils.nix /tmp/build/nix/utils.nix
 COPY flake.nix /tmp/build/
 COPY flake.lock /tmp/build/
 WORKDIR /tmp/build
+
+FROM builder-source AS builder
 
 # Build our Nix CI environment (all build tools in a single store path)
 RUN nix \

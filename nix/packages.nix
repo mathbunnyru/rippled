@@ -23,5 +23,6 @@ in
     pre-commit
     python3
     runClangTidy
+    vim
   ];
 }
