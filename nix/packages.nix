@@ -7,7 +7,6 @@ let
   '';
 in
 {
-  inherit runClangTidy;
   commonPackages = with pkgs; [
     ccache
     cmake
