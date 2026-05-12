@@ -20,22 +20,19 @@ let
     libc = glibc231;
   };
 
-  # A stdenv that uses the existing gcc 15 binary but with glibc 2.31 as its
-  # libc. We only need this as a *build* environment — its job is to compile
-  # a fresh gcc 15 whose libstdc++/libgcc target glibc 2.31.
-  bootstrapGcc15WithGlibc231 = pkgs.wrapCCWith {
-    cc = pkgs.gcc15.cc;
-    libc = glibc231;
-    bintools = binutils231;
-  };
-  glibc231Stdenv = pkgs.stdenvAdapters.overrideCC pkgs.stdenv bootstrapGcc15WithGlibc231;
-
   # Rebuild gcc 15 (specifically libstdc++ / libgcc_s) against glibc 2.31.
-  # Using gcc15.cc.override { stdenv = ...; } reruns the bootstrap with the
-  # glibc-2.31-flavoured stdenv, so the resulting compiler ships runtime
-  # libraries that only reference symbols available in glibc 2.31.
+  # The override swaps gcc15.cc's bootstrap stdenv for one that uses the
+  # existing gcc 15 binary but links against glibc 2.31, so the resulting
+  # compiler ships runtime libraries that only reference symbols available
+  # in glibc 2.31.
   gcc15CcWithGlibc231 = pkgs.gcc15.cc.override {
-    stdenv = glibc231Stdenv;
+    stdenv = pkgs.stdenvAdapters.overrideCC pkgs.stdenv (
+      pkgs.wrapCCWith {
+        cc = pkgs.gcc15.cc;
+        libc = glibc231;
+        bintools = binutils231;
+      }
+    );
   };
 
   # cc-wrapper around the rebuilt compiler, pointing at glibc 2.31 headers
