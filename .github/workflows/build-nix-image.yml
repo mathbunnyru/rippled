@@ -19,6 +19,14 @@ on:
       - "nix/**"
   workflow_dispatch:
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+defaults:
+  run:
+    shell: bash
+
 env:
   UBUNTU_VERSION: "20.04"
   RHEL_VERSION: "9"
