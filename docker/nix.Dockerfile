@@ -8,7 +8,6 @@ RUN mkdir -p ~/.config/nix && \
 
 # Copy our source and setup our working dir.
 COPY nix/ci-env.nix /tmp/build/nix/ci-env.nix
-COPY nix/glibc231.nix /tmp/build/nix/glibc231.nix
 COPY nix/packages.nix /tmp/build/nix/packages.nix
 COPY nix/utils.nix /tmp/build/nix/utils.nix
 COPY flake.nix /tmp/build/

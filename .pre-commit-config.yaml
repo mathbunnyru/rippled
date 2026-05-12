@@ -73,8 +73,7 @@ repos:
         exclude: |
           (?x)^(
               .config/cspell.config.yaml|
-              include/xrpl/protocol_autogen/(transactions|ledger_entries)/.*|
-              nix/glibc231.nix
+              include/xrpl/protocol_autogen/(transactions|ledger_entries)/.*
           )$
       - id: cspell # Spell check the commit message
         name: check commit message spelling
