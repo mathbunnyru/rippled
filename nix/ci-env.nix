@@ -3,21 +3,37 @@ let
   inherit (import ./packages.nix { inherit pkgs; }) commonPackages;
 
   # glibc 2.31 — matches the system libc on Ubuntu 20.04 LTS.
-  # Produced by overriding the current nixpkgs glibc; no extra flake input required.
   glibc231 = import ./glibc231.nix { inherit pkgs; };
 
-  # binutils wrapped so that the linker emits binaries that reference glibc 2.31
-  # (dynamic linker path, library search path, RPATH).
+  # binutils wrapped to emit binaries that reference glibc 2.31 (dynamic
+  # linker path, library search path, RPATH).
   binutils231 = pkgs.wrapBintoolsWith {
     bintools = pkgs.binutils-unwrapped;
     libc = glibc231;
   };
 
-  # GCC 15 re-wrapped to compile and link against glibc 2.31 headers/libraries.
-  # pkgs.gcc15.cc is the raw (unwrapped) GCC 15 compiler binary; we give it a
-  # fresh cc-wrapper that substitutes glibc 2.31 for the default sysroot.
-  gcc15WithGlibc231 = pkgs.wrapCCWith {
+  # A stdenv that uses the existing gcc 15 binary but with glibc 2.31 as its
+  # libc. We only need this as a *build* environment — its job is to compile
+  # a fresh gcc 15 whose libstdc++/libgcc target glibc 2.31.
+  bootstrapGcc15WithGlibc231 = pkgs.wrapCCWith {
     cc = pkgs.gcc15.cc;
+    libc = glibc231;
+    bintools = binutils231;
+  };
+  glibc231Stdenv = pkgs.stdenvAdapters.overrideCC pkgs.stdenv bootstrapGcc15WithGlibc231;
+
+  # Rebuild gcc 15 (specifically libstdc++ / libgcc_s) against glibc 2.31.
+  # Using gcc15.cc.override { stdenv = ...; } reruns the bootstrap with the
+  # glibc-2.31-flavoured stdenv, so the resulting compiler ships runtime
+  # libraries that only reference symbols available in glibc 2.31.
+  gcc15CcWithGlibc231 = pkgs.gcc15.cc.override {
+    stdenv = glibc231Stdenv;
+  };
+
+  # cc-wrapper around the rebuilt compiler, pointing at glibc 2.31 headers
+  # and libraries. This is what we actually expose to users.
+  gcc15WithGlibc231 = pkgs.wrapCCWith {
+    cc = gcc15CcWithGlibc231;
     libc = glibc231;
     bintools = binutils231;
   };
