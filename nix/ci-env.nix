@@ -1,17 +1,10 @@
 {
   pkgs,
-  system,
-  nixpkgs-glibc231,
+  glibc231,
   ...
 }:
 let
   inherit (import ./packages.nix { inherit pkgs; }) commonPackages;
-
-  # glibc 2.31 — matches the system libc on Ubuntu 20.04 LTS. Sourced from
-  # the nixpkgs snapshot pinned via the `nixpkgs-glibc231` flake input, so
-  # the build uses the compiler from that snapshot (gcc 9.3.0) along with
-  # the matching patches, configure flags, and hardening defaults.
-  glibc231 = (import nixpkgs-glibc231 { inherit system; }).glibc;
 
   # binutils wrapped to emit binaries that reference glibc 2.31 (dynamic
   # linker path, library search path, RPATH).
@@ -43,7 +36,9 @@ let
     bintools = binutils231;
   };
 
-  env = pkgs.buildEnv {
+in
+{
+  default = pkgs.buildEnv {
     name = "xrpld-ci-env";
     paths = commonPackages ++ [
       gcc15WithGlibc231
@@ -55,9 +50,5 @@ let
       "/include"
       "/share"
     ];
-    ignoreCollisions = false;
   };
-in
-{
-  default = env;
 }

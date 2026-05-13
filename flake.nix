@@ -15,11 +15,11 @@
   outputs =
     { nixpkgs, nixpkgs-glibc231, ... }:
     let
-      forEachSystem = (import ./nix/utils.nix { inherit nixpkgs; }).forEachSystem;
+      forEachSystem = import ./nix/utils.nix { inherit nixpkgs nixpkgs-glibc231; };
     in
     {
       devShells = forEachSystem (import ./nix/devshell.nix);
-      packages = forEachSystem (args: import ./nix/ci-env.nix (args // { inherit nixpkgs-glibc231; }));
+      packages = forEachSystem (import ./nix/ci-env.nix);
       formatter = forEachSystem ({ pkgs, ... }: pkgs.nixfmt);
     };
 }
