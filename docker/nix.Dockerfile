@@ -1,4 +1,4 @@
-ARG BASE_IMAGE=ubuntu:20.04
+ARG BASE_IMAGE=nixos/nix:latest
 
 # Nix builder
 FROM nixos/nix:latest AS builder-source
@@ -28,6 +28,11 @@ RUN mkdir /tmp/nix-store-closure && \
 
 # Final image
 FROM ${BASE_IMAGE}
+
+# bash is not located at /bin/bash in nixos/nix, so we need to create a symlink to it.
+RUN if [ -d /nix ]; then \
+        ln -s /root/.nix-profile/bin/bash /bin/bash; \
+    fi
 
 # Use Bash as the default shell for RUN commands, using the options
 # `set -o errexit -o pipefail`, and as the entrypoint.
