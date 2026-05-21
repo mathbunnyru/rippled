@@ -198,6 +198,7 @@ words:
   - NOLINTNEXTLINE
   - nonxrp
   - noreplace
+  - nostdinc
   - noripple
   - notifempty
   - nudb
@@ -298,6 +299,7 @@ words:
   - unauthorizing
   - unergonomic
   - unfetched
+  - unfindable
   - unflatten
   - unfund
   - unimpair

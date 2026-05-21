@@ -36,6 +36,28 @@ let
     bintools = binutils231;
   };
 
+  # stdenv built around the rebuilt gcc 15 / glibc 2.31. Used to rebuild
+  # compiler-rt below so its sanitizer runtimes see glibc 2.31 headers.
+  stdenvWithGlibc231 = pkgs.stdenvAdapters.overrideCC pkgs.stdenv gcc15WithGlibc231;
+
+  # Rebuild compiler-rt against glibc 2.31 so the sanitizer runtimes don't
+  # use glibc symbols (or sysconf constants like _SC_SIGSTKSZ) that only
+  # exist in newer glibc versions. scudo is dropped because its CMake
+  # includes CheckAtomic with -nostdinc++ in CMAKE_REQUIRED_FLAGS, which
+  # makes std::atomic unfindable in our stdenv; we don't use scudo (only
+  # asan/ubsan/tsan etc.).
+  compilerRt21WithGlibc231 =
+    (pkgs.llvmPackages_21.compiler-rt.override {
+      stdenv = stdenvWithGlibc231;
+    }).overrideAttrs
+      (old: {
+        postPatch = (old.postPatch or "") + ''
+          substituteInPlace lib/CMakeLists.txt \
+            --replace-quiet 'add_subdirectory(scudo/standalone)' \
+                            '# scudo/standalone disabled in xrpld ci-env'
+        '';
+      });
+
   # cc-wrapper around clang 21, pointing at glibc 2.31 headers and libraries.
   # Reuses the rebuilt gcc 15 for libstdc++ / libgcc_s so that C++ binaries
   # produced by clang also only reference symbols available in glibc 2.31.
@@ -47,13 +69,13 @@ let
     libc = glibc231;
     bintools = binutils231;
     gccForLibs = gcc15CcWithGlibc231;
-    extraPackages = [ pkgs.llvmPackages_21.compiler-rt ];
+    extraPackages = [ compilerRt21WithGlibc231 ];
     extraBuildCommands = ''
       rsrc="$out/resource-root"
       mkdir "$rsrc"
       ln -s "${pkgs.llvmPackages_21.clang-unwrapped.lib}/lib/clang/21/include" "$rsrc/include"
-      ln -s "${pkgs.llvmPackages_21.compiler-rt.out}/lib" "$rsrc/lib"
-      ln -s "${pkgs.llvmPackages_21.compiler-rt.out}/share" "$rsrc/share" || true
+      ln -s "${compilerRt21WithGlibc231.out}/lib" "$rsrc/lib"
+      ln -s "${compilerRt21WithGlibc231.out}/share" "$rsrc/share" || true
       echo "-resource-dir=$rsrc" >> $out/nix-support/cc-cflags
     '';
   };
