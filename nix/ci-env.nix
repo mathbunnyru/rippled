@@ -39,11 +39,23 @@ let
   # cc-wrapper around clang 21, pointing at glibc 2.31 headers and libraries.
   # Reuses the rebuilt gcc 15 for libstdc++ / libgcc_s so that C++ binaries
   # produced by clang also only reference symbols available in glibc 2.31.
+  # compiler-rt is wired into a resource-root so sanitizer runtimes
+  # (libclang_rt.*.a) are found at link time; this mirrors what nixpkgs
+  # does internally when building llvmPackages_21.clang.
   clang21WithGlibc231 = pkgs.wrapCCWith {
     cc = pkgs.llvmPackages_21.clang-unwrapped;
     libc = glibc231;
     bintools = binutils231;
     gccForLibs = gcc15CcWithGlibc231;
+    extraPackages = [ pkgs.llvmPackages_21.compiler-rt ];
+    extraBuildCommands = ''
+      rsrc="$out/resource-root"
+      mkdir "$rsrc"
+      ln -s "${pkgs.llvmPackages_21.clang-unwrapped.lib}/lib/clang/21/include" "$rsrc/include"
+      ln -s "${pkgs.llvmPackages_21.compiler-rt.out}/lib" "$rsrc/lib"
+      ln -s "${pkgs.llvmPackages_21.compiler-rt.out}/share" "$rsrc/share" || true
+      echo "-resource-dir=$rsrc" >> $out/nix-support/cc-cflags
+    '';
   };
 
   # Strip the generic cc/c++/cpp symlinks from the clang wrapper so it can
