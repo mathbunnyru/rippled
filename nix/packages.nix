@@ -17,7 +17,6 @@ in
     llvmPackages_22.clang-tools
     mold
     ninja
-    patchelf
     perl # needed for openssl
     pkg-config
     pre-commit
