@@ -198,8 +198,8 @@ words:
   - NOLINTNEXTLINE
   - nonxrp
   - noreplace
-  - nostdinc
   - noripple
+  - nostdinc
   - notifempty
   - nudb
   - nullptr

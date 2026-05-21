@@ -46,7 +46,7 @@ COPY --from=builder /tmp/build/result /nix/ci-env
 ENV PATH="/nix/ci-env/bin:$PATH"
 
 # Externally-built dynamically-linked ELF binaries hard-code the loader path
-# (e.g. /lib64/ld-linux-x86-64.so.2) in their PT_INTERP header. Symlink the
+# (e.g. /lib64/ld-linux-x86-64.so.2) in their PT_INTERP header. Copy the
 # loader from the Nix store to that path when the base image doesn't already
 # provide one (i.e. on nixos/nix).
 RUN <<EOF
