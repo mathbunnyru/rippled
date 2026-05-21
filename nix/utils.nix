@@ -16,6 +16,6 @@ nixpkgs.lib.genAttrs
       # input, so the build uses the compiler from that snapshot
       # (gcc 9.3.0) along with the matching patches, configure flags, and
       # hardening defaults.
-      glibc231 = (import nixpkgs-glibc231 { inherit system; }).glibc;
+      customGlibc = (import nixpkgs-glibc231 { inherit system; }).glibc;
     }
   )
