@@ -45,6 +45,26 @@ COPY --from=builder /tmp/build/result /nix/ci-env
 
 ENV PATH="/nix/ci-env/bin:$PATH"
 
+# Externally-built dynamically-linked ELF binaries hard-code the loader path
+# (e.g. /lib64/ld-linux-x86-64.so.2) in their PT_INTERP header. Symlink the
+# loader from the Nix store to that path when the base image doesn't already
+# provide one (i.e. on nixos/nix).
+RUN <<EOF
+case "$(uname -m)" in
+    x86_64)  target=/lib64/ld-linux-x86-64.so.2 ;;
+    aarch64) target=/lib/ld-linux-aarch64.so.1 ;;
+    *) echo "Unsupported arch: $(uname -m)" >&2; exit 1 ;;
+esac
+if [ ! -e "$target" ]; then
+    # Use the loader from the same glibc that gcc links libc against, so
+    # ld-linux and libc/libpthread share GLIBC_PRIVATE symbols at runtime.
+    src="$(dirname "$(gcc -print-file-name=libc.so.6)")/$(basename "$target")"
+    [ -e "$src" ] || { echo "ld-linux not found at $src" >&2; exit 1; }
+    mkdir -p "$(dirname "$target")"
+    cp "$src" "$target"
+fi
+EOF
+
 RUN <<EOF
 ccache --version
 clang --version
@@ -65,4 +85,44 @@ pre-commit --version
 python3 --version
 run-clang-tidy --help
 vim --version
+EOF
+
+# Sanity-check that the sanitizer runtimes shipped with g++/clang++ work
+# end-to-end against the system loader: compile each example with both
+# compilers, run it, and confirm the expected diagnostic is emitted.
+COPY docker/cpp_files/ /tmp/cpp_files/
+
+RUN <<EOF
+case "$(uname -m)" in
+    x86_64)  loader=/lib64/ld-linux-x86-64.so.2 ;;
+    aarch64) loader=/lib/ld-linux-aarch64.so.1 ;;
+    *) echo "Unsupported arch: $(uname -m)" >&2; exit 1 ;;
+esac
+
+declare -A sanitize=(
+    [asan]="-fsanitize=address"
+    [tsan]="-fsanitize=thread"
+    [ubsan]="-fsanitize=undefined"
+)
+declare -A expect=(
+    [asan]="heap-use-after-free"
+    [tsan]="data race"
+    [ubsan]="signed integer overflow"
+)
+
+for compiler in g++ clang++; do
+    for name in asan tsan ubsan; do
+        bin="/tmp/${name}-${compiler}"
+        echo "=== Build ${name} with ${compiler} ==="
+        "$compiler" -std=c++23 -O3 -g ${sanitize[$name]} \
+            -Wl,--dynamic-linker=$loader \
+            "/tmp/cpp_files/${name}.cpp" -o "$bin"
+        echo "=== Run ${name}-${compiler} ==="
+        output=$("$bin" 2>&1) || true
+        echo "$output"
+        echo "$output" | grep -q "${expect[$name]}" \
+            || { echo "expected '${expect[$name]}' from $bin"; exit 1; }
+        rm -f "$bin"
+    done
+done
 EOF
