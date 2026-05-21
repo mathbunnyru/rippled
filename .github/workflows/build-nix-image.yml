@@ -7,7 +7,7 @@ on:
     paths:
       - ".github/workflows/build-nix-image.yml"
       - ".github/workflows/reusable-build-nix-image.yml"
-      - "docker/nix.Dockerfile"
+      - "docker/**"
       - "flake.nix"
       - "flake.lock"
       - "nix/**"
@@ -15,7 +15,7 @@ on:
     paths:
       - ".github/workflows/build-nix-image.yml"
       - ".github/workflows/reusable-build-nix-image.yml"
-      - "docker/nix.Dockerfile"
+      - "docker/**"
       - "flake.nix"
       - "flake.lock"
       - "nix/**"
@@ -31,7 +31,7 @@ defaults:
 
 jobs:
   build:
-    name: Build ${{ matrix.distro }} (${{ matrix.platform.platform }})
+    name: Build ${{ matrix.distro }} (${{ matrix.target.platform }})
     permissions:
       contents: read
       packages: write
@@ -39,7 +39,7 @@ jobs:
       fail-fast: false
       matrix:
         distro: [nixos, ubuntu, rhel, debian]
-        platform:
+        target:
           - platform: linux/amd64
             runner: ubuntu-latest
           - platform: linux/arm64
@@ -47,8 +47,8 @@ jobs:
     uses: ./.github/workflows/reusable-build-nix-image.yml
     with:
       distro: ${{ matrix.distro }}
-      platform: ${{ matrix.platform.platform }}
-      runner: ${{ matrix.platform.runner }}
+      platform: ${{ matrix.target.platform }}
+      runner: ${{ matrix.target.runner }}
       push: ${{ github.event_name == 'push' }}
 
   merge:
