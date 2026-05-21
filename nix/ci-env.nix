@@ -36,12 +36,34 @@ let
     bintools = binutils231;
   };
 
+  # cc-wrapper around clang 21, pointing at glibc 2.31 headers and libraries.
+  # Reuses the rebuilt gcc 15 for libstdc++ / libgcc_s so that C++ binaries
+  # produced by clang also only reference symbols available in glibc 2.31.
+  clang21WithGlibc231 = pkgs.wrapCCWith {
+    cc = pkgs.llvmPackages_21.clang-unwrapped;
+    libc = glibc231;
+    bintools = binutils231;
+    gccForLibs = gcc15CcWithGlibc231;
+  };
+
+  # Strip the generic cc/c++/cpp symlinks from the clang wrapper so it can
+  # coexist with the gcc wrapper in buildEnv. gcc remains the default
+  # compiler (cc/c++/cpp); clang is invoked explicitly as clang/clang++.
+  clang21ForCiEnv = pkgs.symlinkJoin {
+    name = "clang-wrapper-21-for-ci-env";
+    paths = [ clang21WithGlibc231 ];
+    postBuild = ''
+      rm -f $out/bin/cc $out/bin/c++ $out/bin/cpp
+    '';
+  };
+
 in
 {
   default = pkgs.buildEnv {
     name = "xrpld-ci-env";
     paths = commonPackages ++ [
       gcc15WithGlibc231
+      clang21ForCiEnv
       binutils231
     ];
     pathsToLink = [

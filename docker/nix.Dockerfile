@@ -47,6 +47,8 @@ ENV PATH="/nix/ci-env/bin:$PATH"
 
 RUN <<EOF
 ccache --version
+clang --version
+clang++ --version
 clang-format --version
 cmake --version
 conan --version
