@@ -46,8 +46,8 @@ let
   # includes CheckAtomic with -nostdinc++ in CMAKE_REQUIRED_FLAGS, which
   # makes std::atomic unfindable in our stdenv; we don't use scudo (only
   # asan/ubsan/tsan etc.).
-  compilerRt21WithGlibc231 =
-    (pkgs.llvmPackages_21.compiler-rt.override {
+  compilerRt22WithGlibc231 =
+    (pkgs.llvmPackages_22.compiler-rt.override {
       stdenv = stdenvWithGlibc231;
     }).overrideAttrs
       (old: {
@@ -58,24 +58,24 @@ let
         '';
       });
 
-  # cc-wrapper around clang 21, pointing at glibc 2.31 headers and libraries.
+  # cc-wrapper around clang 22, pointing at glibc 2.31 headers and libraries.
   # Reuses the rebuilt gcc 15 for libstdc++ / libgcc_s so that C++ binaries
   # produced by clang also only reference symbols available in glibc 2.31.
   # compiler-rt is wired into a resource-root so sanitizer runtimes
   # (libclang_rt.*.a) are found at link time; this mirrors what nixpkgs
-  # does internally when building llvmPackages_21.clang.
-  clang21WithGlibc231 = pkgs.wrapCCWith {
-    cc = pkgs.llvmPackages_21.clang-unwrapped;
+  # does internally when building llvmPackages_22.clang.
+  clang22WithGlibc231 = pkgs.wrapCCWith {
+    cc = pkgs.llvmPackages_22.clang-unwrapped;
     libc = glibc231;
     bintools = binutils231;
     gccForLibs = gcc15CcWithGlibc231;
-    extraPackages = [ compilerRt21WithGlibc231 ];
+    extraPackages = [ compilerRt22WithGlibc231 ];
     extraBuildCommands = ''
       rsrc="$out/resource-root"
       mkdir "$rsrc"
-      ln -s "${pkgs.llvmPackages_21.clang-unwrapped.lib}/lib/clang/21/include" "$rsrc/include"
-      ln -s "${compilerRt21WithGlibc231.out}/lib" "$rsrc/lib"
-      ln -s "${compilerRt21WithGlibc231.out}/share" "$rsrc/share" || true
+      ln -s "${pkgs.llvmPackages_22.clang-unwrapped.lib}/lib/clang/22/include" "$rsrc/include"
+      ln -s "${compilerRt22WithGlibc231.out}/lib" "$rsrc/lib"
+      ln -s "${compilerRt22WithGlibc231.out}/share" "$rsrc/share" || true
       echo "-resource-dir=$rsrc" >> $out/nix-support/cc-cflags
     '';
   };
@@ -83,9 +83,9 @@ let
   # Strip the generic cc/c++/cpp symlinks from the clang wrapper so it can
   # coexist with the gcc wrapper in buildEnv. gcc remains the default
   # compiler (cc/c++/cpp); clang is invoked explicitly as clang/clang++.
-  clang21ForCiEnv = pkgs.symlinkJoin {
-    name = "clang-wrapper-21-for-ci-env";
-    paths = [ clang21WithGlibc231 ];
+  clang22ForCiEnv = pkgs.symlinkJoin {
+    name = "clang-wrapper-22-for-ci-env";
+    paths = [ clang22WithGlibc231 ];
     postBuild = ''
       rm -f $out/bin/cc $out/bin/c++ $out/bin/cpp
     '';
@@ -97,7 +97,7 @@ in
     name = "xrpld-ci-env";
     paths = commonPackages ++ [
       gcc15WithGlibc231
-      clang21ForCiEnv
+      clang22ForCiEnv
       binutils231
     ];
     pathsToLink = [
