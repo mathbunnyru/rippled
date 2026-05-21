@@ -29,6 +29,7 @@ defaults:
     shell: bash
 
 env:
+  # These are the oldest supported versions of each distro that we want to build images for
   UBUNTU_VERSION: "20.04"
   RHEL_VERSION: "9"
   DEBIAN_VERSION: "bookworm"
