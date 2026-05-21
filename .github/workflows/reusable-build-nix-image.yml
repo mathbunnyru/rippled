@@ -64,6 +64,10 @@ jobs:
             debian)
               echo "base_image=debian:${DEBIAN_VERSION}" >> $GITHUB_OUTPUT
               ;;
+            *)
+              echo "Error: unsupported distro '$DISTRO'. Expected one of: nixos, ubuntu, rhel, debian." >&2
+              exit 1
+              ;;
           esac
 
           echo "arch=${PLATFORM##*/}" >> $GITHUB_OUTPUT

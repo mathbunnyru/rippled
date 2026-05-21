@@ -29,7 +29,7 @@ for compiler in g++ clang++; do
     for name in asan tsan ubsan; do
         bin="/tmp/${name}-${compiler}"
         echo "=== Build ${name} with ${compiler} ==="
-        "$compiler" -std=c++23 -O3 -g ${sanitize[$name]} \
+        "$compiler" -std=c++20 -O1 -g ${sanitize[$name]} \
             -Wl,--dynamic-linker=$loader \
             "${cpp_files_dir}/${name}.cpp" -o "$bin"
         echo "=== Run ${name}-${compiler} ==="
