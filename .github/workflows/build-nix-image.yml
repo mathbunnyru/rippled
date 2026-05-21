@@ -64,7 +64,7 @@ jobs:
       matrix:
         distro: [nixos, ubuntu, rhel, debian]
     env:
-      IMAGE_NAME: ghcr.io/xrplf/ci/nix-${{ matrix.distro }}
+      IMAGE_NAME: ghcr.io/xrplf/xrpld/nix-${{ matrix.distro }}
 
     steps:
       - name: Set up Docker Buildx
