@@ -5,8 +5,9 @@ int
 main()
 {
     int maxInt = std::numeric_limits<int>::max();
+    volatile int one = 1;
     std::cout << "Current max: " << maxInt << std::endl;
-    int overflowed = maxInt + 1;
+    int overflowed = maxInt + one;
     std::cout << "Overflowed result: " << overflowed << std::endl;
     return 0;
 }
