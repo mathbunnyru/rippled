@@ -1,3 +1,4 @@
+include(GoogleTest)
 include(XrplAddTest)
 
 # Test requirements.
@@ -22,30 +23,24 @@ target_link_libraries(
     INTERFACE gtest::gtest xrpl.libxrpl xrpl.helpers.test
 )
 
-# One test for each module.
-xrpl_add_test(basics)
-target_link_libraries(xrpl.test.basics PRIVATE xrpl.imports.test)
-add_dependencies(xrpl.tests xrpl.test.basics)
+# Single combined gtest binary; each xrpl_add_test() call appends to it.
+add_executable(xrpl_tests)
+set_target_properties(
+    xrpl_tests
+    PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}"
+)
+target_link_libraries(xrpl_tests PRIVATE GTest::gtest_main)
+gtest_discover_tests(xrpl_tests)
 
-xrpl_add_test(crypto)
-target_link_libraries(xrpl.test.crypto PRIVATE xrpl.imports.test)
-add_dependencies(xrpl.tests xrpl.test.crypto)
-
-xrpl_add_test(json)
-target_link_libraries(xrpl.test.json PRIVATE xrpl.imports.test)
-add_dependencies(xrpl.tests xrpl.test.json)
-
-xrpl_add_test(tx)
-target_link_libraries(xrpl.test.tx PRIVATE xrpl.imports.test)
-add_dependencies(xrpl.tests xrpl.test.tx)
-
-xrpl_add_test(protocol_autogen)
-target_link_libraries(xrpl.test.protocol_autogen PRIVATE xrpl.imports.test)
-add_dependencies(xrpl.tests xrpl.test.protocol_autogen)
+xrpl_add_test(basics LIBRARIES xrpl.imports.test)
+xrpl_add_test(crypto LIBRARIES xrpl.imports.test)
+xrpl_add_test(json LIBRARIES xrpl.imports.test)
+xrpl_add_test(tx LIBRARIES xrpl.imports.test)
+xrpl_add_test(protocol_autogen LIBRARIES xrpl.imports.test)
 
 # Network unit tests are currently not supported on Windows
 if(NOT WIN32)
-    xrpl_add_test(net)
-    target_link_libraries(xrpl.test.net PRIVATE xrpl.imports.test)
-    add_dependencies(xrpl.tests xrpl.test.net)
+    xrpl_add_test(net LIBRARIES xrpl.imports.test)
 endif()
+
+add_dependencies(xrpl.tests xrpl_tests)
