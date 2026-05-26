@@ -6,7 +6,7 @@ on:
       - develop
     paths:
       - ".github/workflows/build-nix-image.yml"
-      - ".github/workflows/reusable-build-nix-image.yml"
+      - ".github/workflows/reusable-build-docker-image.yml"
       - "docker/**"
       - "flake.nix"
       - "flake.lock"
@@ -14,7 +14,7 @@ on:
   pull_request:
     paths:
       - ".github/workflows/build-nix-image.yml"
-      - ".github/workflows/reusable-build-nix-image.yml"
+      - ".github/workflows/reusable-build-docker-image.yml"
       - "docker/**"
       - "flake.nix"
       - "flake.lock"
@@ -29,24 +29,39 @@ defaults:
   run:
     shell: bash
 
+env:
+  IMAGE_NAME_PREFIX: ghcr.io/xrplf/xrpld/nix-
+
 jobs:
   build:
-    name: Build ${{ matrix.distro }} (${{ matrix.target.platform }})
+    name: Build ${{ matrix.distro.name }} (${{ matrix.target.platform }})
     permissions:
       contents: read
       packages: write
     strategy:
       fail-fast: false
       matrix:
-        distro: [nixos, ubuntu, rhel, debian]
+        # The base images are the oldest supported version of each distro
+        # that we want to build images for.
+        distro:
+          - name: nixos
+            base_image: nixos/nix:latest
+          - name: ubuntu
+            base_image: ubuntu:20.04
+          - name: rhel
+            base_image: registry.access.redhat.com/ubi9/ubi:latest
+          - name: debian
+            base_image: debian:bookworm
         target:
           - platform: linux/amd64
             runner: ubuntu-latest
           - platform: linux/arm64
             runner: ubuntu-24.04-arm
-    uses: ./.github/workflows/reusable-build-nix-image.yml
+    uses: ./.github/workflows/reusable-build-docker-image.yml
     with:
-      distro: ${{ matrix.distro }}
+      image_name: ghcr.io/xrplf/xrpld/nix-${{ matrix.distro.name }}
+      dockerfile: docker/nix.Dockerfile
+      base_image: ${{ matrix.distro.base_image }}
       platform: ${{ matrix.target.platform }}
       runner: ${{ matrix.target.runner }}
       push: ${{ github.event_name == 'push' }}
@@ -64,7 +79,7 @@ jobs:
       matrix:
         distro: [nixos, ubuntu, rhel, debian]
     env:
-      IMAGE_NAME: ghcr.io/xrplf/xrpld/nix-${{ matrix.distro }}
+      IMAGE_NAME: ${{ env.IMAGE_NAME_PREFIX }}${{ matrix.distro }}
 
     steps:
       - name: Set up Docker Buildx

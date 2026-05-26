@@ -1,14 +1,22 @@
-# Build a single-platform Nix Docker image for one distro. On push, the
-# image is pushed to GHCR with arch-suffixed tags (e.g. `:latest-amd64`,
-# `:sha-abc-amd64`) so the calling workflow can stitch per-arch builds
-# into a multi-arch manifest without needing to pass digests around.
-name: Reusable build Nix Docker image (single platform)
+# Build a single-platform Docker image. On push, the image is pushed to
+# GHCR with arch-suffixed tags (e.g. `:latest-amd64`, `:sha-abc-amd64`)
+# so the calling workflow can stitch per-arch builds into a multi-arch
+# manifest without needing to pass digests around.
+name: Reusable build Docker image (single platform)
 
 on:
   workflow_call:
     inputs:
-      distro:
-        description: "Distro short name (nixos, ubuntu, rhel, debian)"
+      image_name:
+        description: "Full image name without tag (e.g. 'ghcr.io/xrplf/xrpld/nix-ubuntu')"
+        required: true
+        type: string
+      dockerfile:
+        description: "Path to the Dockerfile, relative to the repository root"
+        required: true
+        type: string
+      base_image:
+        description: "Value passed to the Dockerfile as the BASE_IMAGE build arg"
         required: true
         type: string
       platform:
@@ -28,12 +36,6 @@ defaults:
   run:
     shell: bash
 
-env:
-  # These are the oldest supported versions of each distro that we want to build images for
-  UBUNTU_VERSION: "20.04"
-  RHEL_VERSION: "9"
-  DEBIAN_VERSION: "bookworm"
-
 jobs:
   build:
     name: Build (${{ inputs.platform }})
@@ -46,31 +48,11 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 
-      - name: Determine base image and arch
+      - name: Determine arch
         id: vars
         env:
-          DISTRO: ${{ inputs.distro }}
           PLATFORM: ${{ inputs.platform }}
         run: |
-          case "$DISTRO" in
-            nixos)
-              echo "base_image=nixos/nix:latest" >> $GITHUB_OUTPUT
-              ;;
-            ubuntu)
-              echo "base_image=ubuntu:${UBUNTU_VERSION}" >> $GITHUB_OUTPUT
-              ;;
-            rhel)
-              echo "base_image=registry.access.redhat.com/ubi${RHEL_VERSION}/ubi:latest" >> $GITHUB_OUTPUT
-              ;;
-            debian)
-              echo "base_image=debian:${DEBIAN_VERSION}" >> $GITHUB_OUTPUT
-              ;;
-            *)
-              echo "Error: unsupported distro '$DISTRO'. Expected one of: nixos, ubuntu, rhel, debian." >&2
-              exit 1
-              ;;
-          esac
-
           echo "arch=${PLATFORM##*/}" >> $GITHUB_OUTPUT
 
       - name: Set up Docker Buildx
@@ -88,7 +70,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@030e881283bb7a6894de51c315a6bfe6a94e05cf # v6.0.0
         with:
-          images: ghcr.io/xrplf/xrpld/nix-${{ inputs.distro }}
+          images: ${{ inputs.image_name }}
           tags: |
             type=sha,prefix=sha-,format=short
             type=raw,value=latest
@@ -99,9 +81,9 @@ jobs:
         uses: docker/build-push-action@bcafcacb16a39f128d818304e6c9c0c18556b85f # v7.1.0
         with:
           context: .
-          file: docker/nix.Dockerfile
+          file: ${{ inputs.dockerfile }}
           platforms: ${{ inputs.platform }}
           push: ${{ inputs.push }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
-          build-args: BASE_IMAGE=${{ steps.vars.outputs.base_image }}
+          build-args: BASE_IMAGE=${{ inputs.base_image }}
