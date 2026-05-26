@@ -29,9 +29,6 @@ defaults:
   run:
     shell: bash
 
-env:
-  IMAGE_NAME_PREFIX: ghcr.io/xrplf/xrpld/nix-
-
 jobs:
   build:
     name: Build ${{ matrix.distro.name }} (${{ matrix.target.platform }})
@@ -79,7 +76,7 @@ jobs:
       matrix:
         distro: [nixos, ubuntu, rhel, debian]
     env:
-      IMAGE_NAME: ${{ env.IMAGE_NAME_PREFIX }}${{ matrix.distro }}
+      IMAGE_NAME: ghcr.io/xrplf/xrpld/nix-${{ matrix.distro }}
 
     steps:
       - name: Set up Docker Buildx
