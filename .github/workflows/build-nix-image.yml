@@ -61,12 +61,12 @@ jobs:
       base_image: ${{ matrix.distro.base_image }}
       platform: ${{ matrix.target.platform }}
       runner: ${{ matrix.target.runner }}
-      push: ${{ github.event_name == 'push' }}
+      push: ${{ github.repository == 'XRPLF/rippled' && github.event_name == 'push' }}
 
   merge:
     name: Merge ${{ matrix.distro }} manifest
     needs: build
-    if: github.event_name == 'push'
+    if: ${{ github.repository == 'XRPLF/rippled' && github.event_name == 'push' }}
     runs-on: ubuntu-latest
     permissions:
       contents: read
