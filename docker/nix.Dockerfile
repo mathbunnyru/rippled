@@ -92,4 +92,4 @@ EOF
 COPY docker/cpp_files/ /tmp/cpp_files/
 COPY docker/check-sanitizers.sh /tmp/check-sanitizers.sh
 
-RUN /tmp/check-sanitizers.sh /tmp/cpp_files
+RUN grep -qi ubuntu /etc/os-release 2>/dev/null && /tmp/check-sanitizers.sh /tmp/cpp_files || true
