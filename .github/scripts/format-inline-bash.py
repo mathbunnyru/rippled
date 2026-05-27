@@ -370,7 +370,7 @@ def main(argv: list[str]) -> int:
     files = [f for f in gather_files(argv) if _is_target(f)]
     if not files:
         return 0
-    with tempfile.TemporaryDirectory(prefix="format-workflow-runs-") as tmpdir:
+    with tempfile.TemporaryDirectory(prefix="format-inline-bash-") as tmpdir:
         tmp_path = Path(tmpdir) / "shfmt.sh"
         total = 0
         for f in files:
