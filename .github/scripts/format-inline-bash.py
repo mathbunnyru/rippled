@@ -242,6 +242,18 @@ def shfmt_via_hook(tmp_path: Path) -> tuple[bool, str]:
     output = res.stdout + res.stderr
     # shfmt emits parse errors as "<path>:<line>:<col>: <message>".
     parse_err = bool(_SHFMT_ERR_RE.search(output))
+    # A non-zero exit that is neither a parse error nor pre-commit's "I had
+    # to modify files" signal means the hook itself failed to run (missing
+    # binary, install failure, bad config, ...). Surface that loudly rather
+    # than silently treating it as a no-op.
+    if (
+        res.returncode != 0
+        and not parse_err
+        and "files were modified by this hook" not in output
+    ):
+        sys.exit(
+            f"error: `{_HOOK_RUNNER} run shfmt` failed with exit {res.returncode}:\n{output}"
+        )
     if exprs and not parse_err:
         tmp_path.write_text(_decode_gha_exprs(tmp_path.read_text(), exprs))
     return not parse_err, output
