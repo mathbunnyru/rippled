@@ -66,6 +66,14 @@ repos:
       - id: shfmt
         args: [--write, --indent=4, --case-indent=true]
 
+  - repo: local
+    hooks:
+      - id: format-workflow-runs
+        name: "format `run:` blocks in GitHub workflows/actions"
+        entry: ./.github/scripts/format-workflow-runs.py
+        language: python
+        files: ^\.github/(workflows|actions)/.*\.ya?ml$
+
   - repo: https://github.com/streetsidesoftware/cspell-cli
     rev: 4643f154907327ee0a2c7038f0296e0dd77d9776 # frozen: v10.0.0
     hooks:
