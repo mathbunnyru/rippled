@@ -10,9 +10,11 @@ Two shapes are recognised:
   single-line runs (`run: some command`). A single-line run is upgraded to
   a `run: |` block scalar if shfmt's output spans multiple lines.
 
-* Markdown files: ``` ```bash ``` fenced code blocks. When shfmt fails to
-  parse the block body, the opening fence is re-tagged from `bash` to
-  `text` (the content was not really shell).
+* Markdown files: ``` ```bash ``` fenced code blocks.
+
+Any block that shfmt cannot parse is treated as an error: the script exits
+non-zero with the shfmt diagnostic so the author can fix the content (or
+re-tag a markdown block as `text` if it isn't really shell).
 
 For each occurrence the body is dedented, written to a temp .sh file,
 formatted via `pre-commit run shfmt --files <temp>` (falling back to
@@ -32,7 +34,7 @@ import sys
 import tempfile
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Union
+from typing import NoReturn, Union
 
 REPO = Path(__file__).resolve().parents[2]
 
@@ -259,12 +261,11 @@ def shfmt_via_hook(tmp_path: Path) -> tuple[bool, str]:
     return not parse_err, output
 
 
-def _skip(path: Path, where: int, kind: str, output: str) -> None:
-    print(
-        f"  shfmt could not parse {kind} at {path}:{where + 1} — skipped",
-        file=sys.stderr,
+def _fail(path: Path, where: int, kind: str, output: str) -> NoReturn:
+    sys.exit(
+        f"error: shfmt could not parse {kind} at {path}:{where + 1}\n"
+        f"  {output.strip()}"
     )
-    print(f"    {output.strip()}", file=sys.stderr)
 
 
 def process_yaml_file(path: Path, tmp_path: Path) -> int:
@@ -284,8 +285,7 @@ def process_yaml_file(path: Path, tmp_path: Path) -> int:
             tmp_path.write_text("\n".join(dedent(body, item.body_indent)) + "\n")
             ok, output = shfmt_via_hook(tmp_path)
             if not ok:
-                _skip(path, item.body_start, "block", output)
-                continue
+                _fail(path, item.body_start, "block", output)
             formatted = tmp_path.read_text().rstrip("\n")
             new_body = reindent(formatted.split("\n"), item.body_indent)
             if new_body != body:
@@ -295,8 +295,7 @@ def process_yaml_file(path: Path, tmp_path: Path) -> int:
             tmp_path.write_text(item.value + "\n")
             ok, output = shfmt_via_hook(tmp_path)
             if not ok:
-                _skip(path, item.line_idx, "inline run", output)
-                continue
+                _fail(path, item.line_idx, "inline run", output)
             formatted = tmp_path.read_text().rstrip("\n")
             if formatted == item.value:
                 continue
@@ -329,14 +328,9 @@ def process_md_file(path: Path, tmp_path: Path) -> int:
     for block in reversed(blocks):
         body = lines[block.body_start : block.body_end]
         tmp_path.write_text("\n".join(dedent(body, block.body_indent)) + "\n")
-        ok, _ = shfmt_via_hook(tmp_path)
+        ok, output = shfmt_via_hook(tmp_path)
         if not ok:
-            # Content isn't really shell — re-tag the opening fence as text.
-            new_open = lines[block.open_line_idx].replace("bash", "text", 1)
-            if new_open != lines[block.open_line_idx]:
-                lines[block.open_line_idx] = new_open
-                changed += 1
-            continue
+            _fail(path, block.open_line_idx, "```bash block", output)
         formatted = tmp_path.read_text().rstrip("\n")
         formatted_lines = formatted.split("\n") if formatted else []
         new_body = reindent(formatted_lines, block.body_indent)
