@@ -358,28 +358,37 @@ def process_file(path: Path, tmp_path: Path) -> int:
 
 
 def gather_files(argv: list[str]) -> list[Path]:
+    """Return YAML workflow/action files and markdown files that we should
+    process — either the paths in `argv` or, when `argv` is empty, every
+    such file in the repo (skipping `external/`)."""
     if argv:
-        return [
+        candidates: list[Path] = [
             (REPO / a).resolve() if not Path(a).is_absolute() else Path(a) for a in argv
         ]
-    gh = REPO / ".github"
-    yaml_files = [*gh.rglob("*.yml"), *gh.rglob("*.yaml")]
-    md_files = [
-        p for p in REPO.rglob("*.md") if "external" not in p.relative_to(REPO).parts
-    ]
-    return sorted(yaml_files + md_files)
-
-
-def _is_target(f: Path) -> bool:
-    if not f.exists():
-        return False
-    if f.suffix in (".yml", ".yaml"):
-        return ".github" in f.parts
-    return f.suffix == ".md"
+    else:
+        gh = REPO / ".github"
+        candidates = [
+            *gh.rglob("*.yml"),
+            *gh.rglob("*.yaml"),
+            *(
+                p
+                for p in REPO.rglob("*.md")
+                if "external" not in p.relative_to(REPO).parts
+            ),
+        ]
+    return sorted(
+        p
+        for p in candidates
+        if p.exists()
+        and (
+            (p.suffix in (".yml", ".yaml") and ".github" in p.parts)
+            or p.suffix == ".md"
+        )
+    )
 
 
 def main(argv: list[str]) -> int:
-    files = [f for f in gather_files(argv) if _is_target(f)]
+    files = gather_files(argv)
     if not files:
         return 0
     with tempfile.TemporaryDirectory(prefix="format-inline-bash-") as tmpdir:
