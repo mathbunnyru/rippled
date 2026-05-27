@@ -1,22 +1,26 @@
 #!/usr/bin/env python3
 
 """
-Format `run:` blocks in GitHub Actions workflow/action YAML files using the
-shfmt hook configured in .pre-commit-config.yaml.
+Format embedded shell snippets using the shfmt hook configured in
+.pre-commit-config.yaml.
 
-Handles both literal block-scalar runs (`run: |`) and single-line runs
-(`run: some command`). For each occurrence:
-  1. Extract the shell content (dedented for blocks).
-  2. Write it to a temp .sh file.
-  3. Invoke `pre-commit run shfmt --files <temp>` (falling back to `prek`)
-     so the same shfmt arguments declared in .pre-commit-config.yaml apply.
-  4. Read the formatted result and write it back. If shfmt expands a
-     single-line value into multiple lines, the entry is upgraded to a
-     `run: |` block scalar.
+Two shapes are recognised:
 
-When invoked without arguments, every .yml/.yaml file under .github/ is
-scanned. When invoked with file arguments (the pre-commit case), only those
-files are processed.
+* YAML workflow/action files: literal block-scalar runs (`run: |`) and
+  single-line runs (`run: some command`). A single-line run is upgraded to
+  a `run: |` block scalar if shfmt's output spans multiple lines.
+
+* Markdown files: ``` ```bash ``` fenced code blocks. When shfmt fails to
+  parse the block body, the opening fence is re-tagged from `bash` to
+  `text` (the content was not really shell).
+
+For each occurrence the body is dedented, written to a temp .sh file,
+formatted via `pre-commit run shfmt --files <temp>` (falling back to
+`prek`), then re-indented and written back in place.
+
+When invoked without arguments, every .yml/.yaml under .github/ plus every
+.md file in the repo is scanned. When invoked with file arguments (the
+pre-commit case), only those files are processed.
 """
 
 from __future__ import annotations
@@ -40,6 +44,8 @@ RUN_BLOCK_RE = re.compile(r"^(?P<prefix>[ \t]*(?:- )?)run:[ \t]*\|[+-]?[ \t]*$")
 RUN_INLINE_RE = re.compile(
     r"^(?P<prefix>[ \t]*(?:- )?)run:[ \t]+" r"(?P<value>(?!\|[+-]?[ \t]*$)\S.*?)[ \t]*$"
 )
+MD_BASH_OPEN_RE = re.compile(r"^(?P<indent>[ ]{0,3})`{3}bash[ \t]*$")
+MD_FENCE_CLOSE_RE = re.compile(r"^[ ]{0,3}`{3,}[ \t]*$")
 
 
 @dataclass(frozen=True)
@@ -58,6 +64,20 @@ class InlineRun:
     line_idx: int
     prefix: str
     value: str
+
+
+@dataclass(frozen=True)
+class MdBashBlock:
+    """A markdown ``` ```bash ``` fenced code block.
+
+    `body_start:body_end` slices into the file's lines; `open_line_idx`
+    points at the opening fence line.
+    """
+
+    open_line_idx: int
+    body_start: int
+    body_end: int
+    body_indent: int
 
 
 RunItem = Union[BlockRun, InlineRun]
@@ -129,6 +149,46 @@ def find_run_blocks(lines: list[str]) -> list[RunItem]:
     return items
 
 
+def find_md_bash_blocks(lines: list[str]) -> list[MdBashBlock]:
+    """Return ``` ```bash ``` fenced code blocks in document order."""
+    blocks: list[MdBashBlock] = []
+    line_idx = 0
+    while line_idx < len(lines):
+        open_match = MD_BASH_OPEN_RE.match(lines[line_idx])
+        if not open_match:
+            line_idx += 1
+            continue
+        body_start = line_idx + 1
+        close_idx = next(
+            (
+                j
+                for j in range(body_start, len(lines))
+                if MD_FENCE_CLOSE_RE.match(lines[j])
+            ),
+            None,
+        )
+        if close_idx is None:
+            line_idx = body_start
+            continue
+        body = lines[body_start:close_idx]
+        non_blank = [b for b in body if b.strip()]
+        body_indent = (
+            min(len(b) - len(b.lstrip(" ")) for b in non_blank)
+            if non_blank
+            else len(open_match.group("indent"))
+        )
+        blocks.append(
+            MdBashBlock(
+                open_line_idx=line_idx,
+                body_start=body_start,
+                body_end=close_idx,
+                body_indent=body_indent,
+            )
+        )
+        line_idx = close_idx + 1
+    return blocks
+
+
 def dedent(lines: list[str], n: int) -> list[str]:
     pad = " " * n
     return [
@@ -146,18 +206,45 @@ def reindent(lines: list[str], n: int) -> list[str]:
     return [pad + line if line else "" for line in lines]
 
 
+_SHFMT_ERR_RE = re.compile(r"\.sh:\d+:\d+:\s")
+_GHA_EXPR_RE = re.compile(r"\$\{\{.*?\}\}", re.DOTALL)
+_GHA_PLACEHOLDER_RE = re.compile(r"__GHA_EXPR_(\d+)__")
+
+
+def _encode_gha_exprs(text: str) -> tuple[str, list[str]]:
+    """Replace `${{ ... }}` expressions with bash-safe placeholder identifiers."""
+    exprs: list[str] = []
+
+    def repl(match: re.Match[str]) -> str:
+        exprs.append(match.group(0))
+        return f"__GHA_EXPR_{len(exprs) - 1}__"
+
+    return _GHA_EXPR_RE.sub(repl, text), exprs
+
+
+def _decode_gha_exprs(text: str, exprs: list[str]) -> str:
+    """Restore `${{ ... }}` expressions from placeholder identifiers."""
+    return _GHA_PLACEHOLDER_RE.sub(lambda m: exprs[int(m.group(1))], text)
+
+
 def shfmt_via_hook(tmp_path: Path) -> tuple[bool, str]:
+    # `${{ ... }}` is not valid shell, so swap it for a placeholder identifier
+    # that shfmt can parse, then restore it after formatting.
+    encoded, exprs = _encode_gha_exprs(tmp_path.read_text())
+    if exprs:
+        tmp_path.write_text(encoded)
     res = subprocess.run(
         [_HOOK_RUNNER, "run", "shfmt", "--files", str(tmp_path)],
         cwd=REPO,
         capture_output=True,
         text=True,
     )
-    blob = (res.stdout + res.stderr).lower()
-    parse_err = any(
-        s in blob for s in ("syntax error", "invalid parameter", "parse error")
-    )
-    return not parse_err, res.stdout + res.stderr
+    output = res.stdout + res.stderr
+    # shfmt emits parse errors as "<path>:<line>:<col>: <message>".
+    parse_err = bool(_SHFMT_ERR_RE.search(output))
+    if exprs and not parse_err:
+        tmp_path.write_text(_decode_gha_exprs(tmp_path.read_text(), exprs))
+    return not parse_err, output
 
 
 def _skip(path: Path, where: int, kind: str, output: str) -> None:
@@ -168,7 +255,7 @@ def _skip(path: Path, where: int, kind: str, output: str) -> None:
     print(f"    {output.strip()}", file=sys.stderr)
 
 
-def process_file(path: Path, tmp_path: Path) -> int:
+def process_yaml_file(path: Path, tmp_path: Path) -> int:
     text = path.read_text()
     had_nl = text.endswith("\n")
     lines = text.split("\n")
@@ -217,21 +304,70 @@ def process_file(path: Path, tmp_path: Path) -> int:
     return changed
 
 
+def process_md_file(path: Path, tmp_path: Path) -> int:
+    text = path.read_text()
+    had_nl = text.endswith("\n")
+    lines = text.split("\n")
+    if had_nl:
+        lines = lines[:-1]
+    blocks = find_md_bash_blocks(lines)
+    if not blocks:
+        return 0
+    changed = 0
+    for block in reversed(blocks):
+        body = lines[block.body_start : block.body_end]
+        tmp_path.write_text("\n".join(dedent(body, block.body_indent)) + "\n")
+        ok, _ = shfmt_via_hook(tmp_path)
+        if not ok:
+            # Content isn't really shell — re-tag the opening fence as text.
+            new_open = lines[block.open_line_idx].replace("bash", "text", 1)
+            if new_open != lines[block.open_line_idx]:
+                lines[block.open_line_idx] = new_open
+                changed += 1
+            continue
+        formatted = tmp_path.read_text().rstrip("\n")
+        formatted_lines = formatted.split("\n") if formatted else []
+        new_body = reindent(formatted_lines, block.body_indent)
+        if new_body != body:
+            lines[block.body_start : block.body_end] = new_body
+            changed += 1
+    new_text = "\n".join(lines) + ("\n" if had_nl else "")
+    if new_text != text:
+        path.write_text(new_text)
+    return changed
+
+
+def process_file(path: Path, tmp_path: Path) -> int:
+    if path.suffix in (".yml", ".yaml"):
+        return process_yaml_file(path, tmp_path)
+    if path.suffix == ".md":
+        return process_md_file(path, tmp_path)
+    return 0
+
+
 def gather_files(argv: list[str]) -> list[Path]:
     if argv:
         return [
             (REPO / a).resolve() if not Path(a).is_absolute() else Path(a) for a in argv
         ]
     gh = REPO / ".github"
-    return sorted(list(gh.rglob("*.yml")) + list(gh.rglob("*.yaml")))
+    yaml_files = [*gh.rglob("*.yml"), *gh.rglob("*.yaml")]
+    md_files = [
+        p for p in REPO.rglob("*.md") if "external" not in p.relative_to(REPO).parts
+    ]
+    return sorted(yaml_files + md_files)
+
+
+def _is_target(f: Path) -> bool:
+    if not f.exists():
+        return False
+    if f.suffix in (".yml", ".yaml"):
+        return ".github" in f.parts
+    return f.suffix == ".md"
 
 
 def main(argv: list[str]) -> int:
-    files = [
-        f
-        for f in gather_files(argv)
-        if f.suffix in (".yml", ".yaml") and ".github" in f.parts and f.exists()
-    ]
+    files = [f for f in gather_files(argv) if _is_target(f)]
     if not files:
         return 0
     with tempfile.TemporaryDirectory(prefix="format-workflow-runs-") as tmpdir:
@@ -240,7 +376,7 @@ def main(argv: list[str]) -> int:
         for f in files:
             n = process_file(f, tmp_path)
             if n:
-                print(f"{f.relative_to(REPO)}: reformatted {n} run-block(s)")
+                print(f"{f.relative_to(REPO)}: reformatted {n} block(s)")
                 total += n
         return 1 if total else 0
 

@@ -69,10 +69,10 @@ repos:
   - repo: local
     hooks:
       - id: format-workflow-runs
-        name: "format `run:` blocks in GitHub workflows/actions"
+        name: "format embedded shell snippets in workflows/actions and markdown"
         entry: ./.github/scripts/format-workflow-runs.py
         language: python
-        files: ^\.github/(workflows|actions)/.*\.ya?ml$
+        files: ^(\.github/(workflows|actions)/.*\.ya?ml|.*\.md)$
 
   - repo: https://github.com/streetsidesoftware/cspell-cli
     rev: 4643f154907327ee0a2c7038f0296e0dd77d9776 # frozen: v10.0.0

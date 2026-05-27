@@ -113,7 +113,7 @@ jobs:
 
       - name: Set ccache log file
         if: ${{ inputs.ccache_enabled && runner.debug == '1' }}
-        run: echo "CCACHE_LOGFILE=${{ runner.temp }}/ccache.log" >> "${GITHUB_ENV}"
+        run: echo "CCACHE_LOGFILE=${{ runner.temp }}/ccache.log" >>"${GITHUB_ENV}"
 
       - name: Print build environment
         uses: XRPLF/actions/print-build-env@59dec886e4afb05a1724443af08baccbc045b574
