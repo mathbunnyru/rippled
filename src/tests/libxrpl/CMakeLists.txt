@@ -24,12 +24,12 @@ target_link_libraries(
 )
 
 # Single combined gtest binary; each xrpl_add_test() call appends to it.
-add_executable(xrpl_tests)
+add_executable(xrpl_tests main.cpp)
 set_target_properties(
     xrpl_tests
     PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}"
 )
-target_link_libraries(xrpl_tests PRIVATE GTest::gtest_main)
+target_link_libraries(xrpl_tests PRIVATE GTest::gtest)
 gtest_discover_tests(xrpl_tests)
 
 xrpl_add_test(basics LIBRARIES xrpl.imports.test)
