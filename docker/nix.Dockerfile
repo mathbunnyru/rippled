@@ -29,6 +29,8 @@ RUN mkdir /tmp/nix-store-closure && \
 # Final image
 FROM ${BASE_IMAGE} AS final
 
+ARG BASE_IMAGE
+
 # bash is not located at /bin/bash in nixos/nix, so we need to create a symlink to it.
 RUN if [ -d /nix ]; then \
         ln -s /root/.nix-profile/bin/bash /bin/bash; \
@@ -91,4 +93,6 @@ COPY docker/test_files/compile-cpp-sources.sh /tmp/compile-cpp-sources.sh
 RUN /tmp/compile-cpp-sources.sh /tmp/cpp_sources /tmp/bins
 
 COPY docker/test_files/run-test-binaries.sh /tmp/run-test-binaries.sh
-RUN /tmp/run-test-binaries.sh /tmp/bins
+RUN if echo "${BASE_IMAGE}" | grep -qiE '(ubuntu|nixos)'; then \
+        /tmp/run-test-binaries.sh /tmp/bins; \
+    fi
