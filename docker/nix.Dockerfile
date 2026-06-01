@@ -87,11 +87,13 @@ run-clang-tidy --help
 vim --version
 EOF
 
+# Sanity-check that the sanitizer runtimes shipped with g++/clang++ are able to build binaries
 COPY docker/test_files/cpp_sources/ /tmp/cpp_sources/
 COPY docker/test_files/compile-cpp-sources.sh /tmp/compile-cpp-sources.sh
-
 RUN /tmp/compile-cpp-sources.sh /tmp/cpp_sources /tmp/bins
 
+# Sanity-check that the built binaries are able to run.
+# We only support running the test binaries on Ubuntu and NixOS right now (will be fixed in the future)
 COPY docker/test_files/run-test-binaries.sh /tmp/run-test-binaries.sh
 RUN if echo "${BASE_IMAGE}" | grep -qiE '(ubuntu|nixos)'; then \
         /tmp/run-test-binaries.sh /tmp/bins; \
