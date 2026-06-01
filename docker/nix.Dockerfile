@@ -58,9 +58,9 @@ target="$(/tmp/loader-path.sh)"
 if [ ! -e "${target}" ]; then
     # Use the loader from the same glibc that gcc links libc against, so
     # ld-linux and libc/libpthread share GLIBC_PRIVATE symbols at runtime.
-    src="$(dirname "$(gcc -print-file-name=libc.so.6)")/$(basename "$target")"
-    [ -e "$src" ] || { echo "ld-linux not found at $src" >&2; exit 1; }
-    mkdir -p "$(dirname "$target")"
+    src="$(dirname "$(gcc -print-file-name=libc.so.6)")/$(basename "${target}")"
+    [ -e "${src}" ] || { echo "ld-linux not found at ${src}" >&2; exit 1; }
+    mkdir -p "$(dirname "${target}")"
     cp "${src}" "${target}"
 fi
 EOF
