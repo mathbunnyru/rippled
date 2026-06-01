@@ -45,7 +45,7 @@ ENTRYPOINT ["/bin/bash"]
 COPY --from=builder /tmp/nix-store-closure /nix/store
 COPY --from=builder /tmp/build/result /nix/ci-env
 
-ENV PATH="/nix/ci-env/bin:$PATH"
+ENV PATH="/nix/ci-env/bin:${PATH}"
 
 # Externally-built dynamically-linked ELF binaries hard-code the loader path
 # (e.g. /lib64/ld-linux-x86-64.so.2) in their PT_INTERP header. Install it
@@ -55,13 +55,13 @@ COPY docker/loader-path.sh /tmp/loader-path.sh
 RUN <<EOF
 target="$(/tmp/loader-path.sh)"
 
-if [ ! -e "$target" ]; then
+if [ ! -e "${target}" ]; then
     # Use the loader from the same glibc that gcc links libc against, so
     # ld-linux and libc/libpthread share GLIBC_PRIVATE symbols at runtime.
     src="$(dirname "$(gcc -print-file-name=libc.so.6)")/$(basename "$target")"
     [ -e "$src" ] || { echo "ld-linux not found at $src" >&2; exit 1; }
     mkdir -p "$(dirname "$target")"
-    cp "$src" "$target"
+    cp "${src}" "${target}"
 fi
 EOF
 

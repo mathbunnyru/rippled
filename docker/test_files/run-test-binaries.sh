@@ -10,9 +10,9 @@ bins_dir="${1:?usage: $0 <bins_dir>}"
 # Run a binary and verify its exit code and output.
 # Usage: run <binary> <expected_output> <expected_rc>
 function run() {
-    local binary="$1"
-    local expected_output="$2"
-    local expected_rc="$3"
+    local binary="${1}"
+    local expected_output="${2}"
+    local expected_rc="${3}"
 
     local out_file
     out_file="$(mktemp)"

@@ -13,8 +13,8 @@ loader="$(/tmp/loader-path.sh)"
 mkdir -p "${dst_dir}"
 
 function compile() {
-    local compiler="$1"
-    local name="$2"
+    local compiler="${1}"
+    local name="${2}"
     local san_flag="${3:-}"
 
     local src="${src_dir}/${name}.cpp"
