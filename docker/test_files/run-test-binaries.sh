@@ -52,7 +52,7 @@ declare -A expect=(
 for compiler in g++ clang++; do
     for name in regular asan tsan ubsan; do
         binary="${bins_dir}/${name}-${compiler}"
-        if [[ "${binary}" == *regular* ]]; then
+        if [ "${name}" = "regular" ]; then
             expected_rc=0
         else
             expected_rc=nonzero

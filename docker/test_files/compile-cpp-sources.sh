@@ -1,5 +1,5 @@
 #!/bin/bash
-# Compile all C++ test binaries inside the Nix builder stage.
+# Compile all C++ test binaries during the Docker image build.
 # Each binary has the target system's ELF PT_INTERP (dynamic-linker path)
 # baked in so it can run on the (potentially minimal) final BASE_IMAGE.
 
