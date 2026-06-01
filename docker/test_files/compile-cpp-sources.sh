@@ -31,7 +31,7 @@ function compile() {
     echo "Compile cmd: ${compile_cmd}"
     eval "${compile_cmd}"
 
-    echo "=== Patch ${binary} to use ${loader} as PT_INTERP ==="
+    echo "=== Patching ${binary} to use ${loader} as PT_INTERP ==="
     patch_cmd="patchelf --set-interpreter ${loader} --remove-rpath ${binary}"
     echo "Patch cmd: ${patch_cmd}"
     eval "${patch_cmd}"
