@@ -21,7 +21,7 @@ function compile() {
     local binary="${dst_dir}/${name}-${compiler}"
 
     echo "=== Compiling ${name} with ${compiler} ==="
-    compile_cmd="${compiler} -std=c++23 -O1 -g \
+    local compile_cmd="${compiler} -std=c++23 -O1 -g \
         -pthread \
         ${san_flag} \
         ${src} -o ${binary}"
@@ -32,7 +32,7 @@ function compile() {
     eval "${compile_cmd}"
 
     echo "=== Patching ${binary} to use ${loader} as PT_INTERP ==="
-    patch_cmd="patchelf --set-interpreter ${loader} --remove-rpath ${binary}"
+    local patch_cmd="patchelf --set-interpreter ${loader} --remove-rpath ${binary}"
     echo "Patch cmd: ${patch_cmd}"
     eval "${patch_cmd}"
 }

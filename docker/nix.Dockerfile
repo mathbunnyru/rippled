@@ -92,7 +92,7 @@ COPY --from=final /tmp/bins /tmp/bins
 
 RUN <<EOF
 if echo "${BASE_IMAGE}" | grep -qiE 'nixos'; then
-    echo "Skipping sanitizer lib tests on NixOS."
+    echo "Skipping runnning binaries on NixOS."
 else
     /tmp/install-sanitizer-libs.sh
     /tmp/run-test-binaries.sh /tmp/bins

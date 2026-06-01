@@ -61,7 +61,7 @@ case "${ID}" in
         ;;
 
     *)
-        echo "ERROR: unsupported OS '${ID}'. Supported: debian, ubuntu, rhel" >&2
+        echo "ERROR: unsupported OS '${ID}'. Supported: debian, ubuntu, rhel-family" >&2
         exit 1
         ;;
 esac
