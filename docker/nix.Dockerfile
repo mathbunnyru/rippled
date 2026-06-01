@@ -94,6 +94,8 @@ RUN /tmp/compile-cpp-sources.sh /tmp/cpp_sources /tmp/bins
 
 # Sanity-check that the built binaries are able to run.
 # We only support running the test binaries on Ubuntu and NixOS right now (will be fixed in the future)
+#
+# When build and test images will be separate, we will be to run on vanilla images.
 COPY docker/test_files/run-test-binaries.sh /tmp/run-test-binaries.sh
 RUN if echo "${BASE_IMAGE}" | grep -qiE '(ubuntu|nixos)'; then \
         /tmp/run-test-binaries.sh /tmp/bins; \
