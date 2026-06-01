@@ -4,10 +4,14 @@
 #   -fsanitize=thread    → libtsan.so.2
 #   -fsanitize=undefined → libubsan.so.1
 #
-# These versions ship with GCC 12. Supported base images:
-#   debian:bookworm  — GCC 12 is the default compiler
-#   ubuntu:20.04     — GCC 9 is the default; GCC 12 libs installed via PPA
-#   rhel:9           — GCC 11 is the default; GCC 12 libs installed via gcc-toolset-12
+# The exact SONAMEs required depend on the compiler toolchain used to build the
+# test binaries (see nix/ci-env.nix). If the toolchain is bumped and SONAMEs
+# change, update the list below (or detect them from the binaries).
+#
+# Supported base images:
+#   debian:bookworm
+#   ubuntu:20.04
+#   rhel:9
 #   nixos/nix        — tests are skipped; this script is not called
 
 set -euo pipefail
