@@ -15,7 +15,7 @@
         "type": "indirect"
       }
     },
-    "nixpkgs-custom-glibc": {
+    "nixpkgs-glibc-2-31": {
       "flake": false,
       "locked": {
         "lastModified": 1593520194,
@@ -32,10 +32,46 @@
         "type": "github"
       }
     },
+    "nixpkgs-glibc-2-34": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1658843810,
+        "narHash": "sha256-J5iJLliax/TI6vPEtc4yU2jPI0UcQU3ftXwCZcFjezg=",
+        "owner": "NixOS",
+        "repo": "nixpkgs",
+        "rev": "cd935b2d96037d2eee31529d27340c12098d9b07",
+        "type": "github"
+      },
+      "original": {
+        "owner": "NixOS",
+        "repo": "nixpkgs",
+        "rev": "cd935b2d96037d2eee31529d27340c12098d9b07",
+        "type": "github"
+      }
+    },
+    "nixpkgs-glibc-2-35": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1681128000,
+        "narHash": "sha256-S1xCHg38L6l1JwGgQ42/KgHTKzgebZCKWHVixI96xQ8=",
+        "owner": "NixOS",
+        "repo": "nixpkgs",
+        "rev": "f9c5b550c2ff7116bb39783f34820754a11c016b",
+        "type": "github"
+      },
+      "original": {
+        "owner": "NixOS",
+        "repo": "nixpkgs",
+        "rev": "f9c5b550c2ff7116bb39783f34820754a11c016b",
+        "type": "github"
+      }
+    },
     "root": {
       "inputs": {
         "nixpkgs": "nixpkgs",
-        "nixpkgs-custom-glibc": "nixpkgs-custom-glibc"
+        "nixpkgs-glibc-2-31": "nixpkgs-glibc-2-31",
+        "nixpkgs-glibc-2-34": "nixpkgs-glibc-2-34",
+        "nixpkgs-glibc-2-35": "nixpkgs-glibc-2-35"
       }
     }
   },

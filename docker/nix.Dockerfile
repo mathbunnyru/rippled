@@ -16,10 +16,23 @@ WORKDIR /tmp/build
 
 FROM builder-source AS builder
 
-# Build our Nix CI environment (all build tools in a single store path)
-RUN nix \
-    --option filter-syscalls false \
-    build
+ARG BASE_IMAGE=nixos/nix:latest
+
+# Build the CI environment variant that matches the target OS's native glibc.
+# The flake exposes per-distro packages (ubuntu/rhel/debian/nixos) that are
+# each compiled against the glibc version shipped by the corresponding base
+# image, so produced binaries don't require symbols newer than what the OS
+# provides at runtime.
+RUN case "$BASE_IMAGE" in \
+        nixos/*) DISTRO="nixos" ;; \
+        ubuntu:*) DISTRO="ubuntu" ;; \
+        *ubi*|*rhel*) DISTRO="rhel" ;; \
+        debian:*) DISTRO="debian" ;; \
+        *) echo "Unknown base image: $BASE_IMAGE, defaulting to ubuntu" >&2; DISTRO="ubuntu" ;; \
+    esac && \
+    nix \
+        --option filter-syscalls false \
+        build ".#${DISTRO}"
 
 # Copy the Nix store closure into a directory. The Nix store closure is the
 # entire set of Nix store values that we need for our build.
@@ -28,8 +41,6 @@ RUN mkdir /tmp/nix-store-closure && \
 
 # Final image
 FROM ${BASE_IMAGE} AS final
-
-ARG BASE_IMAGE
 
 # bash is not located at /bin/bash in nixos/nix, so we need to create a symlink to it.
 RUN if [ -d /nix ]; then \
@@ -97,6 +108,4 @@ RUN /tmp/compile-cpp-sources.sh /tmp/cpp_sources /tmp/bins
 #
 # When build and test images will be separate, we will be to run on vanilla images.
 COPY docker/test_files/run-test-binaries.sh /tmp/run-test-binaries.sh
-RUN if echo "${BASE_IMAGE}" | grep -qiE '(ubuntu|nixos)'; then \
-        /tmp/run-test-binaries.sh /tmp/bins; \
-    fi
+RUN /tmp/run-test-binaries.sh /tmp/bins
