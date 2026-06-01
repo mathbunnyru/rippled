@@ -12,6 +12,7 @@ g++ --version
 gcc --version
 gcovr --version
 git --version
+less --version
 make --version
 mold --version
 ninja --version
