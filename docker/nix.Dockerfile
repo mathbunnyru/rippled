@@ -68,7 +68,7 @@ EOF
 COPY docker/check-tool-versions.sh /tmp/check-tool-versions.sh
 RUN /tmp/check-tool-versions.sh
 
-# Sanity-check that the sanitizer runtimes shipped with g++/clang++ are able to build binaries
+# Sanity-check that the g++/clang++ are able to build binaries, including sanitizer-instrumented ones.
 COPY docker/test_files/cpp_sources/ /tmp/cpp_sources/
 COPY docker/test_files/compile-cpp-sources.sh /tmp/compile-cpp-sources.sh
 RUN /tmp/compile-cpp-sources.sh /tmp/cpp_sources /tmp/bins
@@ -86,6 +86,7 @@ RUN if echo "${BASE_IMAGE}" | grep -qiE 'nixos'; then \
 
 SHELL ["/bin/bash", "-e", "-o", "pipefail", "-c"]
 
+# Sanity-check that the built binaries run correctly in the vanilla base image, with the necessary sanitizer runtime libraries installed.
 COPY docker/install-sanitizer-libs.sh /tmp/install-sanitizer-libs.sh
 COPY docker/test_files/run-test-binaries.sh /tmp/run-test-binaries.sh
 COPY --from=final /tmp/bins /tmp/bins
