@@ -33,6 +33,8 @@ case "${ID}" in
             libasan8 \
             libtsan2 \
             libubsan1
+
+        apt-get clean
         rm -rf /var/lib/apt/lists/*
         ;;
 
@@ -47,6 +49,8 @@ case "${ID}" in
             libasan8 \
             libtsan2 \
             libubsan1
+
+        apt-get clean
         rm -rf /var/lib/apt/lists/*
         ;;
 
@@ -55,6 +59,9 @@ case "${ID}" in
             libasan8 \
             libtsan2 \
             libubsan
+
+        dnf clean -y all
+        rm -rf /var/cache/dnf/*
         ;;
 
     *)
