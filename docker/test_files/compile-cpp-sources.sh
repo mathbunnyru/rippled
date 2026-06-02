@@ -21,13 +21,13 @@ function compile() {
     local binary="${dst_dir}/${name}-${compiler}"
 
     echo "=== Compiling ${name} with ${compiler} ==="
+    # Always statically link libstdc++ so the test binary does not depend on
+    # the host's libstdc++.so.6 version.
     local compile_cmd="${compiler} -std=c++23 -O1 -g \
         -pthread \
+        -static-libstdc++ \
         ${san_flag} \
         ${src} -o ${binary}"
-    if [[ "${name}" == "regular" ]]; then
-        compile_cmd="${compile_cmd} -static-libstdc++"
-    fi
     echo "Compile cmd: ${compile_cmd}"
     eval "${compile_cmd}"
 

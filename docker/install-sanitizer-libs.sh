@@ -3,7 +3,6 @@
 #   -fsanitize=address   → libasan.so.8
 #   -fsanitize=thread    → libtsan.so.2
 #   -fsanitize=undefined → libubsan.so.1
-#   C++ standard library → libstdc++.so.6
 #
 # The exact SONAMEs required depend on the compiler toolchain used to build the
 # test binaries (see nix/ci-env.nix). If the toolchain is bumped and SONAMEs
@@ -33,8 +32,7 @@ case "${ID}" in
         apt-get install -y --no-install-recommends \
             libasan8 \
             libtsan2 \
-            libubsan1 \
-            libstdc++6
+            libubsan1
         rm -rf /var/lib/apt/lists/*
         ;;
 
@@ -48,19 +46,15 @@ case "${ID}" in
         apt-get install -y --no-install-recommends \
             libasan8 \
             libtsan2 \
-            libubsan1 \
-            libstdc++6
+            libubsan1
         rm -rf /var/lib/apt/lists/*
         ;;
 
     rhel | centos | rocky | almalinux)
-        # gcc-toolset-12 installs GCC 12 runtime libraries under
-        # /opt/rh/gcc-toolset-12/root/usr/lib64/. Make them visible to the
-        # dynamic linker by adding that path to ld.so.conf.d.
-        dnf install -y gcc-toolset-12 libstdc++
-        echo "/opt/rh/gcc-toolset-12/root/usr/lib64" \
-            >/etc/ld.so.conf.d/gcc-toolset-12.conf
-        ldconfig
+        dnf install -y \
+            libasan8 \
+            libtsan2 \
+            libubsan
         ;;
 
     *)
@@ -71,7 +65,7 @@ esac
 
 # Verify that every expected library is now resolvable by the dynamic linker.
 missing=0
-for lib in libasan.so.8 libtsan.so.2 libubsan.so.1 libstdc++.so.6; do
+for lib in libasan.so.8 libtsan.so.2 libubsan.so.1; do
     if ldconfig -p | grep -q "${lib}"; then
         echo "OK: ${lib} found"
     else
