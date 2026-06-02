@@ -30,7 +30,7 @@ runs:
       shell: bash
       env:
         BUILD_NPROC: ${{ inputs.build_nproc }}
-        BUILD_OPTION: ${{ inputs.force_build == 'true' && '*' || 'missing' }}
+        BUILD_OPTION: ${{ '*' }}
         BUILD_TYPE: ${{ inputs.build_type }}
         LOG_VERBOSITY: ${{ inputs.log_verbosity }}
         SANITIZERS: ${{ inputs.sanitizers }}
