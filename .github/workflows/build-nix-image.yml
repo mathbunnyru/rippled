@@ -62,6 +62,10 @@ jobs:
       platform: ${{ matrix.target.platform }}
       runner: ${{ matrix.target.runner }}
       push: ${{ github.repository == 'XRPLF/rippled' && github.event_name == 'push' }}
+      # Allow insecure entitlements for Debian ARM64 build to be able to run tsan-g++
+      #
+      # If needed during runtime, add `--security-opt seccomp=unconfined` to the `docker run` command
+      allow_insecure: ${{ matrix.distro.name == 'debian' && matrix.target.platform == 'linux/arm64' }}
 
   merge:
     name: Merge ${{ matrix.distro }} manifest
