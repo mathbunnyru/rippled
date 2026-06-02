@@ -32,7 +32,7 @@ FROM ${BASE_IMAGE} AS final
 ARG BASE_IMAGE
 
 # bash is not located at /bin/bash in nixos/nix, so we need to create a symlink to it.
-RUN if [ -d /nix ]; then \
+RUN if echo "${BASE_IMAGE}" | grep -qiE 'nixos'; then \
         ln -s /root/.nix-profile/bin/bash /bin/bash; \
     fi
 
@@ -80,7 +80,7 @@ FROM ${BASE_IMAGE} AS tester
 ARG BASE_IMAGE
 
 # bash is not located at /bin/bash in nixos/nix, so we need to create a symlink to it.
-RUN if [ -d /nix ]; then \
+RUN if echo "${BASE_IMAGE}" | grep -qiE 'nixos'; then \
         ln -s /root/.nix-profile/bin/bash /bin/bash; \
     fi
 
