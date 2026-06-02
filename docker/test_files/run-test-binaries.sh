@@ -61,6 +61,15 @@ declare -A expect=(
 for compiler in g++ clang++; do
     for name in regular asan tsan ubsan; do
         binary="${bins_dir}/${name}-${compiler}"
+
+        if [ "${name}" = "tsan" ] && [ "${compiler}" = "g++" ] &&
+            grep -qi 'debian' /etc/os-release 2>/dev/null &&
+            [ "$(uname -m)" = "aarch64" ]; then
+            echo "=== Skipping ${binary} (tsan-g++ unsupported on Debian ARM64) ==="
+            echo "    NOTE: to enable it, add --security-opt seccomp=unconfined to your docker run command"
+            continue
+        fi
+
         if [ "${name}" = "regular" ]; then
             expected_rc=0
         else
