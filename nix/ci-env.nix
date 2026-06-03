@@ -107,9 +107,13 @@ in
       customGcc
       customClangForCiEnv
       customBinutils
+      # CA certificate bundle so HTTPS clients (git, curl, conan) can verify
+      # TLS connections without ca-certificates being installed in the system.
+      pkgs.cacert
     ];
     pathsToLink = [
       "/bin"
+      "/etc/ssl/certs"
       "/lib"
       "/include"
       "/share"

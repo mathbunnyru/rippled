@@ -22,3 +22,9 @@ pre-commit --version
 python3 --version
 run-clang-tidy --help
 vim --version
+
+# A simple test to verify that git can clone a repository over HTTPS
+# (i.e. the CA bundle is wired up). Clone to a temp dir and clean up.
+tmp_clone="$(mktemp -d)"
+git clone --depth 1 https://github.com/XRPLF/actions.git "${tmp_clone}/actions"
+rm -rf "${tmp_clone}"
