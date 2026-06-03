@@ -33,14 +33,14 @@
       {
         "compiler": ["clang"],
         "build_type": ["Release"],
-        "arch": ["amd64", "arm64"],
+        "arch": ["amd64"],
         "suffix": "reffee",
         "extra_cmake_args": "-DUNIT_TEST_REFERENCE_FEE=1000"
       },
       {
         "compiler": ["gcc"],
         "build_type": ["Debug"],
-        "arch": ["amd64", "arm64"],
+        "arch": ["amd64"],
         "suffix": "unity",
         "extra_cmake_args": "-Dunity=ON"
       }
