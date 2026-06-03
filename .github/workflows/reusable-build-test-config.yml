@@ -109,13 +109,6 @@ jobs:
         if: ${{ runner.os == 'macOS' || runner.os == 'Windows' }}
         uses: XRPLF/actions/cleanup-workspace@c7d9ce5ebb03c752a354889ecd870cadfc2b1cd4
 
-      - name: This will be moved to the image, and is not complete yet
-        if: ${{ runner.os == 'Linux' }}
-        run: |
-          apt update
-          apt install -y --no-install-recommends \
-              ca-certificates # needed for git clone
-
       - name: Checkout repository
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 
