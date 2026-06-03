@@ -3,7 +3,7 @@ description: "Set CC and CXX environment variables for the given compiler."
 
 inputs:
   compiler:
-    description: 'The compiler to use ("gcc" or "clang"). Leave empty to skip.'
+    description: 'The compiler to use ("gcc" or "clang").'
     required: true
 
 runs:
