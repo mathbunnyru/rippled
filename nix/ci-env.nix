@@ -43,6 +43,15 @@ let
     bintools = customBinutils;
   };
 
+  # gcov ships in gcc's `cc` output, but the cc-wrapper doesn't expose it.
+  # Surface the gcov from our rebuilt gcc (linked against the custom glibc, so
+  # it runs under the loader installed in the image) and matching the exact
+  # compiler version, so gcovr can produce coverage reports in the CI env.
+  customGcov = pkgs.runCommand "gcov-custom-for-ci-env" { } ''
+    mkdir -p "$out/bin"
+    ln -s "${customGccCc}/bin/gcov" "$out/bin/gcov"
+  '';
+
   # stdenv built around the rebuilt gcc / custom glibc. Used to rebuild
   # compiler-rt below so its sanitizer runtimes see the custom glibc
   # headers.
@@ -105,6 +114,7 @@ in
     name = "xrpld-ci-env";
     paths = commonPackages ++ [
       customGcc
+      customGcov
       customClangForCiEnv
       customBinutils
       # CA certificate bundle so HTTPS clients (git, curl, conan) can verify

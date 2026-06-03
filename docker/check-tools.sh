@@ -10,11 +10,13 @@ cmake --version
 conan --version
 g++ --version
 gcc --version
+gcov --version
 gcovr --version
 git --version
 less --version
 make --version
 mold --version
+netstat --version
 ninja --version
 perl --version
 pkg-config --version
