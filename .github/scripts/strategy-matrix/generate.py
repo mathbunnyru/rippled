@@ -152,9 +152,7 @@ def expand_linux_matrix(linux: LinuxFile) -> list[MatrixEntry]:
         for cfg in configs:
             # An empty sanitizers list means "one entry with no sanitizer".
             effective_sanitizers = cfg.sanitizers or [""]
-            effective_archs = {
-                arch: _ARCHS[arch] for arch in cfg.arch if arch in _ARCHS
-            }
+            effective_archs = {arch: _ARCHS[arch] for arch in cfg.arch}
 
             for compiler, build_type, sanitizer, (arch, arch_info) in itertools.product(
                 cfg.compiler,
