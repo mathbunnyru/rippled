@@ -21,29 +21,14 @@ _SANITIZER_SUFFIX: dict[str, str] = {
 
 @dataclasses.dataclass
 class LinuxConfig:
-    """One entry in linux.json's 'configs' or 'package_configs' arrays.
-
-    'compiler', 'build_type', and 'sanitizers' are normalized to lists in
-    __post_init__ so the rest of the code can always iterate over them,
-    regardless of whether the JSON value was a scalar or a list.
-    """
+    """One entry in linux.json's 'configs' or 'package_configs' arrays."""
 
     compiler: list[str]
     build_type: list[str]
+    arch: list[str]
     sanitizers: list[str] = dataclasses.field(default_factory=list)
-    arch: list[str] = dataclasses.field(default_factory=lambda: ["amd64", "arm64"])
     suffix: str = ""
     extra_cmake_args: str = ""
-
-    def __post_init__(self) -> None:
-        if isinstance(self.compiler, str):
-            self.compiler = [self.compiler]
-        if isinstance(self.build_type, str):
-            self.build_type = [self.build_type]
-        if isinstance(self.sanitizers, str):
-            self.sanitizers = [self.sanitizers] if self.sanitizers else []
-        if isinstance(self.arch, str):
-            self.arch = [self.arch]
 
 
 @dataclasses.dataclass
