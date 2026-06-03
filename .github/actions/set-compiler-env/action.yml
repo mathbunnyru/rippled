@@ -4,15 +4,13 @@ description: "Set CC and CXX environment variables for the given compiler."
 inputs:
   compiler:
     description: 'The compiler to use ("gcc" or "clang"). Leave empty to skip.'
-    required: false
-    default: ""
+    required: true
 
 runs:
   using: composite
 
   steps:
     - name: Set CC and CXX
-      if: ${{ inputs.compiler != '' }}
       shell: bash
       env:
         COMPILER: ${{ inputs.compiler }}

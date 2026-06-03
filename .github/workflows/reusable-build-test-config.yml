@@ -137,7 +137,8 @@ jobs:
         with:
           subtract: ${{ inputs.nproc_subtract }}
 
-      - name: Set compiler environment
+      - name: Set compiler environment (Linux)
+        if: ${{ runner.os == 'Linux' }}
         uses: ./.github/actions/set-compiler-env
         with:
           compiler: ${{ inputs.compiler }}

@@ -81,7 +81,8 @@ jobs:
         with:
           subtract: ${{ env.NPROC_SUBTRACT }}
 
-      - name: Set compiler environment
+      - name: Set compiler environment (Linux)
+        if: ${{ runner.os == 'Linux' }}
         uses: ./.github/actions/set-compiler-env
         with:
           compiler: ${{ matrix.compiler }}
