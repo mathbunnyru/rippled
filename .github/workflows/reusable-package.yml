@@ -1,6 +1,6 @@
 # Build Linux packages (DEB and RPM) from pre-built binary artifacts.
-# Discovers which configurations to package from linux.json (configs with
-# "package": true) and fans out one job per distro. Only linux/amd64 is
+# Discovers which configurations to package from linux.json (configs in
+# "package_configs") and fans out one job per distro. Only linux/amd64 is
 # supported; the runner is hardcoded in the job below.
 name: Package
 
