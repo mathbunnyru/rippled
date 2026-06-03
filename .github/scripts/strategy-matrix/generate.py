@@ -11,6 +11,7 @@ THIS_DIR = Path(__file__).parent.resolve()
 _SANITIZER_SUFFIX: dict[str, str] = {
     "address": "asan",
     "undefinedbehavior": "ubsan",
+    "thread": "tsan",
 }
 
 
