@@ -17,6 +17,7 @@ in
     llvmPackages_22.clang-tools
     less # needed for git diff
     mold
+    nettools # provides netstat, used to debug failures in CI
     ninja
     patchelf
     perl # needed for openssl
