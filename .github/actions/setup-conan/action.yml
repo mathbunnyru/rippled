@@ -24,13 +24,13 @@ runs:
         echo 'Conan configuration:'
         conan config show '*'
 
-    - name: Set up Conan profile
+    - name: Set up Conan profiles
       shell: bash
       run: |
-        echo 'Installing profile.'
+        echo 'Installing profiles.'
         conan config install conan/profiles/ -tf $(conan config home)/profiles/
 
-        echo 'Conan profile:'
+        echo 'Conan CI profile:'
         conan profile show --profile ci
 
     - name: Set up Conan remote
