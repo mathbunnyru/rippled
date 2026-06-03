@@ -31,7 +31,7 @@ class LinuxConfig:
     compiler: list[str]
     build_type: list[str]
     sanitizers: list[str] = dataclasses.field(default_factory=list)
-    archs: list[str] = dataclasses.field(default_factory=lambda: ["amd64", "arm64"])
+    arch: list[str] = dataclasses.field(default_factory=lambda: ["amd64", "arm64"])
     suffix: str = ""
     extra_cmake_args: str = ""
 
@@ -42,8 +42,8 @@ class LinuxConfig:
             self.build_type = [self.build_type]
         if isinstance(self.sanitizers, str):
             self.sanitizers = [self.sanitizers] if self.sanitizers else []
-        if isinstance(self.archs, str):
-            self.archs = [self.archs]
+        if isinstance(self.arch, str):
+            self.arch = [self.arch]
 
 
 @dataclasses.dataclass
@@ -167,7 +167,7 @@ def expand_linux_matrix(linux: LinuxFile) -> list[MatrixEntry]:
             # An empty sanitizers list means "one entry with no sanitizer".
             effective_sanitizers = cfg.sanitizers or [""]
             effective_archs = {
-                arch: _ARCHS[arch] for arch in cfg.archs if arch in _ARCHS
+                arch: _ARCHS[arch] for arch in cfg.arch if arch in _ARCHS
             }
 
             for compiler, build_type, sanitizer, (arch, arch_info) in itertools.product(
