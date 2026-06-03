@@ -39,7 +39,6 @@ jobs:
     strategy:
       fail-fast: ${{ github.event_name == 'merge_group' }}
       matrix: ${{ fromJson(needs.generate-matrix.outputs.matrix) }}
-      max-parallel: 10
     with:
       build_only: ${{ matrix.build_only }}
       build_type: ${{ matrix.build_type }}
