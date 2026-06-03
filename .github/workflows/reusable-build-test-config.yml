@@ -209,6 +209,13 @@ jobs:
               --parallel "${BUILD_NPROC}" \
               --target "${CMAKE_TARGET}"
 
+      # This step is needed to allow running in non-Nix environments
+      - name: Patch binary to use default loader and remove rpath
+        if: ${{ runner.os == 'Linux' }}
+        run: |
+          loader="$(/tmp/loader-path.sh)"
+          patchelf --set-interpreter "${loader}" --remove-rpath "${{ env.BUILD_DIR }}/xrpld"
+
       - name: Show ccache statistics
         if: ${{ inputs.ccache_enabled }}
         run: |
