@@ -4,6 +4,8 @@
 #   -fsanitize=thread    → libtsan.so.2
 #   -fsanitize=undefined → libubsan.so.1
 #
+# We also install libatomic, which is a common dependency of the above libraries and may be required by some test binaries.
+#
 # The exact SONAMEs required depend on the compiler toolchain used to build the
 # test binaries (see nix/ci-env.nix). If the toolchain is bumped and SONAMEs
 # change, update the list below (or detect them from the binaries).
@@ -32,7 +34,8 @@ case "${ID}" in
         apt-get install -y --no-install-recommends \
             libasan8 \
             libtsan2 \
-            libubsan1
+            libubsan1 \
+            libatomic1
 
         apt-get clean
         rm -rf /var/lib/apt/lists/*
@@ -48,7 +51,8 @@ case "${ID}" in
         apt-get install -y --no-install-recommends \
             libasan8 \
             libtsan2 \
-            libubsan1
+            libubsan1 \
+            libatomic1
 
         apt-get clean
         rm -rf /var/lib/apt/lists/*
@@ -58,7 +62,8 @@ case "${ID}" in
         dnf install -y \
             libasan8 \
             libtsan2 \
-            libubsan
+            libubsan \
+            libatomic
 
         dnf clean -y all
         rm -rf /var/cache/dnf/*
