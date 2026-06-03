@@ -100,6 +100,9 @@ jobs:
       # header files are copied into separate directories by CMake, which will
       # otherwise result in cache misses.
       CCACHE_SLOPPINESS: include_file_ctime,include_file_mtime
+      # Compile the original file if pre-processed wasn't found in the cache
+      # More details: https://petereisentraut.blogspot.com/2011/09/ccache-and-clang-part-2.html
+      CCACHE_CPP2: yes
       # Determine if coverage and voidstar should be enabled.
       COVERAGE_ENABLED: ${{ contains(inputs.cmake_args, '-Dcoverage=ON') }}
       VOIDSTAR_ENABLED: ${{ contains(inputs.cmake_args, '-Dvoidstar=ON') }}
