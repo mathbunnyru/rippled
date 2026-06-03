@@ -43,7 +43,6 @@
 #include <xrpl/basics/BasicConfig.h>
 #include <xrpl/basics/ByteUtilities.h>
 #include <xrpl/basics/Log.h>
-#include <xrpl/basics/MallocTrim.h>
 #include <xrpl/basics/ResolverAsio.h>
 #include <xrpl/basics/ToString.h>
 #include <xrpl/basics/base_uint.h>
@@ -1087,8 +1086,6 @@ public:
             JLOG(journal_.debug()) << "CachedSLEs sweep.  Size before: " << oldCachedSLEsSize
                                    << "; size after: " << cachedSLEs_.size();
         }
-
-        mallocTrim("doSweep", journal_);
 
         // Set timer to do another sweep later.
         setSweepTimer();
