@@ -210,17 +210,11 @@ jobs:
               --target "${CMAKE_TARGET}"
 
       # This step is needed to allow running in non-Nix environments
-      - name: Patch binary to use default loader and remove rpath (Linux)
+      - name: Patch binary to use default loader and remove rpath
         if: ${{ runner.os == 'Linux' }}
         run: |
           loader="$(/tmp/loader-path.sh)"
           patchelf --set-interpreter "${loader}" --remove-rpath "${{ env.BUILD_DIR }}/xrpld"
-
-      # These are not required in the build environment, but are required after patching the binary
-      - name: Install runtime sanitizer libraries (Linux)
-        if: ${{ runner.os == 'Linux' && env.SANITIZERS_ENABLED == 'true' }}
-        run: |
-          ./docker/install-runtime-libs.sh
 
       - name: Show ccache statistics
         if: ${{ inputs.ccache_enabled }}

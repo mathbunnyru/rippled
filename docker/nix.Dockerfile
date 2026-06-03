@@ -87,7 +87,7 @@ RUN if echo "${BASE_IMAGE}" | grep -qiE 'nixos'; then \
 SHELL ["/bin/bash", "-e", "-o", "pipefail", "-c"]
 
 # Sanity-check that the built binaries run correctly in the vanilla base image, with the necessary sanitizer runtime libraries installed.
-COPY docker/install-runtime-libs.sh /tmp/install-runtime-libs.sh
+COPY docker/install-sanitizer-libs.sh /tmp/install-sanitizer-libs.sh
 COPY docker/test_files/run-test-binaries.sh /tmp/run-test-binaries.sh
 COPY --from=final /tmp/bins /tmp/bins
 
@@ -95,7 +95,7 @@ RUN <<EOF
 if echo "${BASE_IMAGE}" | grep -qiE 'nixos'; then
     echo "Skipping runnning binaries on NixOS."
 else
-    /tmp/install-runtime-libs.sh
+    /tmp/install-sanitizer-libs.sh
     /tmp/run-test-binaries.sh /tmp/bins
 fi
 touch /tmp/tests-passed
