@@ -64,7 +64,7 @@ class PlatformConfig:
     """One entry in macos.json's or windows.json's 'configs' array."""
 
     build_type: list[str]
-    build_only: bool = False  # if true, skip tests (e.g. Windows Debug)
+    build_only: bool = False  # if true, skip tests (e.g. macos/Windows Debug)
 
     def __post_init__(self) -> None:
         if isinstance(self.build_type, str):
