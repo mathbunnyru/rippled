@@ -1,5 +1,5 @@
 {
-  "image_tag": "sha-1441d46",
+  "image_tag": "sha-023bdae",
   "base_cmake_args": "-Dtests=ON -Dwerr=ON -Dxrpld=ON -Dwextra=ON",
   "configs": {
     "ubuntu": [
