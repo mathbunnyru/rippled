@@ -210,6 +210,7 @@ jobs:
           loader="$(/tmp/loader-path.sh)"
           patchelf --set-interpreter "${loader}" --remove-rpath "${{ env.BUILD_DIR }}/xrpld"
 
+      # We're only running aarch64 Linux builds in Ubuntu-based images, so this is kept simple
       - name: Install libatomic (Linux aarch64)
         if: ${{ runner.os == 'Linux' && runner.arch == 'ARM64' }}
         run: |
