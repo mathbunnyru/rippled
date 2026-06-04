@@ -37,7 +37,7 @@ runs:
       run: |
         echo 'Installing dependencies.'
         conan install \
-            --profile ci \
+            --profile:all ci \
             --build="${BUILD_OPTION}" \
             --options:host='&:tests=True' \
             --options:host='&:xrpld=True' \
