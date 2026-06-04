@@ -154,6 +154,26 @@ else()
             >
     )
 
+    # libresolv hosts getaddrinfo's resolver helpers (dn_expand, res_*). Under ASan
+    # these are intercepted via dlsym(RTLD_NEXT, ...), which yields a NULL pointer
+    # and crashes DNS resolution if libresolv isn't loaded. Linking it guarantees
+    # the symbols are present; it's a harmless no-op on glibc >= 2.34 (merged into
+    # libc) and is what the compiler driver already does for sanitizer builds.
+    #   https://github.com/llvm/llvm-project/issues/59007
+    #   https://github.com/google/sanitizers/issues/1592
+    if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
+        find_library(RESOLV_LIBRARY NAMES resolv)
+        if(RESOLV_LIBRARY)
+            # --no-as-needed forces the DT_NEEDED entry to survive: the symbol is pulled
+            # in indirectly (via the sanitizer interceptor), not by a direct reference,
+            # so the default --as-needed would otherwise drop the dependency.
+            target_link_libraries(
+                common
+                PUBLIC -Wl,--no-as-needed ${RESOLV_LIBRARY} -Wl,--as-needed
+            )
+        endif()
+    endif()
+
     # Keep -stdlib=libstdc++ off the compile commands, but preserve it for linking.
     #
     # Conan turns `compiler.libcxx=libstdc++` into `-stdlib=libstdc++` and puts it in
