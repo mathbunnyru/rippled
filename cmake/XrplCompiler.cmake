@@ -169,7 +169,7 @@ else()
             # so the default --as-needed would otherwise drop the dependency.
             target_link_libraries(
                 common
-                INTERFACE -Wl,--no-as-needed ${RESOLV_LIBRARY} -Wl,--as-needed
+                PUBLIC -Wl,--no-as-needed ${RESOLV_LIBRARY} -Wl,--as-needed
             )
         endif()
     endif()
