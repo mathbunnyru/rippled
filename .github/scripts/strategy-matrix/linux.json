@@ -66,7 +66,8 @@
       {
         "compiler": ["gcc"],
         "build_type": ["Release"],
-        "arch": ["amd64"]
+        "arch": ["amd64"],
+        "image": "debian:bookworm"
       }
     ],
 
@@ -74,7 +75,8 @@
       {
         "compiler": ["gcc"],
         "build_type": ["Release"],
-        "arch": ["amd64"]
+        "arch": ["amd64"],
+        "image": "registry.access.redhat.com/ubi9/ubi:latest"
       }
     ]
   }

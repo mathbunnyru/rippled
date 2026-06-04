@@ -42,6 +42,7 @@ class LinuxConfig:
     sanitizers: list[str] = dataclasses.field(default_factory=list)
     suffix: str = ""
     extra_cmake_args: str = ""
+    image: str = ""  # only used by package_configs entries
 
 
 @dataclasses.dataclass
@@ -132,6 +133,7 @@ class PackagingEntry:
 
     artifact_name: str
     image: str
+    distro: str  # e.g. "debian" or "rhel"; drives package-format-specific steps
 
 
 # ---------------------------------------------------------------------------
@@ -194,7 +196,13 @@ def expand_linux_matrix(linux: LinuxFile) -> list[MatrixEntry]:
 
 
 def expand_linux_packaging(linux: LinuxFile) -> list[PackagingEntry]:
-    """Generate the packaging matrix from a LinuxFile's package_configs section."""
+    """Generate the packaging matrix from a LinuxFile's package_configs section.
+
+    Packaging uses vanilla distro images (debian:bookworm, ubi9, …) instead of
+    the nix-based build images, because deb/rpm tooling (debhelper, rpm-build)
+    is taken from the distro's archive rather than from nixpkgs. Each config
+    entry carries its own 'image'.
+    """
     entries = []
     for distro, configs in linux.package_configs.items():
         for cfg in configs:
@@ -202,7 +210,8 @@ def expand_linux_packaging(linux: LinuxFile) -> list[PackagingEntry]:
                 entries.append(
                     PackagingEntry(
                         artifact_name=f"xrpld-{distro}-{compiler}-{build_type.lower()}-amd64",
-                        image=f"ghcr.io/xrplf/xrpld/nix-{distro}:{linux.image_tag}",
+                        image=cfg.image,
+                        distro=distro,
                     )
                 )
 
