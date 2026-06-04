@@ -80,6 +80,16 @@ jobs:
       - name: Make binary executable
         run: chmod +x "${BUILD_DIR}/xrpld"
 
+      # debhelper isn't packaged in nixpkgs, so install it from the base
+      # image's archive on Debian/Ubuntu hosts. RPM jobs don't need it.
+      - name: Install debhelper (deb hosts only)
+        run: |
+          if command -v apt-get >/dev/null 2>&1; then
+              export DEBIAN_FRONTEND=noninteractive
+              apt-get update
+              apt-get install -y --no-install-recommends debhelper
+          fi
+
       - name: Build package
         env:
           PKG_VERSION: ${{ needs.generate-version.outputs.version }}
