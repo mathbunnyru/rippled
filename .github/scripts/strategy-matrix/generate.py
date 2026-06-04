@@ -195,15 +195,18 @@ def expand_linux_matrix(linux: LinuxFile) -> list[MatrixEntry]:
 
 def expand_linux_packaging(linux: LinuxFile) -> list[PackagingEntry]:
     """Generate the packaging matrix from a LinuxFile's package_configs section."""
-    return [
-        PackagingEntry(
-            artifact_name=f"xrpld-{distro}-{compiler}-{build_type.lower()}-amd64",
-            image=f"ghcr.io/xrplf/xrpld/nix-{distro}:{linux.image_tag}",
-        )
-        for distro, configs in linux.package_configs.items()
-        for cfg in configs
-        for compiler, build_type in itertools.product(cfg.compiler, cfg.build_type)
-    ]
+    entries = []
+    for distro, configs in linux.package_configs.items():
+        for cfg in configs:
+            for compiler, build_type in itertools.product(cfg.compiler, cfg.build_type):
+                entries.append(
+                    PackagingEntry(
+                        artifact_name=f"xrpld-{distro}-{compiler}-{build_type.lower()}-amd64",
+                        image=f"ghcr.io/xrplf/xrpld/nix-{distro}:{linux.image_tag}",
+                    )
+                )
+
+    return entries
 
 
 def expand_platform_matrix(pf: PlatformFile) -> list[MatrixEntry]:
