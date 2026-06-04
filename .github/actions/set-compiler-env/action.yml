@@ -10,22 +10,23 @@ runs:
   using: composite
 
   steps:
-    - name: Set CC and CXX
+    - name: Set CC and CXX for gcc
+      if: ${{ inputs.compiler == 'gcc' }}
       shell: bash
-      env:
-        COMPILER: ${{ inputs.compiler }}
       run: |
-        case "${COMPILER}" in
-            gcc)
-                echo "CC=gcc" >>"${GITHUB_ENV}"
-                echo "CXX=g++" >>"${GITHUB_ENV}"
-                ;;
-            clang)
-                echo "CC=clang" >>"${GITHUB_ENV}"
-                echo "CXX=clang++" >>"${GITHUB_ENV}"
-                ;;
-            *)
-                echo "Unknown compiler: ${COMPILER}" >&2
-                exit 1
-                ;;
-        esac
+        echo "CC=gcc" >>"${GITHUB_ENV}"
+        echo "CXX=g++" >>"${GITHUB_ENV}"
+
+    - name: Set CC and CXX for clang
+      if: ${{ inputs.compiler == 'clang' }}
+      shell: bash
+      run: |
+        echo "CC=clang" >>"${GITHUB_ENV}"
+        echo "CXX=clang++" >>"${GITHUB_ENV}"
+
+    - name: Fail on unknown compiler
+      if: ${{ inputs.compiler != 'gcc' && inputs.compiler != 'clang' }}
+      shell: bash
+      run: |
+        echo "Unknown compiler: ${{ inputs.compiler }}" >&2
+        exit 1
