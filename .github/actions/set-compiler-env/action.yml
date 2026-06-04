@@ -27,6 +27,11 @@ runs:
     - name: Fail on unknown compiler
       if: ${{ inputs.compiler != 'gcc' && inputs.compiler != 'clang' }}
       shell: bash
+    - name: Fail on unknown compiler
+      if: ${{ inputs.compiler != 'gcc' && inputs.compiler != 'clang' }}
+      shell: bash
+      env:
+        COMPILER: ${{ inputs.compiler }}
       run: |
-        echo "Unknown compiler: ${{ inputs.compiler }}" >&2
+        echo "Unknown compiler: $COMPILER" >&2
         exit 1
