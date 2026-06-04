@@ -305,7 +305,25 @@ jobs:
           set -o pipefail
           # Coverage builds are slower due to instrumentation; use fewer parallel jobs to avoid flakiness
           [ "$COVERAGE_ENABLED" = "true" ] && BUILD_NPROC=$((BUILD_NPROC - 2))
-          ./xrpld --unittest --unittest-jobs "${BUILD_NPROC}" 2>&1 | tee unittest.log
+
+          # The resolver/preload workaround is only correct for the ASan build:
+          # a regular build doesn't hit the __dn_expand interceptor bug, and must
+          # NOT have libasan injected. So only preload when xrpld is ASan-built.
+          #
+          # libresolv hosts getaddrinfo's resolver helpers (dn_expand, res_*). Under ASan
+          # these are intercepted via dlsym(RTLD_NEXT, ...), which yields a NULL pointer
+          # and crashes DNS resolution if libresolv isn't loaded. Linking it guarantees
+          # the symbols are present; it's a harmless no-op on glibc >= 2.34 (merged into
+          # libc) and is what the compiler driver already does for sanitizer builds.
+          #   https://github.com/llvm/llvm-project/issues/59007
+          #   https://github.com/google/sanitizers/issues/1592
+          if ldd ./xrpld | grep -q libasan; then
+              PRELOAD="$(gcc -print-file-name=libasan.so):/usr/lib/x86_64-linux-gnu/libresolv.so.2"
+          else
+              PRELOAD=""
+          fi
+
+          LD_PRELOAD="$PRELOAD" ./xrpld --unittest --unittest-jobs "${BUILD_NPROC}" 2>&1 | tee unittest.log
 
       - name: Show test failure summary
         if: ${{ failure() && !inputs.build_only }}
