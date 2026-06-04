@@ -15,7 +15,7 @@ runs:
   using: composite
 
   steps:
-    - name: Prepend custom configuration to global.conf
+    - name: Apply custom configuration to global.conf
       shell: bash
       run: |
         cat conan/global.conf ${{ runner.os == 'Linux' && '>>' || '>' }} $(conan config home)/global.conf
