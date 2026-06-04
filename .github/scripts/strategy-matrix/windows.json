@@ -1,7 +1,6 @@
 {
   "platform": "windows/amd64",
   "runner": ["self-hosted", "Windows", "devbox"],
-  "base_cmake_args": "-Dtests=ON -Dwerr=ON -Dxrpld=ON -Dwextra=ON",
   "configs": [
     { "build_type": "Release" },
     { "build_type": "Debug", "build_only": true }

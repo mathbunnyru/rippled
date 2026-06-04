@@ -7,12 +7,24 @@ from pathlib import Path
 
 THIS_DIR = Path(__file__).parent.resolve()
 
+_BASE_CMAKE_ARGS = ["-Dtests=ON", "-Dwerr=ON", "-Dxrpld=ON", "-Dwextra=ON"]
+
 # Maps sanitizer names (as used in cmake) to short config-name suffixes.
 _SANITIZER_SUFFIX: dict[str, str] = {
     "address": "asan",
     "undefinedbehavior": "ubsan",
     "thread": "tsan",
 }
+
+
+def get_cmake_args(build_type: str, extra_args: str) -> str:
+    """Get the full list of CMake arguments for a config."""
+    args = _BASE_CMAKE_ARGS.copy()
+    if build_type == "Release":
+        args.append("-Dassert=ON")
+    if extra_args:
+        args.extend(extra_args.split())
+    return " ".join(args)
 
 
 # ---------------------------------------------------------------------------
@@ -37,7 +49,6 @@ class LinuxFile:
     """Shape of linux.json."""
 
     image_tag: str
-    base_cmake_args: str
     configs: dict[str, list[LinuxConfig]]  # distro → configs
     package_configs: dict[str, list[LinuxConfig]]  # distro → packaging configs
 
@@ -53,7 +64,6 @@ class LinuxFile:
 
         return cls(
             image_tag=data["image_tag"],
-            base_cmake_args=data["base_cmake_args"],
             configs=parse(data["configs"]),
             package_configs=parse(data.get("package_configs", {})),
         )
@@ -65,6 +75,7 @@ class PlatformConfig:
 
     build_type: list[str]
     build_only: bool = False  # if true, skip tests (e.g. macos/Windows Debug)
+    extra_cmake_args: str = ""
 
     def __post_init__(self) -> None:
         if isinstance(self.build_type, str):
@@ -77,7 +88,6 @@ class PlatformFile:
 
     platform: str  # e.g. "macos/arm64" or "windows/amd64"
     runner: list[str]  # GitHub Actions runner labels
-    base_cmake_args: str
     configs: list[PlatformConfig]
 
     @classmethod
@@ -86,7 +96,6 @@ class PlatformFile:
         return cls(
             platform=data["platform"],
             runner=data["runner"],
-            base_cmake_args=data["base_cmake_args"],
             configs=[PlatformConfig(**c) for c in data["configs"]],
         )
 
@@ -160,12 +169,6 @@ def expand_linux_matrix(linux: LinuxFile) -> list[MatrixEntry]:
                 effective_sanitizers,
                 effective_archs.items(),
             ):
-                parts = [linux.base_cmake_args]
-                if build_type == "Release":
-                    parts.append("-Dassert=ON")
-                if cfg.extra_cmake_args:
-                    parts.append(cfg.extra_cmake_args)
-
                 name = f"{distro}-{compiler}-{build_type.lower()}-{arch}"
                 suffix_parts = [
                     s for s in [cfg.suffix, _SANITIZER_SUFFIX.get(sanitizer, "")] if s
@@ -177,7 +180,7 @@ def expand_linux_matrix(linux: LinuxFile) -> list[MatrixEntry]:
                     MatrixEntry(
                         config_name=name,
                         image=f"ghcr.io/xrplf/xrpld/nix-{distro}:{linux.image_tag}",
-                        cmake_args=" ".join(parts),
+                        cmake_args=get_cmake_args(build_type, cfg.extra_cmake_args),
                         cmake_target="all",
                         build_only=False,
                         build_type=build_type,
@@ -211,13 +214,10 @@ def expand_platform_matrix(pf: PlatformFile) -> list[MatrixEntry]:
     entries: list[MatrixEntry] = []
     for cfg in pf.configs:
         for build_type in cfg.build_type:
-            parts = [pf.base_cmake_args]
-            if build_type == "Release":
-                parts.append("-Dassert=ON")
             entries.append(
                 MatrixEntry(
                     config_name=f"{platform_name}-{arch}-{build_type.lower()}",
-                    cmake_args=" ".join(parts),
+                    cmake_args=get_cmake_args(build_type, cfg.extra_cmake_args),
                     cmake_target="install" if is_windows else "all",
                     build_only=cfg.build_only,
                     build_type=build_type,
