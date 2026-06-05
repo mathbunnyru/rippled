@@ -29,6 +29,8 @@ function install() {
             apt-get install -y --no-install-recommends \
                 ca-certificates \
                 debhelper \
+                debhelper-compat \
+                dpkg-dev \
                 git
             ;;
 
