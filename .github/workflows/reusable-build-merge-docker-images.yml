@@ -82,5 +82,8 @@ jobs:
           done
 
       - name: Inspect image
+        env:
+          IMAGE_NAME: ${{ inputs.image_name }}
+          IMAGE_VERSION: ${{ steps.meta.outputs.version }}
         run: |
-          docker buildx imagetools inspect "${{ inputs.image_name }}:${{ steps.meta.outputs.version }}"
+          docker buildx imagetools inspect "${IMAGE_NAME}:${IMAGE_VERSION}"
