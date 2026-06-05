@@ -20,14 +20,11 @@ defaults:
   run:
     shell: bash
 
-permissions:
-  contents: read
-  packages: write
-
 jobs:
   build:
     permissions:
       contents: read
+      packages: write
 
     strategy:
       fail-fast: false
