@@ -1,4 +1,4 @@
-name: Reusable build Docker image (single platform)
+name: Reusable build and merge Docker image (multi-arch)
 
 on:
   workflow_call:
