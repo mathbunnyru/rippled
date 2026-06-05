@@ -22,6 +22,7 @@ defaults:
 
 jobs:
   build:
+    name: Build ${{ inputs.image_name }}
     permissions:
       contents: read
       packages: write
@@ -45,7 +46,7 @@ jobs:
       push: ${{ github.repository == 'XRPLF/rippled' && github.event_name == 'push' }}
 
   merge:
-    name: Merge (${{ inputs.image_name }})
+    name: Merge ${{ inputs.image_name }}
     needs: build
     runs-on: ubuntu-latest
     permissions:
