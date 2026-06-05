@@ -26,15 +26,15 @@ inside `package_configs` configurations. Today only
 `linux/amd64` is emitted. The package format
 (deb or rpm) is inferred at build time from the container's package manager
 (`apt-get` -> deb, `dnf`/`yum` -> rpm). The image tag is composed as
-`ghcr.io/xrplf/xrpld/nix-<distro>:sha-<git_sha>` —
+`ghcr.io/xrplf/xrpld/packaging-<distro>:sha-<git_sha>` —
 the same scheme used by `reusable-build-test.yml`. Bump `image_sha` in
 `linux.json` and both CI and local builds pick up the new image with no
 workflow edits.
 
-| Package type | Image (derived from `linux.json`)              | Tool required                                                   |
-| ------------ | ---------------------------------------------- | --------------------------------------------------------------- |
-| RPM          | `ghcr.io/xrplf/xrpld/nix-rhel:sha-<git_sha>`   | `rpmbuild`                                                      |
-| DEB          | `ghcr.io/xrplf/xrpld/nix-debian:sha-<git_sha>` | `dpkg-buildpackage`, `debhelper (>= 13)`, `dh-sequence-systemd` |
+| Package type | Image (derived from `linux.json`)                    | Tool required                                                   |
+| ------------ | ---------------------------------------------------- | --------------------------------------------------------------- |
+| RPM          | `ghcr.io/xrplf/xrpld/packaging-rhel:sha-<git_sha>`   | `rpmbuild`                                                      |
+| DEB          | `ghcr.io/xrplf/xrpld/packaging-debian:sha-<git_sha>` | `dpkg-buildpackage`, `debhelper (>= 13)`, `dh-sequence-systemd` |
 
 To print the exact image tags for the current `linux.json`:
 
