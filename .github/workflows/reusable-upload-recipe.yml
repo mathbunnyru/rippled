@@ -40,7 +40,7 @@ defaults:
 jobs:
   upload:
     runs-on: ubuntu-latest
-    container: ghcr.io/xrplf/ci/ubuntu-noble:gcc-13-sha-5dd7158
+    container: ghcr.io/xrplf/xrpld/nix-nixos:sha-8abe82e
     steps:
       - name: Checkout repository
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2

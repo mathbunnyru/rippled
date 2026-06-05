@@ -41,7 +41,7 @@ env:
 jobs:
   build:
     runs-on: ubuntu-latest
-    container: ghcr.io/xrplf/ci/tools-rippled-documentation:sha-a8c7be1
+    container: ghcr.io/xrplf/xrpld/nix-nixos:sha-8abe82e
     steps:
       - name: Checkout repository
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
@@ -57,18 +57,11 @@ jobs:
         with:
           subtract: ${{ env.NPROC_SUBTRACT }}
 
-      - name: Check configuration
+      - name: Print build environment
+        uses: XRPLF/actions/print-build-env@59dec886e4afb05a1724443af08baccbc045b574
+
+      - name: Check Doxygen version
         run: |
-          echo 'Checking path.'
-          echo ${PATH} | tr ':' '\n'
-
-          echo 'Checking environment variables.'
-          env | sort
-
-          echo 'Checking CMake version.'
-          cmake --version
-
-          echo 'Checking Doxygen version.'
           doxygen --version
 
       - name: Build documentation
