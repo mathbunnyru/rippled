@@ -57,11 +57,18 @@ jobs:
         with:
           subtract: ${{ env.NPROC_SUBTRACT }}
 
-      - name: Print build environment
-        uses: XRPLF/actions/print-build-env@59dec886e4afb05a1724443af08baccbc045b574
-
-      - name: Check Doxygen version
+      - name: Check configuration
         run: |
+          echo 'Checking path.'
+          echo ${PATH} | tr ':' '\n'
+
+          echo 'Checking environment variables.'
+          env | sort
+
+          echo 'Checking CMake version.'
+          cmake --version
+
+          echo 'Checking Doxygen version.'
           doxygen --version
 
       - name: Build documentation
