@@ -45,10 +45,10 @@ jobs:
             base_image: nixos/nix:latest
           - name: ubuntu
             base_image: ubuntu:20.04
-          - name: rhel
-            base_image: registry.access.redhat.com/ubi9/ubi:latest
           - name: debian
             base_image: debian:bookworm
+          - name: rhel
+            base_image: registry.access.redhat.com/ubi9/ubi:latest
     uses: ./.github/workflows/reusable-build-merge-docker-images.yml
     with:
       image_name: ghcr.io/xrplf/xrpld/nix-${{ matrix.distro.name }}
