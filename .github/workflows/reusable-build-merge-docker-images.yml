@@ -73,12 +73,14 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Create multi-arch manifests
+        if: ${{ github.repository == 'XRPLF/rippled' && github.event_name == 'push' }}
         run: |
           for tag in $(jq -cr '.tags[]' <<<"$DOCKER_METADATA_OUTPUT_JSON"); do
               docker buildx imagetools create -t "$tag" "${tag}-amd64" "${tag}-arm64"
           done
 
       - name: Inspect image
+        if: ${{ github.repository == 'XRPLF/rippled' && github.event_name == 'push' }}
         env:
           IMAGE_NAME: ${{ inputs.image_name }}
           IMAGE_VERSION: ${{ steps.meta.outputs.version }}
