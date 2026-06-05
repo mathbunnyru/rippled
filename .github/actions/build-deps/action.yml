@@ -40,10 +40,9 @@ runs:
         LOG_VERBOSITY: ${{ inputs.log_verbosity }}
         SANITIZERS: ${{ inputs.sanitizers }}
       run: |
-        echo 'Installing dependencies.'
         conan install \
             --output-folder "${BUILD_DIR}" \
-            --profile ci \
+            --profile:all ci \
             --build="${BUILD_OPTION}" \
             --options:host='&:tests=True' \
             --options:host='&:xrpld=True' \
