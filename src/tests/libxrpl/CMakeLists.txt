@@ -1,46 +1,56 @@
 include(GoogleTest)
-include(XrplAddTest)
+include(isolate_headers)
 
 # Test requirements.
 find_package(GTest REQUIRED)
 
-# Custom target for all tests defined in this file
-add_custom_target(xrpl.tests)
-
-# Test helpers
-add_library(xrpl.helpers.test STATIC)
-target_sources(
-    xrpl.helpers.test
-    PRIVATE helpers/Account.cpp helpers/TestSink.cpp helpers/TxTest.cpp
+# Single combined gtest binary built from the shared test helpers and all test
+# modules below.
+add_executable(
+    xrpl_tests
+    main.cpp
+    helpers/Account.cpp
+    helpers/TestSink.cpp
+    helpers/TxTest.cpp
 )
-target_include_directories(xrpl.helpers.test PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
-target_link_libraries(xrpl.helpers.test PUBLIC xrpl.libxrpl gtest::gtest)
-
-# Common library dependencies for the rest of the tests.
-add_library(xrpl.imports.test INTERFACE)
-target_link_libraries(
-    xrpl.imports.test
-    INTERFACE gtest::gtest xrpl.libxrpl xrpl.helpers.test
-)
-
-# Single combined gtest binary; each xrpl_add_test() call appends to it.
-add_executable(xrpl_tests main.cpp)
 set_target_properties(
     xrpl_tests
     PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}"
 )
-target_link_libraries(xrpl_tests PRIVATE GTest::gtest)
-gtest_discover_tests(xrpl_tests)
+# Lets test sources include the shared helpers as <helpers/...>.
+target_include_directories(xrpl_tests PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
+target_link_libraries(xrpl_tests PRIVATE GTest::gtest xrpl.libxrpl)
 
-xrpl_add_test(basics LIBRARIES xrpl.imports.test)
-xrpl_add_test(crypto LIBRARIES xrpl.imports.test)
-xrpl_add_test(json LIBRARIES xrpl.imports.test)
-xrpl_add_test(tx LIBRARIES xrpl.imports.test)
-xrpl_add_test(protocol_autogen LIBRARIES xrpl.imports.test)
-
-# Network unit tests are currently not supported on Windows
+# One source subdirectory per module. Network unit tests are currently not
+# supported on Windows.
+set(test_modules
+    basics
+    crypto
+    json
+    tx
+    protocol_autogen
+)
 if(NOT WIN32)
-    xrpl_add_test(net LIBRARIES xrpl.imports.test)
+    list(APPEND test_modules net)
 endif()
 
-add_dependencies(xrpl.tests xrpl_tests)
+foreach(module IN LISTS test_modules)
+    # Append the module's sources (${module}/*.cpp and ${module}.cpp, if any).
+    file(
+        GLOB_RECURSE sources
+        CONFIGURE_DEPENDS
+        "${CMAKE_CURRENT_SOURCE_DIR}/${module}/*.cpp"
+        "${CMAKE_CURRENT_SOURCE_DIR}/${module}.cpp"
+    )
+    target_sources(xrpl_tests PRIVATE ${sources})
+
+    # Expose the module's private headers under their canonical include path.
+    isolate_headers(
+        xrpl_tests
+        "${CMAKE_SOURCE_DIR}"
+        "${CMAKE_SOURCE_DIR}/tests/${module}"
+        PRIVATE
+    )
+endforeach()
+
+gtest_discover_tests(xrpl_tests)

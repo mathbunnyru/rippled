@@ -11,19 +11,6 @@ endfunction()
 function(create_symbolic_link target link)
 endfunction()
 
-function(xrpl_add_test name)
-    set(options)
-    set(oneValueArgs)
-    set(multiValueArgs LIBRARIES)
-    cmake_parse_arguments(
-        THIS_FUNCTION_PREFIX
-        "${options}"
-        "${oneValueArgs}"
-        "${multiValueArgs}"
-        ${ARGN}
-    )
-endfunction()
-
 macro(exclude_from_default target_)
 endmacro()
 
