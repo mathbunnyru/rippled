@@ -38,7 +38,7 @@ defaults:
 
 jobs:
   build:
-    name: Build (${{ inputs.platform }})
+    name: Build ${{ inputs.platform }}
     runs-on: ${{ inputs.runner }}
     permissions:
       contents: read
