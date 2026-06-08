@@ -96,7 +96,6 @@ Checks: "-*,
   misc-header-include-cycle,
   misc-include-cleaner,
   misc-misplaced-const,
-  misc-override-with-different-visibility,
   misc-redundant-expression,
   misc-static-assert,
   misc-throw-by-value-catch-by-reference,
@@ -159,7 +158,8 @@ Checks: "-*,
   readability-use-std-min-max
   "
 # ---
-# readability-inconsistent-declaration-parameter-name, # In this codebase this check will break a lot of arg names
+# misc-override-with-different-visibility,             # will be addressed in a future PR, but for now it generates too many warnings
+# readability-inconsistent-declaration-parameter-name, # in this codebase this check will break a lot of arg names
 # readability-static-accessed-through-instance,        # this check is probably unnecessary. It makes the code less readable
 # ---
 
