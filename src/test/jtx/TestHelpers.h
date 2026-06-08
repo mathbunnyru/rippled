@@ -27,7 +27,7 @@ namespace xrpl::test::jtx {
 */
 template <
     class SField,
-    class StoredValue = typename SField::type::value_type,
+    class StoredValue = SField::type::value_type,
     class OutputValue = StoredValue>
 struct JTxField
 {
@@ -213,8 +213,8 @@ template <class JTxField>
 struct JTxFieldWrapper
 {
     using JF = JTxField;
-    using SF = typename JF::SF;
-    using SV = typename JF::SV;
+    using SF = JF::SF;
+    using SV = JF::SV;
 
 protected:
     SF const& sfield_;
@@ -266,10 +266,10 @@ public:
     }
 };
 
-template <class SField, class UnitTag, class ValueType = typename SField::type::value_type>
+template <class SField, class UnitTag, class ValueType = SField::type::value_type>
 using valueUnitWrapper = JTxFieldWrapper<ValueUnitField<SField, UnitTag, ValueType>>;
 
-template <class SField, class StoredValue = typename SField::type::value_type>
+template <class SField, class StoredValue = SField::type::value_type>
 using simpleField = JTxFieldWrapper<JTxField<SField, StoredValue>>;
 
 /** General field definitions, or fields used in multiple transaction namespaces

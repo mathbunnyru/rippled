@@ -29,7 +29,7 @@ static_assert(
 namespace detail {
 
 // Determines if a type can be called like an Engine
-template <class Engine, class Result = typename Engine::result_type>
+template <class Engine, class Result = Engine::result_type>
 using is_engine = std::is_invocable_r<Result, Engine>;
 }  // namespace detail
 

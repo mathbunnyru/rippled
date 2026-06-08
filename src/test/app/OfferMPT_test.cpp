@@ -3432,7 +3432,7 @@ public:
         auto const gw = Account("gateway");
 
         auto const fee = env.current()->fees().base;
-        env.fund(reserve(env, 2) + drops(9999640) + (fee), ann);
+        env.fund(reserve(env, 2) + drops(9999640) + fee, ann);
         env.fund(reserve(env, 2) + (fee * 4), gw);
         env.close();
 
@@ -3468,7 +3468,7 @@ public:
         auto const bob = Account("bob");
 
         auto const fee = env.current()->fees().base;
-        env.fund(reserve(env, 2) + drops(400'000'000'000) + (fee), alice, bob);
+        env.fund(reserve(env, 2) + drops(400'000'000'000) + fee, alice, bob);
         env.fund(reserve(env, 2) + (fee * 4), gw);
         env.close();
 

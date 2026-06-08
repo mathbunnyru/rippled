@@ -3614,7 +3614,7 @@ public:
         auto const btc = gw["BTC"];
 
         auto const fee = env.current()->fees().base;
-        env.fund(reserve(env, 2) + drops(9999640) + (fee), ann);
+        env.fund(reserve(env, 2) + drops(9999640) + fee, ann);
         env.fund(reserve(env, 2) + (fee * 4), gw);
         env.close();
 
@@ -3652,7 +3652,7 @@ public:
         auto const cny = gw["CNY"];
 
         auto const fee = env.current()->fees().base;
-        env.fund(reserve(env, 2) + drops(400000000000) + (fee), alice, bob);
+        env.fund(reserve(env, 2) + drops(400000000000) + fee, alice, bob);
         env.fund(reserve(env, 2) + (fee * 4), gw);
         env.close();
 
@@ -3699,7 +3699,7 @@ public:
         auto const jpy = gw["JPY"];
 
         auto const fee = env.current()->fees().base;
-        env.fund(reserve(env, 2) + drops(400000000000) + (fee), alice, bob);
+        env.fund(reserve(env, 2) + drops(400000000000) + fee, alice, bob);
         env.fund(reserve(env, 2) + (fee * 4), gw);
         env.close();
 
@@ -3752,7 +3752,7 @@ public:
         auto const jpy = gw2["JPY"];
 
         auto const fee = env.current()->fees().base;
-        env.fund(reserve(env, 2) + drops(400000000000) + (fee), alice, bob);
+        env.fund(reserve(env, 2) + drops(400000000000) + fee, alice, bob);
         env.fund(reserve(env, 2) + (fee * 4), gw1, gw2);
         env.close();
 

@@ -233,7 +233,7 @@ MPTokenIssuanceSet::preclaim(PreclaimContext const& ctx)
     {
         if (std::ranges::any_of(kMptMutabilityFlags, [mutableFlags, &isMutableFlag](auto const& f) {
                 return !isMutableFlag(f.canMutateFlag) &&
-                    ((*mutableFlags & (f.setFlag | f.clearFlag)));
+                    (*mutableFlags & (f.setFlag | f.clearFlag));
             }))
             return tecNO_PERMISSION;
 
