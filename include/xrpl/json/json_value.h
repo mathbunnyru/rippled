@@ -580,7 +580,7 @@ public:
     SelfType
     operator++(int)
     {
-        SelfType temp(*this);
+        SelfType const temp(*this);
         ++*this;
         return temp;
     }
@@ -588,7 +588,7 @@ public:
     SelfType
     operator--(int)
     {
-        SelfType temp(*this);
+        SelfType const temp(*this);
         --*this;
         return temp;
     }

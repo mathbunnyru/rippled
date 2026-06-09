@@ -809,7 +809,9 @@ Consensus<Adaptor>::peerProposalInternal(
                 gotTxSet(now_, *set);
             }
             else
+            {
                 JLOG(j_.debug()) << "Don't have tx set for peer";
+            }
         }
         else if (result_)
         {

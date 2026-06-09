@@ -78,11 +78,9 @@
 #include <xrpl/protocol/ApiVersion.h>
 #include <xrpl/protocol/BuildInfo.h>
 #include <xrpl/protocol/Feature.h>
-#include <xrpl/protocol/Indexes.h>
 #include <xrpl/protocol/Protocol.h>
 #include <xrpl/protocol/STParsedJSON.h>
 #include <xrpl/protocol/Serializer.h>
-#include <xrpl/protocol/SystemParameters.h>
 #include <xrpl/protocol/jss.h>
 #include <xrpl/rdb/DatabaseCon.h>
 #include <xrpl/resource/Charge.h>
@@ -1612,7 +1610,9 @@ ApplicationImp::signalStop(std::string const& msg)
             JLOG(journal_.warn()) << "Server stopping";
         }
         else
+        {
             JLOG(journal_.warn()) << "Server stopping: " << msg;
+        }
 
         isTimeToStop.notify_all();
     }
