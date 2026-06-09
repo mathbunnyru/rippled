@@ -566,6 +566,7 @@ public:
     using SelfType = ValueConstIterator;
 
     ValueConstIterator() = default;
+    ValueConstIterator(ValueConstIterator const& other) = default;
 
 private:
     /*! \internal Use by Value to create an iterator.
@@ -574,7 +575,7 @@ private:
 
 public:
     SelfType&
-    operator=(ValueIteratorBase const& other);
+    operator=(SelfType const& other);
 
     SelfType
     operator++(int)
