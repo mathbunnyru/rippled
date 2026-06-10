@@ -27,16 +27,17 @@ def get_cmake_args(build_type: str, extra_args: str) -> str:
     return " ".join(args)
 
 
-def runs_on_event(event_type: str | list[str], event: str | None) -> bool:
-    """Whether a config with this event_type should run for the current event.
+def runs_on_event(exclude_event_types: list[str], event: str | None) -> bool:
+    """Whether a config should run for the current event.
 
-    'event_type' is either the string "all" (run on every event) or a list of
-    GitHub event names (e.g. ["push", "pull_request"]) to restrict the config
-    to. When no event is given (event is None), no filtering is applied.
+    'exclude_event_types' is a list of GitHub event names (e.g.
+    ["pull_request"]) on which the config should NOT run; an empty list means
+    the config runs on every event. When no event is given (event is None), no
+    filtering is applied.
     """
-    if event is None or event_type == "all":
+    if event is None:
         return True
-    return event in event_type
+    return event not in exclude_event_types
 
 
 # ---------------------------------------------------------------------------
@@ -55,9 +56,9 @@ class LinuxConfig:
     suffix: str = ""
     extra_cmake_args: str = ""
     image: str = ""  # only used by package_configs entries
-    # Either the string "all" or a list of GitHub event names (e.g. "push",
-    # "pull_request") on which this config should run.
-    event_type: str | list[str] = "all"
+    # List of GitHub event names (e.g. "pull_request") on which this config
+    # should NOT run. Empty means it runs on every event.
+    exclude_event_types: list[str] = dataclasses.field(default_factory=list)
 
 
 @dataclasses.dataclass
@@ -92,9 +93,9 @@ class PlatformConfig:
     build_type: list[str]
     build_only: bool = False  # if true, skip tests (e.g. macos/Windows Debug)
     extra_cmake_args: str = ""
-    # Either the string "all" or a list of GitHub event names (e.g. "push",
-    # "pull_request") on which this config should run.
-    event_type: str | list[str] = "all"
+    # List of GitHub event names (e.g. "pull_request") on which this config
+    # should NOT run. Empty means it runs on every event.
+    exclude_event_types: list[str] = dataclasses.field(default_factory=list)
 
     def __post_init__(self) -> None:
         if isinstance(self.build_type, str):
@@ -175,14 +176,14 @@ def expand_linux_matrix(
     """Expand a LinuxFile into a flat list of matrix entries.
 
     Each config entry is expanded over the cross-product of its
-    compiler, build_type, sanitizers, and architecture lists. Configs whose
-    'event_type' does not match the current event are skipped.
+    compiler, build_type, sanitizers, and architecture lists. Configs that
+    exclude the current event are skipped.
     """
     entries: list[MatrixEntry] = []
 
     for distro, configs in linux.configs.items():
         for cfg in configs:
-            if not runs_on_event(cfg.event_type, event):
+            if not runs_on_event(cfg.exclude_event_types, event):
                 continue
             # An empty sanitizers list means "one entry with no sanitizer".
             effective_sanitizers = cfg.sanitizers or [""]
@@ -246,14 +247,14 @@ def expand_platform_matrix(
 ) -> list[MatrixEntry]:
     """Expand a PlatformFile (macOS or Windows) into matrix entries.
 
-    Configs whose 'event_type' does not match the current event are skipped.
+    Configs that exclude the current event are skipped.
     """
     platform_name, arch = pf.platform.split("/")
     is_windows = platform_name == "windows"
 
     entries: list[MatrixEntry] = []
     for cfg in pf.configs:
-        if not runs_on_event(cfg.event_type, event):
+        if not runs_on_event(cfg.exclude_event_types, event):
             continue
         for build_type in cfg.build_type:
             entries.append(

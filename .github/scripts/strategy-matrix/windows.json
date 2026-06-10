@@ -6,7 +6,7 @@
     {
       "build_type": "Debug",
       "build_only": true,
-      "event_type": ["push", "merge_group", "schedule", "workflow_dispatch"]
+      "exclude_event_types": ["pull_request"]
     }
   ]
 }
