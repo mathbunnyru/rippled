@@ -1,5 +1,6 @@
 #include <xrpl/tx/transactors/vault/VaultClawback.h>
 
+#include <xrpl/basics/Expected.h>
 #include <xrpl/basics/Log.h>
 #include <xrpl/basics/Number.h>
 #include <xrpl/basics/base_uint.h>
@@ -25,7 +26,6 @@
 #include <xrpl/protocol/XRPAmount.h>
 #include <xrpl/tx/Transactor.h>
 
-#include <expected>
 #include <optional>
 #include <stdexcept>
 #include <utility>
@@ -218,7 +218,7 @@ VaultClawback::preclaim(PreclaimContext const& ctx)
     return tecWRONG_ASSET;
 }
 
-std::expected<std::pair<STAmount, STAmount>, TER>
+Expected<std::pair<STAmount, STAmount>, TER>
 VaultClawback::assetsToClawback(
     SLE::ref vault,
     SLE::const_ref sleShareIssuance,
@@ -230,7 +230,7 @@ VaultClawback::assetsToClawback(
         // preclaim should have blocked this , now it's an internal error
         // LCOV_EXCL_START
         JLOG(j_.error()) << "VaultClawback: asset mismatch in clawback.";
-        return std::unexpected(tecINTERNAL);
+        return Unexpected(tecINTERNAL);
         // LCOV_EXCL_STOP
     }
 
@@ -248,7 +248,7 @@ VaultClawback::assetsToClawback(
             view(), holder, share, FreezeHandling::IgnoreFreeze, AuthHandling::IgnoreAuth, j_);
         auto const maybeAssets = sharesToAssetsWithdraw(vault, sleShareIssuance, sharesDestroyed);
         if (!maybeAssets)
-            return std::unexpected(tecINTERNAL);  // LCOV_EXCL_LINE
+            return Unexpected(tecINTERNAL);  // LCOV_EXCL_LINE
 
         return std::make_pair(*maybeAssets, sharesDestroyed);
     }
@@ -265,7 +265,7 @@ VaultClawback::assetsToClawback(
             auto const maybeAssets =
                 sharesToAssetsWithdraw(vault, sleShareIssuance, sharesDestroyed);
             if (!maybeAssets)
-                return std::unexpected(tecINTERNAL);  // LCOV_EXCL_LINE
+                return Unexpected(tecINTERNAL);  // LCOV_EXCL_LINE
 
             assetsRecovered = *maybeAssets;
         }
@@ -274,13 +274,13 @@ VaultClawback::assetsToClawback(
             auto const maybeShares =
                 assetsToSharesWithdraw(vault, sleShareIssuance, clawbackAmount);
             if (!maybeShares)
-                return std::unexpected(tecINTERNAL);  // LCOV_EXCL_LINE
+                return Unexpected(tecINTERNAL);  // LCOV_EXCL_LINE
             sharesDestroyed = *maybeShares;
 
             auto const maybeAssets =
                 sharesToAssetsWithdraw(vault, sleShareIssuance, sharesDestroyed);
             if (!maybeAssets)
-                return std::unexpected(tecINTERNAL);  // LCOV_EXCL_LINE
+                return Unexpected(tecINTERNAL);  // LCOV_EXCL_LINE
             assetsRecovered = *maybeAssets;
         }
         // Clamp to maximum.
@@ -294,20 +294,20 @@ VaultClawback::assetsToClawback(
                 auto const maybeShares = assetsToSharesWithdraw(
                     vault, sleShareIssuance, assetsRecovered, TruncateShares::Yes);
                 if (!maybeShares)
-                    return std::unexpected(tecINTERNAL);  // LCOV_EXCL_LINE
+                    return Unexpected(tecINTERNAL);  // LCOV_EXCL_LINE
                 sharesDestroyed = *maybeShares;
             }
 
             auto const maybeAssets =
                 sharesToAssetsWithdraw(vault, sleShareIssuance, sharesDestroyed);
             if (!maybeAssets)
-                return std::unexpected(tecINTERNAL);  // LCOV_EXCL_LINE
+                return Unexpected(tecINTERNAL);  // LCOV_EXCL_LINE
             assetsRecovered = *maybeAssets;
             if (assetsRecovered > *assetsAvailable)
             {
                 // LCOV_EXCL_START
                 JLOG(j_.error()) << "VaultClawback: invalid rounding of shares.";
-                return std::unexpected(tecINTERNAL);
+                return Unexpected(tecINTERNAL);
                 // LCOV_EXCL_STOP
             }
         }
@@ -322,7 +322,7 @@ VaultClawback::assetsToClawback(
             << ", assetsTotal=" << vault->at(sfAssetsTotal).value()
             << ", sharesTotal=" << sleShareIssuance->at(sfOutstandingAmount)
             << ", amount=" << clawbackAmount.value();
-        return std::unexpected(tecPATH_DRY);
+        return Unexpected(tecPATH_DRY);
     }
 
     return std::make_pair(assetsRecovered, sharesDestroyed);

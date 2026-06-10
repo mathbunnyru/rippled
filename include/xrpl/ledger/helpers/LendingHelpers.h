@@ -4,7 +4,6 @@
 #include <xrpl/protocol/Rules.h>
 #include <xrpl/protocol/st.h>
 
-#include <expected>
 #include <string_view>
 
 namespace xrpl {
@@ -398,7 +397,7 @@ struct LoanStateDeltas
     nonNegative();
 };
 
-std::expected<std::pair<LoanPaymentParts, LoanProperties>, TER>
+Expected<std::pair<LoanPaymentParts, LoanProperties>, TER>
 tryOverpayment(
     Rules const& rules,
     Asset const& asset,
@@ -524,7 +523,7 @@ isRounded(Asset const& asset, Number const& value, std::int32_t scale);
 // potential extra work at the end.
 enum class LoanPaymentType { Regular = 0, Late, Full, Overpayment };
 
-std::expected<LoanPaymentParts, TER>
+Expected<LoanPaymentParts, TER>
 loanMakePayment(
     Asset const& asset,
     ApplyView& view,

@@ -401,7 +401,7 @@ public:
                 }),
                 std::make_unique<CaptureLogs>(&messages)};
         });
-        BEAST_EXPECT(messages.contains("Missing 'ip' in [port_rpc]"));
+        BEAST_EXPECT(messages.find("Missing 'ip' in [port_rpc]") != std::string::npos);
 
         except([&] {
             Env const env{
@@ -413,7 +413,7 @@ public:
                 }),
                 std::make_unique<CaptureLogs>(&messages)};
         });
-        BEAST_EXPECT(messages.contains("Missing 'port' in [port_rpc]"));
+        BEAST_EXPECT(messages.find("Missing 'port' in [port_rpc]") != std::string::npos);
 
         except([&] {
             Env const env{
@@ -426,7 +426,8 @@ public:
                 }),
                 std::make_unique<CaptureLogs>(&messages)};
         });
-        BEAST_EXPECT(!messages.contains("Invalid value '0' for key 'port' in [port_rpc]"));
+        BEAST_EXPECT(
+            messages.find("Invalid value '0' for key 'port' in [port_rpc]") == std::string::npos);
 
         except([&] {
             Env const env{
@@ -437,7 +438,8 @@ public:
                 }),
                 std::make_unique<CaptureLogs>(&messages)};
         });
-        BEAST_EXPECT(messages.contains("Invalid value '0' for key 'port' in [server]"));
+        BEAST_EXPECT(
+            messages.find("Invalid value '0' for key 'port' in [server]") != std::string::npos);
 
         except([&] {
             Env const env{
@@ -451,7 +453,7 @@ public:
                 }),
                 std::make_unique<CaptureLogs>(&messages)};
         });
-        BEAST_EXPECT(messages.contains("Missing 'protocol' in [port_rpc]"));
+        BEAST_EXPECT(messages.find("Missing 'protocol' in [port_rpc]") != std::string::npos);
 
         except([&]  // this creates a standard test config without the server
                     // section
@@ -480,7 +482,7 @@ public:
                        }),
                        std::make_unique<CaptureLogs>(&messages)};
                });
-        BEAST_EXPECT(messages.contains("Required section [server] is missing"));
+        BEAST_EXPECT(messages.find("Required section [server] is missing") != std::string::npos);
 
         except([&]  // this creates a standard test config without some of the
                     // port sections
@@ -501,7 +503,7 @@ public:
                        }),
                        std::make_unique<CaptureLogs>(&messages)};
                });
-        BEAST_EXPECT(messages.contains("Missing section: [port_peer]"));
+        BEAST_EXPECT(messages.find("Missing section: [port_peer]") != std::string::npos);
     }
 
     void

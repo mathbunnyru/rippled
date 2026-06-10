@@ -479,7 +479,8 @@ public:
         }
         catch (std::runtime_error const& e)
         {
-            BEAST_EXPECT(std::string(e.what()).contains("Incomplete TLS configuration"));
+            BEAST_EXPECT(
+                std::string(e.what()).find("Incomplete TLS configuration") != std::string::npos);
         }
     }
 
@@ -504,7 +505,8 @@ public:
         }
         catch (std::runtime_error const& e)
         {
-            BEAST_EXPECT(std::string(e.what()).contains("Incomplete TLS configuration"));
+            BEAST_EXPECT(
+                std::string(e.what()).find("Incomplete TLS configuration") != std::string::npos);
         }
     }
 
@@ -531,8 +533,8 @@ public:
             catch (std::runtime_error const& e)
             {
                 BEAST_EXPECT(
-                    std::string(e.what()).contains(
-                        "ssl_client_ca requires both ssl_cert and ssl_key"));
+                    std::string(e.what()).find(
+                        "ssl_client_ca requires both ssl_cert and ssl_key") != std::string::npos);
             }
         }
 
@@ -554,7 +556,9 @@ public:
             {
                 // This should fail with "Incomplete TLS configuration" first
                 // because ssl_cert is specified without ssl_key
-                BEAST_EXPECT(std::string(e.what()).contains("Incomplete TLS configuration"));
+                BEAST_EXPECT(
+                    std::string(e.what()).find("Incomplete TLS configuration") !=
+                    std::string::npos);
             }
         }
 
@@ -576,7 +580,9 @@ public:
             {
                 // This should fail with "Incomplete TLS configuration" first
                 // because ssl_key is specified without ssl_cert
-                BEAST_EXPECT(std::string(e.what()).contains("Incomplete TLS configuration"));
+                BEAST_EXPECT(
+                    std::string(e.what()).find("Incomplete TLS configuration") !=
+                    std::string::npos);
             }
         }
     }
@@ -604,8 +610,8 @@ public:
             catch (std::runtime_error const& e)
             {
                 BEAST_EXPECT(
-                    std::string(e.what()).contains(
-                        "ssl_cert_chain requires both ssl_cert and ssl_key"));
+                    std::string(e.what()).find(
+                        "ssl_cert_chain requires both ssl_cert and ssl_key") != std::string::npos);
             }
         }
 
@@ -627,7 +633,9 @@ public:
             {
                 // This should fail with "Incomplete TLS configuration" first
                 // because ssl_cert is specified without ssl_key
-                BEAST_EXPECT(std::string(e.what()).contains("Incomplete TLS configuration"));
+                BEAST_EXPECT(
+                    std::string(e.what()).find("Incomplete TLS configuration") !=
+                    std::string::npos);
             }
         }
     }

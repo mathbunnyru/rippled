@@ -8,6 +8,7 @@
 #include <xrpld/rpc/Status.h>
 #include <xrpld/rpc/detail/Tuning.h>
 
+#include <xrpl/basics/Expected.h>
 #include <xrpl/basics/base_uint.h>
 #include <xrpl/beast/core/LexicalCast.h>
 #include <xrpl/beast/utility/Zero.h>
@@ -23,7 +24,6 @@
 #include <org/xrpl/rpc/v1/ledger.pb.h>
 
 #include <cstdint>
-#include <expected>
 #include <memory>
 
 namespace xrpl::RPC {
@@ -381,7 +381,7 @@ lookupLedger(std::shared_ptr<ReadView const>& ledger, JsonContext const& context
     return result;
 }
 
-std::expected<std::shared_ptr<Ledger const>, json::Value>
+Expected<std::shared_ptr<Ledger const>, json::Value>
 getOrAcquireLedger(RPC::JsonContext const& context)
 {
     auto const hasHash = context.params.isMember(jss::ledger_hash);
@@ -393,7 +393,7 @@ getOrAcquireLedger(RPC::JsonContext const& context)
 
     if ((static_cast<int>(hasHash) + static_cast<int>(hasIndex)) != 1)
     {
-        return std::unexpected(
+        return Unexpected(
             RPC::makeParamError(
                 "Exactly one of 'ledger_hash' or "
                 "'ledger_index' can be specified."));
@@ -403,29 +403,29 @@ getOrAcquireLedger(RPC::JsonContext const& context)
     {
         auto const& jsonHash = context.params.get(jss::ledger_hash, json::ValueType::Null);
         if (!jsonHash.isString() || !ledgerHash.parseHex(jsonHash.asString()))
-            return std::unexpected(RPC::expectedFieldError(jss::ledger_hash, "hex string"));
+            return Unexpected(RPC::expectedFieldError(jss::ledger_hash, "hex string"));
     }
     else
     {
         auto const& jsonIndex = context.params.get(jss::ledger_index, json::ValueType::Null);
         if (!jsonIndex.isInt() && !jsonIndex.isUInt())
-            return std::unexpected(RPC::expectedFieldError(jss::ledger_index, "number"));
+            return Unexpected(RPC::expectedFieldError(jss::ledger_index, "number"));
 
         // We need a validated ledger to get the hash from the sequence
         if (ledgerMaster.getValidatedLedgerAge() > RPC::Tuning::kMaxValidatedLedgerAge)
         {
             if (context.apiVersion == 1)
-                return std::unexpected(rpcError(RpcNoCurrent));
-            return std::unexpected(rpcError(RpcNotSynced));
+                return Unexpected(rpcError(RpcNoCurrent));
+            return Unexpected(rpcError(RpcNotSynced));
         }
 
         ledgerIndex = jsonIndex.asInt();
         auto ledger = ledgerMaster.getValidatedLedger();
 
         if (ledgerIndex >= ledger->header().seq)
-            return std::unexpected(RPC::makeParamError("Ledger index too large"));
+            return Unexpected(RPC::makeParamError("Ledger index too large"));
         if (ledgerIndex <= 0)
-            return std::unexpected(RPC::makeParamError("Ledger index too small"));
+            return Unexpected(RPC::makeParamError("Ledger index too small"));
 
         auto const j = context.app.getJournal("RPCHandler");
         // Try to get the hash of the desired ledger from the validated
@@ -452,7 +452,7 @@ getOrAcquireLedger(RPC::JsonContext const& context)
                     json::Value jvResult = RPC::makeError(
                         RpcLgrNotFound, "acquiring ledger containing requested index");
                     jvResult[jss::acquiring] = getJson(LedgerFill(*il, &context));
-                    return std::unexpected(jvResult);
+                    return Unexpected(jvResult);
                 }
 
                 if (auto il = context.app.getInboundLedgers().find(*refHash))
@@ -461,11 +461,11 @@ getOrAcquireLedger(RPC::JsonContext const& context)
                     json::Value jvResult = RPC::makeError(
                         RpcLgrNotFound, "acquiring ledger containing requested index");
                     jvResult[jss::acquiring] = il->getJson(0);
-                    return std::unexpected(jvResult);
+                    return Unexpected(jvResult);
                 }
 
                 // Likely the app is shutting down
-                return std::unexpected(json::Value());
+                return Unexpected(json::Value());
             }
 
             neededHash = hashOfSeq(*ledger, ledgerIndex, j);
@@ -487,10 +487,9 @@ getOrAcquireLedger(RPC::JsonContext const& context)
         return ledger;
 
     if (auto il = context.app.getInboundLedgers().find(ledgerHash))
-        return std::unexpected(il->getJson(0));
+        return Unexpected(il->getJson(0));
 
-    return std::unexpected(
-        RPC::makeError(RpcNotReady, "findCreate failed to return an inbound ledger"));
+    return Unexpected(RPC::makeError(RpcNotReady, "findCreate failed to return an inbound ledger"));
 }
 
 }  // namespace xrpl::RPC

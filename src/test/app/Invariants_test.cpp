@@ -216,7 +216,7 @@ class Invariants_test : public beast::unit_test::Suite
             // std::cerr << messages << '\n';
             for (auto const& m : expectLogs)
             {
-                BEAST_EXPECTS(messages.contains(m), m);
+                BEAST_EXPECTS(messages.find(m) != std::string::npos, m);
             }
         }
     }
@@ -2187,7 +2187,8 @@ class Invariants_test : public beast::unit_test::Suite
                 BEAST_EXPECT(!invariant.finalize(
                     makeOfferCreateTx(), tesSUCCESS, XRPAmount{}, view, missingRootJlog));
                 BEAST_EXPECT(
-                    missingRootSink.messages().str().contains("book directory root missing"));
+                    missingRootSink.messages().str().find("book directory root missing") !=
+                    std::string::npos);
             }
             {
                 // delete

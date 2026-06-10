@@ -1,5 +1,6 @@
 #include <xrpl/ledger/helpers/CredentialHelpers.h>
 
+#include <xrpl/basics/Expected.h>
 #include <xrpl/basics/Log.h>
 #include <xrpl/basics/Slice.h>
 #include <xrpl/basics/base_uint.h>
@@ -23,7 +24,6 @@
 #include <xrpl/protocol/digest.h>
 
 #include <cstdint>
-#include <expected>
 #include <limits>
 #include <set>
 #include <unordered_set>
@@ -43,7 +43,7 @@ checkExpired(SLE const& sleCredential, NetClock::time_point const& closed)
 }
 
 [[nodiscard]]
-static std::expected<bool, TER>
+static Expected<bool, TER>
 removeExpired(ApplyView& view, STVector256 const& arr, beast::Journal const j)
 {
     auto const closeTime = view.header().parentCloseTime;
@@ -61,7 +61,7 @@ removeExpired(ApplyView& view, STVector256 const& arr, beast::Journal const j)
             // delete expired credentials even if the transaction failed
             auto const err = deleteSLE(view, sleCred, j);
             if (view.rules().enabled(fixCleanup3_1_3) && !isTesSuccess(err))
-                return std::unexpected(err);
+                return Unexpected(err);
             foundExpired = true;
         }
     }

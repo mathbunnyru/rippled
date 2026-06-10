@@ -1,9 +1,8 @@
 #pragma once
 
+#include <xrpl/basics/Expected.h>
 #include <xrpl/protocol/UintTypes.h>
 #include <xrpl/tx/Transactor.h>
-
-#include <expected>
 
 namespace xrpl {
 
@@ -62,7 +61,7 @@ public:
         ReadView const& view,
         beast::Journal const& j) override;
 
-    static std::expected<MPTID, TER>
+    static Expected<MPTID, TER>
     create(ApplyView& view, beast::Journal journal, MPTCreateArgs const& args);
 };
 

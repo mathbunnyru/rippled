@@ -2,8 +2,6 @@
 
 #include <xrpl/tx/Transactor.h>
 
-#include <expected>
-
 namespace xrpl {
 
 class VaultClawback : public Transactor
@@ -36,7 +34,7 @@ public:
         beast::Journal const& j) override;
 
 private:
-    std::expected<std::pair<STAmount, STAmount>, TER>
+    Expected<std::pair<STAmount, STAmount>, TER>
     assetsToClawback(
         SLE::ref vault,
         SLE::const_ref sleShareIssuance,

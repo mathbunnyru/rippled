@@ -24,7 +24,7 @@ class CheckMessageLogs : public Logs
         void
         write(beast::Severity level, std::string const& text) override
         {
-            if (text.contains(owner_.msg_))
+            if (text.find(owner_.msg_) != std::string::npos)
                 *owner_.pFound_ = true;
         }
 

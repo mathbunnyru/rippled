@@ -1,5 +1,6 @@
 #include <xrpl/tx/SignerEntries.h>
 
+#include <xrpl/basics/Expected.h>
 #include <xrpl/basics/Log.h>
 #include <xrpl/basics/base_uint.h>
 #include <xrpl/beast/utility/Journal.h>
@@ -11,20 +12,19 @@
 #include <xrpl/protocol/TER.h>
 
 #include <cstdint>
-#include <expected>
 #include <optional>
 #include <string_view>
 #include <vector>
 
 namespace xrpl {
 
-std::expected<std::vector<SignerEntries::SignerEntry>, NotTEC>
+Expected<std::vector<SignerEntries::SignerEntry>, NotTEC>
 SignerEntries::deserialize(STObject const& obj, beast::Journal journal, std::string_view annotation)
 {
     if (!obj.isFieldPresent(sfSignerEntries))
     {
         JLOG(journal.trace()) << "Malformed " << annotation << ": Need signer entry array.";
-        return std::unexpected(temMALFORMED);
+        return Unexpected(temMALFORMED);
     }
 
     std::vector<SignerEntry> accountVec;
@@ -37,7 +37,7 @@ SignerEntries::deserialize(STObject const& obj, beast::Journal journal, std::str
         if (sEntry.getFName() != sfSignerEntry)
         {
             JLOG(journal.trace()) << "Malformed " << annotation << ": Expected SignerEntry.";
-            return std::unexpected(temMALFORMED);
+            return Unexpected(temMALFORMED);
         }
 
         // Extract SignerEntry fields.

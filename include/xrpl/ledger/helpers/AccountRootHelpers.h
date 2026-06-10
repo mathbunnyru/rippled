@@ -1,5 +1,6 @@
 #pragma once
 
+#include <xrpl/basics/Expected.h>
 #include <xrpl/beast/utility/Journal.h>
 #include <xrpl/ledger/ApplyView.h>
 #include <xrpl/ledger/ReadView.h>
@@ -8,7 +9,6 @@
 #include <xrpl/protocol/STLedgerEntry.h>
 #include <xrpl/protocol/TER.h>
 
-#include <expected>
 #include <set>
 #include <vector>
 
@@ -91,7 +91,7 @@ isPseudoAccount(
  * before using a field. The amendment check is **not** performed in
  * createPseudoAccount.
  */
-[[nodiscard]] std::expected<SLE::pointer, TER>
+[[nodiscard]] Expected<SLE::pointer, TER>
 createPseudoAccount(ApplyView& view, uint256 const& pseudoOwnerKey, SField const& ownerField);
 
 /** Checks the destination and tag.

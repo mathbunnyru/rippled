@@ -2,6 +2,7 @@
 #include <xrpld/rpc/Context.h>
 #include <xrpld/rpc/detail/RPCLedgerHelpers.h>
 
+#include <xrpl/basics/Expected.h>
 #include <xrpl/basics/Log.h>
 #include <xrpl/basics/base_uint.h>
 #include <xrpl/basics/chrono.h>
@@ -17,7 +18,7 @@
 #include <xrpl/protocol/AccountID.h>
 #include <xrpl/protocol/Asset.h>
 #include <xrpl/protocol/ErrorCodes.h>
-#include <xrpl/protocol/Feature.h>  // IWYU pragma: keep
+#include <xrpl/protocol/Feature.h>
 #include <xrpl/protocol/Indexes.h>
 #include <xrpl/protocol/SField.h>
 #include <xrpl/protocol/STAmount.h>
@@ -26,7 +27,6 @@
 #include <date/date.h>
 
 #include <chrono>
-#include <expected>
 #include <memory>
 #include <optional>
 #include <stdexcept>
@@ -35,7 +35,7 @@
 
 namespace xrpl {
 
-std::expected<Asset, ErrorCodeI>
+Expected<Asset, ErrorCodeI>
 getAsset(json::Value const& v, beast::Journal j)
 {
     try
@@ -46,7 +46,7 @@ getAsset(json::Value const& v, beast::Journal j)
     {
         JLOG(j.debug()) << "getAsset " << ex.what();
     }
-    return std::unexpected(RpcIssueMalformed);
+    return Unexpected(RpcIssueMalformed);
 }
 
 std::string
@@ -79,7 +79,7 @@ doAMMInfo(RPC::JsonContext& context)
         SLE::const_pointer amm;
     };
 
-    auto getValuesFromContextParams = [&]() -> std::expected<ValuesFromContextParams, ErrorCodeI> {
+    auto getValuesFromContextParams = [&]() -> Expected<ValuesFromContextParams, ErrorCodeI> {
         std::optional<AccountID> accountID;
         std::optional<Asset> asset1;
         std::optional<Asset> asset2;
@@ -92,7 +92,7 @@ doAMMInfo(RPC::JsonContext& context)
 
         // NOTE, identical check for apVersion >= 3 below
         if (context.apiVersion < 3 && kInvalid(params))
-            return std::unexpected(RpcInvalidParams);
+            return Unexpected(RpcInvalidParams);
 
         if (params.isMember(jss::asset))
         {
@@ -102,7 +102,7 @@ doAMMInfo(RPC::JsonContext& context)
             }
             else
             {
-                return std::unexpected(i.error());
+                return Unexpected(i.error());
             }
         }
 
@@ -114,7 +114,7 @@ doAMMInfo(RPC::JsonContext& context)
             }
             else
             {
-                return std::unexpected(i.error());
+                return Unexpected(i.error());
             }
         }
 
@@ -122,25 +122,25 @@ doAMMInfo(RPC::JsonContext& context)
         {
             auto const id = parseBase58<AccountID>((params[jss::amm_account].asString()));
             if (!id)
-                return std::unexpected(RpcActMalformed);
+                return Unexpected(RpcActMalformed);
             auto const sle = ledger->read(keylet::account(*id));
             if (!sle)
-                return std::unexpected(RpcActMalformed);
+                return Unexpected(RpcActMalformed);
             ammID = sle->getFieldH256(sfAMMID);
             if (ammID->isZero())
-                return std::unexpected(RpcActNotFound);
+                return Unexpected(RpcActNotFound);
         }
 
         if (params.isMember(jss::account))
         {
             accountID = parseBase58<AccountID>(params[jss::account].asString());
             if (!accountID || !ledger->read(keylet::account(*accountID)))
-                return std::unexpected(RpcActMalformed);
+                return Unexpected(RpcActMalformed);
         }
 
         // NOTE, identical check for apVersion < 3 above
         if (context.apiVersion >= 3 && kInvalid(params))
-            return std::unexpected(RpcInvalidParams);
+            return Unexpected(RpcInvalidParams);
 
         XRPL_ASSERT(
             (asset1.has_value() == asset2.has_value()) && (asset1.has_value() != ammID.has_value()),
@@ -154,7 +154,7 @@ doAMMInfo(RPC::JsonContext& context)
         }();
         auto const amm = ledger->read(ammKeylet);
         if (!amm)
-            return std::unexpected(RpcActNotFound);
+            return Unexpected(RpcActNotFound);
         if (!asset1 && !asset2)
         {
             asset1 = (*amm)[sfAsset];
