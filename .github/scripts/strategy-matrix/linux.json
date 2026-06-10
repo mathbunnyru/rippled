@@ -41,7 +41,8 @@
         "build_type": ["Debug"],
         "arch": ["amd64"],
         "suffix": "unity",
-        "extra_cmake_args": "-Dunity=ON"
+        "extra_cmake_args": "-Dunity=ON",
+        "event_type": ["push", "merge_group", "schedule", "workflow_dispatch"]
       }
     ],
 
