@@ -14,6 +14,7 @@ in
     curlMinimal # needed for codecov/codecov-action
     doxygen
     gcovr
+    gh
     git
     git-cliff
     gnumake

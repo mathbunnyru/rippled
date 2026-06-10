@@ -14,6 +14,7 @@ g++ --version
 gcc --version
 gcov --version
 gcovr --version
+gh --version
 git --version
 git-cliff --version
 gpg --version
