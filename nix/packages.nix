@@ -13,6 +13,7 @@ in
     conan
     curlMinimal # needed for codecov/codecov-action
     doxygen
+    file # needed for cpack in Clio
     gcovr
     gh
     git

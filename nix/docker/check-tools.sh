@@ -10,6 +10,7 @@ cmake --version
 conan --version
 curl --version
 doxygen --version
+file --version
 g++ --version
 gcc --version
 gcov --version
