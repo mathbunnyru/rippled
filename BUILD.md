@@ -85,7 +85,7 @@ These instructions assume a basic familiarity with Conan and CMake. If you are
 unfamiliar with Conan, then please read [this crash course](./docs/build/conan.md) or the official
 [Getting Started][conan-getting-started] walkthrough.
 
-#### Default profile
+#### Profiles
 
 We recommend that you install our Conan profiles:
 
@@ -101,6 +101,14 @@ conan profile show
 
 If the default profile is not suitable for your environment, you can create a custom profile and pass it to Conan.
 More information on customizing Conan can be found in the [Advanced Conan configuration](./docs/build/advanced_conan.md).
+
+#### Add xrplf remote
+
+Run the following command to add the `xrplf` remote, which hosts some of our dependencies:
+
+```bash
+conan remote add --index 0 --force xrplf https://conan.ripplex.io
+```
 
 ### Set Up Ccache
 
