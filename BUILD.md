@@ -48,7 +48,7 @@ You can verify that the required tools are installed and runnable with:
 
 | Compiler    | Version   |
 | ----------- | --------- |
-| GCC         | 15        |
+| GCC         | 15.2      |
 | Clang       | 22        |
 | Apple Clang | 17        |
 | MSVC        | 19.44[^3] |
