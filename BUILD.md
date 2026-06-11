@@ -44,8 +44,7 @@ You can verify that the required tools are installed and runnable with:
 ./bin/check-tools.sh
 ```
 
-`xrpld` is written in the C++23 dialect and includes the `<concepts>` header.
-The [tested compiler versions][2] are:
+`xrpld` is written in the C++23 dialect. The [tested compiler versions][2] are:
 
 | Compiler    | Version   |
 | ----------- | --------- |
@@ -59,16 +58,17 @@ The [tested compiler versions][2] are:
 The Ubuntu Linux distribution has received the highest level of quality
 assurance, testing, and support. We also support Red Hat and use Debian
 internally.
+Our CI tooling is OS independent and uses Nix-based environment though, so it should be possible to build on other Linux distributions as well, but we have not tested them.
 
-### Mac
+### macOS
 
-Many xrpld engineers use macOS for development.
+Many `xrpld` engineers use `macOS` for development.
 
 ### Windows
 
 Windows is used by some engineers for development only.
 
-On Linux and macOS we recommend the [Nix development shell](./docs/build/nix.md)
+On `Linux` and `macOS` we recommend the [Nix development shell](./docs/build/nix.md)
 to get the exact tooling used in CI. See the [environment setup
 guide](./docs/build/environment.md) for all platforms, including Windows.
 
@@ -85,16 +85,9 @@ These instructions assume a basic familiarity with Conan and CMake. If you are
 unfamiliar with Conan, then please read [this crash course](./docs/build/conan.md) or the official
 [Getting Started][3] walkthrough.
 
-#### Conan lockfile
-
-To achieve reproducible dependencies, we use a [Conan lockfile](https://docs.conan.io/2/tutorial/versioning/lockfiles.html),
-which has to be updated every time dependencies change.
-
-Please see the [instructions on how to regenerate the lockfile](conan/lockfile/README.md).
-
 #### Default profile
 
-We recommend that you import the provided `conan/profiles/default` profile:
+We recommend that you install our `conan` profiles:
 
 ```bash
 conan config install conan/profiles/ -tf $(conan config home)/profiles/
@@ -106,185 +99,8 @@ You can check your Conan profile by running:
 conan profile show
 ```
 
-#### Custom profile
-
-If the default profile does not work for you and you do not yet have a Conan
-profile, you can create one by running:
-
-```bash
-conan profile detect
-```
-
-You may need to make changes to the profile to suit your environment. You can
-refer to the provided `conan/profiles/default` profile for inspiration, and you
-may also need to apply the required [tweaks](#conan-profile-tweaks) to this
-default profile.
-
-### Patched recipes
-
-Occasionally, we need patched recipes or recipes not present in Conan Center.
-We maintain a fork of the Conan Center Index
-[here](https://github.com/XRPLF/conan-center-index/) containing the modified and newly added recipes.
-
-To ensure our patched recipes are used, you must add our Conan remote at a
-higher index than the default Conan Center remote, so it is consulted first. You
-can do this by running:
-
-```bash
-conan remote add --index 0 xrplf https://conan.ripplex.io
-```
-
-Alternatively, you can pull our recipes from the repository and export them locally:
-
-```bash
-# Define which recipes to export.
-recipes=('abseil' 'ed25519' 'mpt-crypto' 'openssl' 'secp256k1' 'snappy' 'soci' 'wasm-xrplf' 'wasmi')
-
-# Selectively check out the recipes from our CCI fork.
-cd external
-mkdir -p conan-center-index
-cd conan-center-index
-git init
-git remote add origin git@github.com:XRPLF/conan-center-index.git
-git sparse-checkout init
-for recipe in "${recipes[@]}"; do
-    echo "Checking out recipe '${recipe}'..."
-    git sparse-checkout add recipes/${recipe}
-done
-git fetch origin master
-git checkout master
-
-./export_all.sh
-cd ../../
-```
-
-In the case we switch to a newer version of a dependency that still requires a
-patch or add a new dependency, it will be necessary for you to pull in the changes and re-export the
-updated dependencies with the newer version. However, if we switch to a newer
-version that no longer requires a patch, no action is required on your part, as
-the new recipe will be automatically pulled from the official Conan Center.
-
-> [!NOTE]
-> You might need to add `--lockfile=""` to your `conan install` command
-> to avoid automatic use of the existing `conan.lock` file when you run
-> `conan export` manually on your machine
->
-> This is not recommended though, as you might end up using different revisions of recipes.
-
-### Conan profile tweaks
-
-#### Missing compiler version
-
-If you see an error similar to the following after running `conan profile show`:
-
-```text
-ERROR: Invalid setting '17' is not a valid 'settings.compiler.version' value.
-Possible values are ['5.0', '5.1', '6.0', '6.1', '7.0', '7.3', '8.0', '8.1',
-'9.0', '9.1', '10.0', '11.0', '12.0', '13', '13.0', '13.1', '14', '14.0', '15',
-'15.0', '16', '16.0']
-Read "http://docs.conan.io/2/knowledge/faq.html#error-invalid-setting"
-```
-
-you need to add your compiler to the list of compiler versions in
-`$(conan config home)/settings_user.yml`, by adding the required version number(s)
-to the `version` array specific for your compiler. For example:
-
-```yaml
-compiler:
-  apple-clang:
-    version: ["17.0"]
-```
-
-#### Multiple compilers
-
-If you have multiple compilers installed, make sure to select the one to use in
-your default Conan configuration **before** running `conan profile detect`, by
-setting the `CC` and `CXX` environment variables.
-
-For example, if you are running MacOS and have [homebrew
-LLVM@18](https://formulae.brew.sh/formula/llvm@18), and want to use it as a
-compiler in the new Conan profile:
-
-```bash
-export CC=$(brew --prefix llvm@18)/bin/clang
-export CXX=$(brew --prefix llvm@18)/bin/clang++
-conan profile detect
-```
-
-You should also explicitly set the path to the compiler in the profile file,
-which helps to avoid errors when `CC` and/or `CXX` are set and disagree with the
-selected Conan profile. For example:
-
-```text
-[conf]
-tools.build:compiler_executables={'c':'/usr/bin/gcc','cpp':'/usr/bin/g++'}
-```
-
-#### Multiple profiles
-
-You can manage multiple Conan profiles in the directory
-`$(conan config home)/profiles`, for example renaming `default` to a different
-name and then creating a new `default` profile for a different compiler.
-
-#### Select language
-
-The default profile created by Conan will typically select different C++ dialect
-than C++23 used by this project. You should set `23` in the profile line
-starting with `compiler.cppstd=`. For example:
-
-```bash
-sed -i.bak -e 's|^compiler\.cppstd=.*$|compiler.cppstd=23|' $(conan config home)/profiles/default
-```
-
-#### Select standard library in Linux
-
-**Linux** developers will commonly have a default Conan [profile][] that
-compiles with GCC and links with libstdc++. If you are linking with libstdc++
-(see profile setting `compiler.libcxx`), then you will need to choose the
-`libstdc++11` ABI:
-
-```bash
-sed -i.bak -e 's|^compiler\.libcxx=.*$|compiler.libcxx=libstdc++11|' $(conan config home)/profiles/default
-```
-
-#### Select architecture and runtime in Windows
-
-**Windows** developers may need to use the x64 native build tools. An easy way
-to do that is to run the shortcut "x64 Native Tools Command Prompt" for the
-version of Visual Studio that you have installed.
-
-Windows developers must also build `xrpld` and its dependencies for the x64
-architecture:
-
-```bash
-sed -i.bak -e 's|^arch=.*$|arch=x86_64|' $(conan config home)/profiles/default
-```
-
-**Windows** developers also must select static runtime:
-
-```bash
-sed -i.bak -e 's|^compiler\.runtime=.*$|compiler.runtime=static|' $(conan config home)/profiles/default
-```
-
-#### Clang workaround for grpc
-
-If your compiler is clang, version 19 or later, or apple-clang, version 17 or
-later, you may encounter a compilation error while building the `grpc`
-dependency:
-
-```text
-In file included from .../lib/promise/try_seq.h:26:
-.../lib/promise/detail/basic_seq.h:499:38: error: a template argument list is expected after a name prefixed by the template keyword [-Wmissing-template-arg-list-after-template-kw]
-  499 |                     Traits::template CallSeqFactory(f_, *cur_, std::move(arg)));
-      |                                      ^
-```
-
-The workaround for this error is to add two lines to profile:
-
-```text
-[conf]
-tools.build:cxxflags=['-Wno-missing-template-arg-list-after-template-kw']
-```
+If the default profile is not suitable for your environment, you can create a custom profile and pass it to Conan.
+More information for customizing Conan be be found in the [Advanced Conan configuration](./docs/build/advanced_conan.md).
 
 ### Set Up Ccache
 
@@ -292,8 +108,7 @@ To speed up repeated compilations, we recommend that you install
 [ccache](https://ccache.dev), a tool that wraps your compiler so that it can
 cache build objects locally.
 
-On Linux and macOS, ccache is included in the
-[Nix development shell](./docs/build/nix.md).
+On `Linux` and `macOS`, `ccache` is included in the [Nix development shell](./docs/build/nix.md).
 
 #### Windows
 
