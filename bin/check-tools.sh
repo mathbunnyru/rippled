@@ -11,8 +11,7 @@
 #              with GCC, Clang and the sanitizer/coverage tooling. This script is
 #              run during the Nix Docker image build (nix/docker/Dockerfile), so
 #              the Linux list is kept in sync with that environment.
-#   - macOS:   the same tooling, minus GCC/g++/gcov — macOS uses the system
-#              Apple Clang as its compiler.
+#   - macOS:   the same tooling, minus GCC/g++/gcov/mold
 #   - Windows: the core build tools only (CMake, Conan, Git, Ninja, Python).
 #              MSVC is expected to be provided separately and is not checked here.
 #
@@ -48,7 +47,10 @@ case "$(uname -s)" in
     Linux*) os=linux ;;
     Darwin*) os=macos ;;
     MINGW* | MSYS* | CYGWIN*) os=windows ;;
-    *) os=unknown ;;
+    *)
+        echo "Unknown OS: $(uname -s)" >&2
+        exit 1
+        ;;
 esac
 
 echo "Detected OS: ${os} ($(uname -s) $(uname -m))"
