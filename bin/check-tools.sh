@@ -12,7 +12,7 @@
 #              run during the Nix Docker image build (nix/docker/Dockerfile), so
 #              the Linux list is kept in sync with that environment.
 #   - macOS:   the same tooling, minus GCC/g++/gcov/mold
-#   - Windows: the core build tools only (CMake, Conan, Git, Ninja, Python).
+#   - Windows: the core build tools only (CMake, Conan, Git, Python).
 #              MSVC is expected to be provided separately and is not checked here.
 #
 # Environment variables:
@@ -60,7 +60,6 @@ echo "Core build tools:"
 check cmake
 check conan
 check git
-check ninja
 if [ "${os}" = "windows" ]; then
     check python python --version
 else
@@ -86,6 +85,7 @@ if [ "${os}" = "linux" ] || [ "${os}" = "macos" ]; then
     check less
     check make
     check netstat which netstat
+    check ninja
     check perl
     check pkg-config
     # pre-commit, or its alternative implementation prek
