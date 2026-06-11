@@ -8,7 +8,7 @@ let
   # Darwin. Scoped to the dev shell (not the CI env, which builds conan on
   # Linux from the cache). Drop once the fix reaches nixos-unstable and the
   # lock is bumped.
-  pkgs' =
+  pkgs_patched =
     if pkgs.stdenv.isDarwin then
       pkgs.extend (
         final: prev: {
@@ -20,7 +20,7 @@ let
     else
       pkgs;
 
-  inherit (import ./packages.nix { pkgs = pkgs'; }) commonPackages;
+  inherit (import ./packages.nix { pkgs = pkgs_patched; }) commonPackages;
 
   # Supported compiler versions
   gccVersion = pkgs.lib.range 13 15;
