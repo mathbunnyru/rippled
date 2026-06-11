@@ -87,7 +87,8 @@ if [ "${os}" = "linux" ] || [ "${os}" = "macos" ]; then
     check netstat which netstat
     check perl
     check pkg-config
-    check pre-commit
+    # pre-commit, or its alternative implementation prek
+    check pre-commit sh -c 'pre-commit --version || prek --version'
     check run-clang-tidy run-clang-tidy --help
     check vim
 fi
