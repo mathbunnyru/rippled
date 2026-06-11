@@ -122,6 +122,8 @@ jobs:
         run: echo "CCACHE_LOGFILE=${{ runner.temp }}/ccache.log" >>"${GITHUB_ENV}"
 
       - name: Check tools
+        env:
+          CHECK_TOOLS_SKIP_CLONE: "1"
         run: ./bin/check-tools.sh
 
       - name: Print build environment

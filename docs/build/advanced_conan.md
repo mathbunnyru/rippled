@@ -169,4 +169,4 @@ sed -i.bak -e 's|^arch=.*$|arch=x86_64|' $(conan config home)/profiles/default
 sed -i.bak -e 's|^compiler\.runtime=.*$|compiler.runtime=static|' $(conan config home)/profiles/default
 ```
 
-[profile]: https://docs.conan.io/en/latest/reference/profiles.html
+[profile]: https://docs.conan.io/2/reference/config_files/profiles.html

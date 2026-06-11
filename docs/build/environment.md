@@ -98,7 +98,6 @@ manually:
 
 > [!NOTE]
 > Windows is used for development only and is not recommended for production.
-> The C++23 migration described above currently targets non-Windows platforms.
 
 ## Clang-tidy
 
