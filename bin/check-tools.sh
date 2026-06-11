@@ -15,7 +15,13 @@
 #   - Windows: the core build tools only (CMake, Conan, Git, Python).
 #              MSVC is expected to be provided separately and is not checked here.
 #
+# Some tools (clang-format, doxygen, gcovr, gh, git-cliff, gpg, pre-commit,
+# run-clang-tidy) are present in our Linux CI images and in local development
+# setups, but not in the macOS CI environment. They are checked everywhere
+# except when running in CI on macOS.
+#
 # Environment variables:
+#   CI                      if set, skip the tools above when on macOS.
 #   CHECK_TOOLS_SKIP_CLONE  if set, skip the git-over-HTTPS connectivity check.
 
 set -uo pipefail
@@ -74,24 +80,30 @@ if [ "${os}" = "linux" ] || [ "${os}" = "macos" ]; then
     check ccache
     check clang
     check clang++
-    check clang-format
     check curl
-    check doxygen
     check file
-    check gcovr
-    check gh
-    check git-cliff
-    check gpg
     check less
     check make
     check netstat which netstat
     check ninja
     check perl
     check pkg-config
-    # pre-commit, or its alternative implementation prek
-    check pre-commit sh -c 'pre-commit --version || prek --version'
-    check run-clang-tidy run-clang-tidy --help
     check vim
+
+    # These tools are present in our Linux CI images and in local development
+    # setups, but not in the macOS CI environment. So check them everywhere
+    # except when running in CI on macOS.
+    if [ "${os}" = "linux" ] || [ -z "${CI:-}" ]; then
+        check clang-format
+        check doxygen
+        check gcovr
+        check gh
+        check git-cliff
+        check gpg
+        # pre-commit, or its alternative implementation prek
+        check pre-commit sh -c 'pre-commit --version || prek --version'
+        check run-clang-tidy run-clang-tidy --help
+    fi
 fi
 
 # GCC is the default compiler on Linux. macOS uses the system Apple Clang
