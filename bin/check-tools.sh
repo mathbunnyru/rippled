@@ -82,8 +82,7 @@ if [ "${os}" = "linux" ] || [ "${os}" = "macos" ]; then
     check gpg
     check less
     check make
-    check mold
-    check netstat
+    check netstat which netstat
     check perl
     check pkg-config
     check pre-commit
@@ -99,6 +98,10 @@ if [ "${os}" = "linux" ]; then
     check gcc
     check g++
     check gcov
+
+    echo
+    echo "Mold:"
+    check mold
 fi
 
 if [ "${os}" = "windows" ]; then
