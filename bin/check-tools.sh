@@ -34,8 +34,9 @@ check() {
         probe=("${name}" --version)
     fi
 
+    echo "Checking ${name}..."
     checked=$((checked + 1))
-    if "${probe[@]}" >/dev/null 2>&1; then
+    if "${probe[@]}" | head -n 1; then
         printf '  [ ok ] %s\n' "${name}"
     else
         printf '  [MISS] %s\n' "${name}"
