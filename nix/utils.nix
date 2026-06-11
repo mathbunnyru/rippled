@@ -13,7 +13,7 @@ nixpkgs.lib.genAttrs
       pkgs = import nixpkgs {
         inherit system;
         overlays = [
-          # Backport NixOS/nixpkgs@3244b07e: disable conan's
+          # Backport https://github.com/NixOS/nixpkgs/pull/528995: disable conan's
           # `test_qbsprofile_rcflags`, which requires gcc and so fails when
           # conan is built from source on Darwin. Drop this once the fix
           # reaches the nixos-unstable channel and the lock is bumped.
