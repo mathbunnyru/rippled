@@ -41,10 +41,10 @@ work without `ca-certificates` being installed in the base image.
    `ci-env` symlink tree, and wire up `PATH` and the CA bundle. It then:
    - installs the dynamic linker if the base image lacks one (see
      [How libc is handled](#how-libc-is-handled)),
-   - runs [`../../bin/check-tools.sh`](../../bin/check-tools.sh) to verify every
+   - runs [`bin/check-tools.sh`](../../bin/check-tools.sh) to verify every
      expected tool is present and runnable, and
-   - compiles the C++ sanitizer test programs in
-     [`test_files/`](./test_files) with both `g++` and `clang++`.
+   - compiles the C++ test programs in
+     [`test_files/`](./test_files) with both `g++` and `clang++`, and sanitizers.
 3. **`tester`** — Start again from a clean `BASE_IMAGE` (no Nix toolchain),
    install only the sanitizer runtime libraries
    ([`install-sanitizer-libs.sh`](./install-sanitizer-libs.sh)), and run the
@@ -66,18 +66,12 @@ toolchain being present at runtime. Two pieces make that work:
   flake input. GCC, Clang, binutils and compiler-rt are all rebuilt/wrapped
   against this custom glibc (see [`nix/ci-env.nix`](../ci-env.nix)). As a result
   the libraries they emit (`libstdc++`, `libgcc_s`, the sanitizer runtimes)
-  reference only symbols available in glibc 2.31, so they don't pull in newer
-  glibc symbols (or `sysconf` constants like `_SC_SIGSTKSZ`) that an old target
-  system lacks.
+  reference only symbols available in glibc 2.31.
 
-- **A matching dynamic linker in the image.** Externally-built dynamically
-  linked ELF binaries hard-code the loader path (e.g.
-  `/lib64/ld-linux-x86-64.so.2`) in their `PT_INTERP` header.
+- **An expected dynamic linker in the image.**
+  Binaries built in Nix environments reference a dynamic linker from Nix store paths, which won't be present in the base image. However,
   [`loader-path.sh`](./loader-path.sh) reports the expected loader path for the
-  current architecture, and the `final` stage installs `ld-linux` from the same
-  glibc that GCC links against when the base image doesn't already provide one —
-  so `ld-linux` and `libc`/`libpthread` share their `GLIBC_PRIVATE` symbols at
-  runtime.
+  current architecture, so we can patch the binaries to use the correct loader.
 
 The build then verifies all of this end to end: the test programs in
 `test_files/` (a regular binary plus ASan/TSan/UBSan variants) are compiled in

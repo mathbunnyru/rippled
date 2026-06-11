@@ -58,17 +58,17 @@ You can verify that the required tools are installed and runnable with:
 The Ubuntu Linux distribution has received the highest level of quality
 assurance, testing, and support. We also support Red Hat and use Debian
 internally.
-Our CI tooling is OS independent and uses Nix-based environment though, so it should be possible to build on other Linux distributions as well, but we have not tested them.
+Our CI tooling is OS-independent and uses a Nix-based environment, so it should be possible to build on other Linux distributions as well, although we have not tested them.
 
 ### macOS
 
-Many `xrpld` engineers use `macOS` for development.
+Many `xrpld` engineers use macOS for development.
 
 ### Windows
 
 Windows is used by some engineers for development only.
 
-On `Linux` and `macOS` we recommend the [Nix development shell](./docs/build/nix.md)
+On Linux and macOS we recommend the [Nix development shell](./docs/build/nix.md)
 to get the exact tooling used in CI. See the [environment setup
 guide](./docs/build/environment.md) for all platforms, including Windows.
 
@@ -87,7 +87,7 @@ unfamiliar with Conan, then please read [this crash course](./docs/build/conan.m
 
 #### Default profile
 
-We recommend that you install our `conan` profiles:
+We recommend that you install our Conan profiles:
 
 ```bash
 conan config install conan/profiles/ -tf $(conan config home)/profiles/
@@ -108,7 +108,7 @@ To speed up repeated compilations, we recommend that you install
 [ccache](https://ccache.dev), a tool that wraps your compiler so that it can
 cache build objects locally.
 
-On `Linux` and `macOS`, `ccache` is included in the [Nix development shell](./docs/build/nix.md).
+On Linux and macOS, `ccache` is included in the [Nix development shell](./docs/build/nix.md).
 
 #### Windows
 
