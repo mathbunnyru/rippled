@@ -261,7 +261,7 @@ This ensures that configuration changes don't introduce new warnings across the 
 
 ### Installing clang-tidy
 
-See the [environment setup guide](./docs/build/environment.md#clang-tidy) for platform-specific installation instructions.
+See the [environment setup guide](./docs/build/environment.md#clang-tidy) for how to get clang-tidy.
 
 ### Running clang-tidy locally
 

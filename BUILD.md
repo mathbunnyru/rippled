@@ -9,19 +9,6 @@
 
 ## Branches
 
-For a stable release, choose the `master` branch or one of the [tagged
-releases](https://github.com/XRPLF/rippled/releases).
-
-```bash
-git checkout master
-```
-
-For the latest release candidate, choose the `release` branch.
-
-```bash
-git checkout release
-```
-
 For the latest set of untested features, or to contribute, choose the `develop`
 branch.
 
@@ -29,21 +16,33 @@ branch.
 git checkout develop
 ```
 
+For a release candidate, choose the relevant release branch, e.g.
+`release/3.2.x`.
+
+```bash
+git checkout release/3.2.x
+```
+
+For a stable release, choose one of the [tagged
+releases](https://github.com/XRPLF/rippled/releases).
+
 ## Minimum Requirements
 
 See [System Requirements](https://xrpl.org/system-requirements.html).
 
-Building xrpld generally requires git, Python, Conan, CMake, and a C++
+Building xrpld generally requires Git, Python, Conan, CMake, and a C++
 compiler. Some guidance on setting up such a [C++ development environment can be
 found here](./docs/build/environment.md).
 
-- [Python 3.11](https://www.python.org/downloads/), or higher
-- [Conan 2.17](https://conan.io/downloads.html)[^1], or higher
-- [CMake 3.22](https://cmake.org/download/), or higher
+- [Python](https://www.python.org/downloads/)
+- [Conan](https://conan.io/downloads.html)
+- [CMake](https://cmake.org/download/)
 
-[^1]:
-    It is possible to build with Conan 1.60+, but the instructions are
-    significantly different, which is why we are not recommending it.
+You can verify that the required tools are installed and runnable with:
+
+```bash
+./bin/check-tools.sh
+```
 
 `xrpld` is written in the C++23 dialect and includes the `<concepts>` header.
 The [tested compiler versions][2] are:
@@ -61,19 +60,17 @@ The Ubuntu Linux distribution has received the highest level of quality
 assurance, testing, and support. We also support Red Hat and use Debian
 internally.
 
-Here are [sample instructions for setting up a C++ development environment on
-Linux](./docs/build/environment.md#linux).
-
 ### Mac
 
 Many xrpld engineers use macOS for development.
 
-Here are [sample instructions for setting up a C++ development environment on
-macOS](./docs/build/environment.md#macos).
-
 ### Windows
 
 Windows is used by some engineers for development only.
+
+On Linux and macOS we recommend the [Nix development shell](./docs/build/nix.md)
+to get the exact tooling used in CI. See the [environment setup
+guide](./docs/build/environment.md) for all platforms, including Windows.
 
 [^3]: Windows is not recommended for production use.
 
@@ -289,58 +286,14 @@ The workaround for this error is to add two lines to profile:
 tools.build:cxxflags=['-Wno-missing-template-arg-list-after-template-kw']
 ```
 
-#### Workaround for gcc 12
-
-If your compiler is gcc, version 12, and you have enabled `werr` option, you may
-encounter a compilation error such as:
-
-```text
-/usr/include/c++/12/bits/char_traits.h:435:56: error: 'void* __builtin_memcpy(void*, const void*, long unsigned int)' accessing 9223372036854775810 or more bytes at offsets [2, 9223372036854775807] and 1 may overlap up to 9223372036854775813 bytes at offset -3 [-Werror=restrict]
-  435 |         return static_cast<char_type*>(__builtin_memcpy(__s1, __s2, __n));
-      |                                        ~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~
-cc1plus: all warnings being treated as errors
-```
-
-The workaround for this error is to add two lines to your profile:
-
-```text
-[conf]
-tools.build:cxxflags=['-Wno-restrict']
-```
-
-#### Workaround for clang 16
-
-If your compiler is clang, version 16, you may encounter compilation error such
-as:
-
-```text
-In file included from .../boost/beast/websocket/stream.hpp:2857:
-.../boost/beast/websocket/impl/read.hpp:695:17: error: call to 'async_teardown' is ambiguous
-                async_teardown(impl.role, impl.stream(),
-                ^~~~~~~~~~~~~~
-```
-
-The workaround for this error is to add two lines to your profile:
-
-```text
-[conf]
-tools.build:cxxflags=['-DBOOST_ASIO_DISABLE_CONCEPTS']
-```
-
 ### Set Up Ccache
 
 To speed up repeated compilations, we recommend that you install
 [ccache](https://ccache.dev), a tool that wraps your compiler so that it can
 cache build objects locally.
 
-#### Linux
-
-You can install it using the package manager, e.g. `sudo apt install ccache`
-(Ubuntu) or `sudo dnf install ccache` (RHEL).
-
-#### macOS
-
-You can install it using Homebrew, i.e. `brew install ccache`.
+On Linux and macOS, ccache is included in the
+[Nix development shell](./docs/build/nix.md).
 
 #### Windows
 
@@ -619,18 +572,22 @@ If you want to experiment with a new package, follow these steps:
    - Add a version of the package to the `requires` property.
    - Change any default options for the package by adding them to the
      `default_options` property (with syntax `'$package:$option': $value`).
-3. Modify [`CMakeLists.txt`](./CMakeLists.txt):
+3. Regenerate the [Conan lockfile](./conan/lockfile/README.md) so the new
+   dependency is captured:
+
+   ```bash
+   ./conan/lockfile/regenerate.sh
+   ```
+
+4. Modify [`CMakeLists.txt`](./CMakeLists.txt):
    - Add a call to `find_package($package REQUIRED)`.
    - Link a library from the package to the target `xrpl_libs`
      (search for the existing call to `target_link_libraries(xrpl_libs INTERFACE ...)`).
-4. Start coding! Don't forget to include whatever headers you need from the package.
+5. Start coding! Don't forget to include whatever headers you need from the package.
 
-[1]: https://github.com/conan-io/conan-center-index/issues/13168
-[2]: https://en.cppreference.com/w/cpp/compiler_support/20
+[2]: https://en.cppreference.com/w/cpp/compiler_support/23
 [3]: https://docs.conan.io/en/latest/getting_started.html
 [5]: https://en.wikipedia.org/wiki/Unity_build
-[6]: https://github.com/boostorg/beast/issues/2648
-[7]: https://github.com/boostorg/beast/issues/2661
 [gcovr]: https://gcovr.com/en/stable/getting-started.html
 [python-pip]: https://packaging.python.org/en/latest/guides/installing-using-pip-and-virtual-environments/
 [build_type]: https://cmake.org/cmake/help/latest/variable/CMAKE_BUILD_TYPE.html

@@ -2,9 +2,12 @@
 
 This guide explains how to use Nix to set up a reproducible development environment for xrpld. Using Nix eliminates the need to manually install utilities and ensures consistent tooling across different machines.
 
+**The Nix development shell is the recommended way to develop xrpld.** It unifies the development environment for everyone and synchronizes updates: the same tooling and compiler versions are used both here and in CI. Any custom environment (Homebrew packages or anything else) will continue to work, but then it is up to you to keep it in sync with the environment used in CI.
+
 ## Benefits of Using Nix
 
 - **Reproducible environment**: Everyone gets the same versions of tools and compilers
+- **Matches CI**: The Linux CI runs in Docker images built from this exact Nix environment
 - **No system pollution**: Dependencies are isolated and don't affect your system packages
 - **Multiple compiler versions**: Easily switch between different GCC and Clang versions
 - **Quick setup**: Get started with a single command
@@ -28,10 +31,21 @@ This will:
 
 - Download and set up all required development tools (CMake, Ninja, Conan, etc.)
 - Configure the appropriate compiler for your platform:
-  - **macOS**: Apple Clang (default system compiler)
-  - **Linux**: GCC 15
+  - **Linux**: GCC 15.2 (provided by Nix)
+  - **macOS**: Apple Clang (your system compiler)
 
 The first time you run this command, it will take a few minutes to download and build the environment. Subsequent runs will be much faster.
+
+### Platform notes
+
+- **Linux**: `nix develop` gives you a shell with all the tooling necessary to
+  develop xrpld and with GCC 15.2 (also provided by Nix). There are no caveats.
+- **macOS**: `nix develop` gives you a full environment too. The compiler is
+  your system-wide Apple Clang, while every other tool — including Conan — is
+  provided by Nix. Conan has no binary in the Nix cache for macOS, so it is
+  built from source the first time you enter the shell, which makes the initial
+  setup slower (this is handled automatically; see
+  [`nix/devshell.nix`](../../nix/devshell.nix)).
 
 > [!TIP]
 > To avoid typing `--experimental-features 'nix-command flakes'` every time, you can permanently enable flakes by creating `~/.config/nix/nix.conf`:

@@ -71,7 +71,7 @@ if [ ! -e "${target}" ]; then
 fi
 EOF
 
-COPY nix/docker/check-tools.sh /tmp/check-tools.sh
+COPY bin/check-tools.sh /tmp/check-tools.sh
 RUN /tmp/check-tools.sh
 
 # Sanity-check that the g++/clang++ are able to build binaries, including sanitizer-instrumented ones.
