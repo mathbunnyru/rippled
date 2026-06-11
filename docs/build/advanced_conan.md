@@ -1,6 +1,6 @@
 # Advanced Conan configuration
 
-This document provides instructions for setting up and configuring Conan for `xrpld` development. It covers the following topics:
+This document provides advanced instructions for setting up and configuring Conan for `xrpld` development: custom profiles, the lockfile, patched recipes, and profile tweaks.
 
 ## Custom profile
 
@@ -21,7 +21,7 @@ default profile.
 To achieve reproducible dependencies, we use a [Conan lockfile](https://docs.conan.io/2/tutorial/versioning/lockfiles.html),
 which has to be updated every time dependencies change.
 
-Please see the [instructions on how to regenerate the lockfile](conan/lockfile/README.md).
+Please see the [instructions on how to regenerate the lockfile](../../conan/lockfile/README.md).
 
 ## Patched recipes
 
@@ -168,3 +168,5 @@ sed -i.bak -e 's|^arch=.*$|arch=x86_64|' $(conan config home)/profiles/default
 ```bash
 sed -i.bak -e 's|^compiler\.runtime=.*$|compiler.runtime=static|' $(conan config home)/profiles/default
 ```
+
+[profile]: https://docs.conan.io/en/latest/reference/profiles.html

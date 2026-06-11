@@ -100,7 +100,7 @@ conan profile show
 ```
 
 If the default profile is not suitable for your environment, you can create a custom profile and pass it to Conan.
-More information for customizing Conan be be found in the [Advanced Conan configuration](./docs/build/advanced_conan.md).
+More information on customizing Conan can be found in the [Advanced Conan configuration](./docs/build/advanced_conan.md).
 
 ### Set Up Ccache
 
@@ -351,14 +351,14 @@ After any updates or changes to dependencies, you may need to do the following:
    conan remove '*'
    ```
 
-3. Re-run [conan export](#patched-recipes) if needed.
-4. [Regenerate lockfile](#conan-lockfile).
+3. Re-run [conan export](./docs/build/advanced_conan.md#patched-recipes) if needed.
+4. [Regenerate lockfile](./docs/build/advanced_conan.md#conan-lockfile).
 5. Re-run [conan install](#build-and-test).
 
 #### ERROR: Package not resolved
 
 If you're seeing an error like `ERROR: Package 'snappy/1.1.10' not resolved: Unable to find 'snappy/1.1.10#968fef506ff261592ec30c574d4a7809%1756234314.246' in remotes.`,
-please add `xrplf` remote or re-run `conan export` for [patched recipes](#patched-recipes).
+please add `xrplf` remote or re-run `conan export` for [patched recipes](./docs/build/advanced_conan.md#patched-recipes).
 
 ### `protobuf/port_def.inc` file not found
 
@@ -406,4 +406,3 @@ If you want to experiment with a new package, follow these steps:
 [gcovr]: https://gcovr.com/en/stable/getting-started.html
 [python-pip]: https://packaging.python.org/en/latest/guides/installing-using-pip-and-virtual-environments/
 [build_type]: https://cmake.org/cmake/help/latest/variable/CMAKE_BUILD_TYPE.html
-[profile]: https://docs.conan.io/en/latest/reference/profiles.html
