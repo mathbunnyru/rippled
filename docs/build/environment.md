@@ -30,7 +30,7 @@ the Nix development shell. It provides the exact tooling used in CI — `git`,
 with a single command and without installing anything system-wide:
 
 ```bash
-nix develop
+nix --experimental-features 'nix-command flakes' develop
 ```
 
 On **Linux**, Nix also provides the compiler (GCC). On **macOS**, the shell uses
