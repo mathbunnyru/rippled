@@ -4,7 +4,7 @@
 
 > These instructions also assume a basic familiarity with Conan and CMake.
 > If you are unfamiliar with Conan, you can read our
-> [crash course](./docs/build/conan.md) or the official [Getting Started][3]
+> [crash course](./docs/build/conan.md) or the official [Getting Started][conan-getting-started]
 > walkthrough.
 
 ## Branches
@@ -44,7 +44,7 @@ You can verify that the required tools are installed and runnable with:
 ./bin/check-tools.sh
 ```
 
-`xrpld` is written in the C++23 dialect. The [tested compiler versions][2] are:
+`xrpld` is written in the C++23 dialect. The [tested compiler versions][cpp23-support] are:
 
 | Compiler    | Version   |
 | ----------- | --------- |
@@ -83,7 +83,7 @@ Conan, CMake, and a C++ compiler, you may need to set up your Conan profile.
 
 These instructions assume a basic familiarity with Conan and CMake. If you are
 unfamiliar with Conan, then please read [this crash course](./docs/build/conan.md) or the official
-[Getting Started][3] walkthrough.
+[Getting Started][conan-getting-started] walkthrough.
 
 #### Default profile
 
@@ -325,7 +325,7 @@ See [Sanitizers docs](./docs/build/sanitizers.md) for more details.
 | `werr`     | OFF           | Treat compilation warnings as errors                           |
 | `wextra`   | OFF           | Enable additional compilation warnings                         |
 
-[Unity builds][5] may be faster for the first build (at the cost of much more
+[Unity builds][unity-build] may be faster for the first build (at the cost of much more
 memory) since they concatenate sources into fewer translation units. Non-unity
 builds may be faster for incremental builds, and can be helpful for detecting
 `#include` omissions.
@@ -400,9 +400,9 @@ If you want to experiment with a new package, follow these steps:
      (search for the existing call to `target_link_libraries(xrpl_libs INTERFACE ...)`).
 5. Start coding! Don't forget to include whatever headers you need from the package.
 
-[2]: https://en.cppreference.com/w/cpp/compiler_support/23
-[3]: https://docs.conan.io/en/latest/getting_started.html
-[5]: https://en.wikipedia.org/wiki/Unity_build
+[cpp23-support]: https://en.cppreference.com/w/cpp/compiler_support/23
+[conan-getting-started]: https://docs.conan.io/en/latest/getting_started.html
+[unity-build]: https://en.wikipedia.org/wiki/Unity_build
 [gcovr]: https://gcovr.com/en/stable/getting-started.html
 [python-pip]: https://packaging.python.org/en/latest/guides/installing-using-pip-and-virtual-environments/
 [build_type]: https://cmake.org/cmake/help/latest/variable/CMAKE_BUILD_TYPE.html
