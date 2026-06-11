@@ -19,10 +19,8 @@ Make sure your toolchain is recent enough — the compiler versions currently te
 LLVM tools (`clang-tidy` and `clang-format`) are also pinned to version 22.
 
 Older compilers may fail to build the latest `develop` code: the codebase now
-relies on C++23 features, has been adjusted for `clang-tidy`, and replaced the
-in-house `Expected` class with `std::expected`. If the latest code doesn't
-build for you, update your build toolchain first. These changes are only on
-`develop` and are **not** part of the upcoming 3.2 release.
+relies on C++23 features, has been adjusted for `clang-tidy`.
+If the latest code doesn't build for you, update your build toolchain first.
 
 ## Linux and macOS
 
