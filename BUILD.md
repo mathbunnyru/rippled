@@ -31,8 +31,7 @@ releases](https://github.com/XRPLF/rippled/releases).
 See [System Requirements](https://xrpl.org/system-requirements.html).
 
 Building xrpld generally requires Git, Python, Conan, CMake, and a C++
-compiler. Some guidance on setting up such a [C++ development environment can be
-found here](./docs/build/environment.md).
+compiler.
 
 - [Python](https://www.python.org/downloads/)
 - [Conan](https://conan.io/downloads.html)
