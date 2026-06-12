@@ -131,7 +131,7 @@ tl;dr
 
 In general, pull requests use `develop` as the base branch.
 
-The exception is fixes, improvements, and hotfixes for an existing release,
+The exceptions are fixes, improvements, and hotfixes for an existing release,
 which use that release's branch (e.g. `release/3.2.x`) as the base.
 
 If your changes are not quite ready, but you want to make it easily available
