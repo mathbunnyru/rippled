@@ -53,6 +53,10 @@ You can verify that the required tools are installed and runnable with:
 | Apple Clang | 17        |
 | MSVC        | 19.44[^3] |
 
+## Operating Systems
+
+Please see the [environment setup guide](./docs/build/environment.md) for detailed instructions for all platforms.
+
 ### Linux
 
 The Ubuntu Linux distribution has received the highest level of quality
@@ -67,10 +71,6 @@ Many `xrpld` engineers use macOS for development.
 ### Windows
 
 Windows is used by some engineers for development only.
-
-On Linux and macOS we recommend the [Nix development shell](./docs/build/nix.md)
-to get the exact tooling used in CI. See the [environment setup
-guide](./docs/build/environment.md) for all platforms, including Windows.
 
 [^3]: Windows is not recommended for production use.
 
