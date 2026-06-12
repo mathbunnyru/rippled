@@ -58,7 +58,7 @@ You can verify that the required tools are installed and runnable with:
 The Ubuntu Linux distribution has received the highest level of quality
 assurance, testing, and support. We also support Red Hat and use Debian
 internally.
-Our CI tooling is OS-independent and uses a Nix-based environment, so it should be possible to build on other Linux distributions as well, although we have not tested them.
+Our Linux CI tooling is distro-independent and uses a Nix-based environment, so it should be possible to build on other Linux distributions as well, although we have not tested them.
 
 ### macOS
 
