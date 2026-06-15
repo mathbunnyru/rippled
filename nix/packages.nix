@@ -9,6 +9,7 @@ in
 {
   commonPackages = with pkgs; [
     ccache
+    clangbuildanalyzer # needed to analyze build times in Clio
     cmake
     conan
     curlMinimal # needed for codecov/codecov-action
