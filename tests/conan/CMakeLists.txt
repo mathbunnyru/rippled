@@ -8,5 +8,6 @@ project(${name} VERSION ${version} LANGUAGES CXX)
 find_package(xrpl CONFIG REQUIRED)
 
 add_executable(example)
+patch_nix_binary(example)
 target_sources(example PRIVATE src/example.cpp)
 target_link_libraries(example PRIVATE xrpl::libxrpl)
