@@ -125,3 +125,8 @@ conan install .. --output-folder . --build '*' --settings build_type=Release
 ## Updating `flake.lock` file
 
 To update `flake.lock` to the latest revision use `nix flake update` command.
+
+## Troubleshooting
+
+See [Troubleshooting Nix problems](./nix_troubleshooting.md) for common issues,
+such as `nix develop` failing inside Git worktrees.
