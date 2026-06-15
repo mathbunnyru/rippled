@@ -65,7 +65,7 @@ The first time you run this command, it will take a few minutes to download and 
 A compiler can be chosen by providing its name with the `.#` prefix, e.g. `nix develop .#gcc15`.
 Use `nix flake show` to see all the available development shells.
 
-Use `nix develop .#no_compiler` to use the compiler from your system.
+Use `nix develop .#no-compiler` to use the compiler from your system.
 
 ### Example Usage
 
@@ -82,11 +82,27 @@ nix develop
 
 ### Using a different shell
 
-`nix develop` opens bash by default. If you want to use another shell this could be done by adding `-c` flag. For example:
+`nix develop` opens bash by default. To use another shell, pass it with the `-c` flag — this works with any shell, e.g. `zsh` or `fish`:
 
 ```bash
+# Use zsh
 nix develop -c zsh
+
+# Use fish
+nix develop -c fish
+
+# Use your login shell
+nix develop -c "$SHELL"
 ```
+
+> [!WARNING]
+> Your shell's interactive startup files (e.g. `config.fish`, `.zshrc`) may prepend other directories — most commonly Homebrew — to `$PATH`, which can shadow the tools provided by the Nix shell. After entering, verify that tools resolve into the Nix store:
+>
+> ```bash
+> command -v cmake   # should print a /nix/store/... path
+> ```
+>
+> If it doesn't, either adjust your shell configuration so it doesn't override `$PATH`, or use [direnv](#automatic-activation-with-direnv) (below), which loads the environment _after_ your shell config and so takes precedence regardless of the shell you use.
 
 ## Building xrpld with Nix
 
@@ -95,6 +111,8 @@ Once inside the Nix development shell, follow the standard [build instructions](
 ## Automatic Activation with direnv
 
 [direnv](https://direnv.net/) or [nix-direnv](https://github.com/nix-community/nix-direnv) can automatically activate the Nix development shell when you enter the repository directory.
+
+This is also the most robust way to use the environment from **any shell** (bash, zsh, fish, …): direnv stays in your current shell and loads the environment _after_ your shell's startup files have run, so the Nix-provided tools take precedence over anything your shell configuration adds to `$PATH`. To use it, install direnv for your shell, then add an `.envrc` containing `use flake` at the repository root and run `direnv allow`.
 
 ## Conan and Prebuilt Packages
 
