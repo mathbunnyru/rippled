@@ -324,7 +324,7 @@ See [Sanitizers docs](./docs/build/sanitizers.md) for more details.
 
 | Option     | Default Value | Description                                                    |
 | ---------- | ------------- | -------------------------------------------------------------- |
-| `assert`   | OFF           | Enable assertions.                                             |
+| `assert`   | OFF           | Force enabling assertions.                                     |
 | `coverage` | OFF           | Prepare the coverage report.                                   |
 | `tests`    | OFF           | Build tests.                                                   |
 | `unity`    | OFF           | Configure a unity build.                                       |
