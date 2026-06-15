@@ -80,6 +80,7 @@ if [ "${os}" = "linux" ] || [ "${os}" = "macos" ]; then
     check ccache
     check clang
     check clang++
+    check ClangBuildAnalyzer
     check curl
     check file
     check less
