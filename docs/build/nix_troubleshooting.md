@@ -37,11 +37,7 @@ If it reports a version below `1.9.4`, upgrade Nix (nixpkgs already ships the
 fixed libgit2):
 
 ```bash
-# Official installer
 sudo -i nix upgrade-nix
-
-# Determinate Systems installer
-determinate-nixd upgrade
 ```
 
 Until Nix is upgraded, you can work around it by either:
