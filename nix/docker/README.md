@@ -86,5 +86,5 @@ diagnostic on a stock base image.
 | [`./Dockerfile`](./Dockerfile)                                          | Multi-stage build described above.                                            |
 | [`./loader-path.sh`](./loader-path.sh)                                  | Print the dynamic-linker (`PT_INTERP`) path for the current architecture.     |
 | [`./test_files/`](./test_files)                                         | C++ sources and scripts to compile and run the sanitizer smoke tests.         |
-| [`/bin/check-tools.sh`](../../bin/check-tools.sh)                       | Verify every expected tool is present and runnable.                           |
+| [`/bin/check-tools.sh`](../../bin/check-tools.sh)                       | Verify every expected tools are present and runnable.                         |
 | [`/bin/install-sanitizer-libs.sh`](../../bin/install-sanitizer-libs.sh) | Install `libasan`/`libtsan`/`libubsan` runtimes on the supported base images. |
