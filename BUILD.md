@@ -21,12 +21,12 @@ You can verify that the required tools are installed and runnable with:
 
 `xrpld` is written in the C++23 dialect. The [tested compiler versions][cpp23-support] are:
 
-| Compiler    | Version   |
-| ----------- | --------- |
-| GCC         | 15.2      |
-| Clang       | 22        |
-| Apple Clang | 17        |
-| MSVC        | 19.44[^3] |
+| Compiler    | Version         |
+| ----------- | --------------- |
+| GCC         | 15.2            |
+| Clang       | 22              |
+| Apple Clang | 17              |
+| MSVC        | 19.44[^windows] |
 
 ## Operating Systems
 
@@ -47,7 +47,7 @@ Many `xrpld` engineers use macOS for development.
 
 Windows is used by some engineers for development only.
 
-[^3]: Windows is not recommended for production use.
+[^windows]: Windows is not recommended for production use.
 
 ## Steps
 
