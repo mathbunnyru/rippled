@@ -2,25 +2,6 @@
 | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | These instructions assume you have a C++ development environment ready with Git, Python, Conan, CMake, and a C++ compiler. For help setting one up on Linux, macOS, or Windows, [see this guide](./docs/build/environment.md).<br><br>These instructions also assume a basic familiarity with Conan and CMake. If you are unfamiliar with Conan, you can read our [crash course](./docs/build/conan.md) or the official [Getting Started][conan-getting-started] walkthrough. |
 
-## Branches
-
-For the latest set of untested features, or to contribute, choose the `develop`
-branch.
-
-```bash
-git checkout develop
-```
-
-For a release candidate, choose the relevant release branch, e.g.
-`release/3.2.x`.
-
-```bash
-git checkout release/3.2.x
-```
-
-For a stable release, choose one of the [tagged
-releases](https://github.com/XRPLF/rippled/releases).
-
 ## Minimum Requirements
 
 See [System Requirements](https://xrpl.org/system-requirements.html).
@@ -69,6 +50,25 @@ Windows is used by some engineers for development only.
 [^3]: Windows is not recommended for production use.
 
 ## Steps
+
+### Branches
+
+For the latest set of untested features, or to contribute, choose the `develop`
+branch.
+
+```bash
+git checkout develop
+```
+
+For a release candidate, choose the relevant release branch, e.g.
+`release/3.2.x`.
+
+```bash
+git checkout release/3.2.x
+```
+
+For a stable release, choose one of the [tagged
+releases](https://github.com/XRPLF/rippled/releases).
 
 ### Set Up Conan
 
