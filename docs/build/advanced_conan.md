@@ -169,4 +169,26 @@ sed -i.bak -e 's|^arch=.*$|arch=x86_64|' $(conan config home)/profiles/default
 sed -i.bak -e 's|^compiler\.runtime=.*$|compiler.runtime=static|' $(conan config home)/profiles/default
 ```
 
+## Add a Dependency
+
+If you want to experiment with a new package, follow these steps:
+
+1. Search for the package on [Conan Center](https://conan.io/center/).
+2. Modify [`conanfile.py`](../../conanfile.py):
+   - Add a version of the package to the `requires` property.
+   - Change any default options for the package by adding them to the
+     `default_options` property (with syntax `'$package:$option': $value`).
+3. Regenerate the [Conan lockfile](../../conan/lockfile/README.md) so the new
+   dependency is captured:
+
+   ```bash
+   ./conan/lockfile/regenerate.sh
+   ```
+
+4. Modify [`CMakeLists.txt`](../../CMakeLists.txt):
+   - Add a call to `find_package($package REQUIRED)`.
+   - Link a library from the package to the target `xrpl_libs`
+     (search for the existing call to `target_link_libraries(xrpl_libs INTERFACE ...)`).
+5. Start coding! Don't forget to include whatever headers you need from the package.
+
 [profile]: https://docs.conan.io/2/reference/config_files/profiles.html
