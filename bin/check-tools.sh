@@ -90,6 +90,7 @@ if [ "${os}" = "linux" ] || [ "${os}" = "macos" ]; then
     check perl
     check pkg-config
     check vim
+    check zip
 
     # These tools are present in our Linux CI images and in local development
     # setups, but not in the macOS CI environment. So check them everywhere
