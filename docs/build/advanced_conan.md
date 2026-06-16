@@ -88,8 +88,7 @@ Possible values are ['5.0', '5.1', '6.0', '6.1', '7.0', '7.3', '8.0', '8.1',
 Read "http://docs.conan.io/2/knowledge/faq.html#error-invalid-setting"
 ```
 
-you need to add your compiler to the list of compiler versions in
-`$(conan config home)/settings_user.yml`, by adding the required version number(s)
+you need to create `$(conan config home)/settings_user.yml` file if it doesn't exist and add the required version number(s)
 to the `version` array specific for your compiler. For example:
 
 ```yaml
