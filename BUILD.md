@@ -365,7 +365,7 @@ After any updates or changes to dependencies, you may need to do the following:
 #### ERROR: Package not resolved
 
 If you're seeing an error like `ERROR: Package 'snappy/1.1.10' not resolved: Unable to find 'snappy/1.1.10#968fef506ff261592ec30c574d4a7809%1756234314.246' in remotes.`,
-please add `xrplf` remote or re-run `conan export` for [patched recipes](./docs/build/advanced_conan.md#patched-recipes).
+please [add `xrplf` remote](#add-xrplf-remote) or re-run `conan export` for [patched recipes](./docs/build/advanced_conan.md#patched-recipes).
 
 ### `protobuf/port_def.inc` file not found
 
