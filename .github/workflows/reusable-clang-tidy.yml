@@ -20,9 +20,11 @@ env:
   BUILD_DIR: build
   BUILD_TYPE: Debug # Debug so that ASSERTS and such participate in clang-tidy check
 
-  OUTPUT_FILE: clang-tidy-output.txt
-  DIFF_FILE: clang-tidy-git-diff.txt
-  ISSUE_FILE: clang-tidy-issue.md
+  OUTPUT_FILE: /tmp/clang-tidy-output.txt
+  DIFF_FILE: /tmp/clang-tidy-git-diff.txt
+  ISSUE_FILE: /tmp/clang-tidy-issue.md
+
+  COMPILER: clang
 
 jobs:
   determine-files:
@@ -59,7 +61,7 @@ jobs:
       - name: Set compiler environment
         uses: ./.github/actions/set-compiler-env
         with:
-          compiler: clang
+          compiler: ${{ env.COMPILER }}
 
       - name: Setup Conan
         uses: ./.github/actions/setup-conan
