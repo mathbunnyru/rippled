@@ -1,11 +1,6 @@
-| :warning: **WARNING** :warning:                                                                                                                                                                                                |
-| ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| These instructions assume you have a C++ development environment ready with Git, Python, Conan, CMake, and a C++ compiler. For help setting one up on Linux, macOS, or Windows, [see this guide](./docs/build/environment.md). |
-
-> These instructions also assume a basic familiarity with Conan and CMake.
-> If you are unfamiliar with Conan, you can read our
-> [crash course](./docs/build/conan.md) or the official [Getting Started][conan-getting-started]
-> walkthrough.
+| :warning: **WARNING** :warning:                                                                                                                                                                                                                                                                                                                                                                                                                                               |
+| ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| These instructions assume you have a C++ development environment ready with Git, Python, Conan, CMake, and a C++ compiler. For help setting one up on Linux, macOS, or Windows, [see this guide](./docs/build/environment.md).<br><br>These instructions also assume a basic familiarity with Conan and CMake. If you are unfamiliar with Conan, you can read our [crash course](./docs/build/conan.md) or the official [Getting Started][conan-getting-started] walkthrough. |
 
 ## Branches
 
