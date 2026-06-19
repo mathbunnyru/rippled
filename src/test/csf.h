@@ -1,3 +1,4 @@
+#pragma once
 #include <test/csf/BasicNetwork.h>
 #include <test/csf/Digraph.h>
 #include <test/csf/Histogram.h>

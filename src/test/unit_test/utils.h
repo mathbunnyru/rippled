@@ -1,3 +1,4 @@
+#pragma once
 #include <xrpl/protocol/SecretKey.h>
 
 #include <cstring>

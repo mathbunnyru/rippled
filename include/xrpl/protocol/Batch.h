@@ -1,3 +1,4 @@
+#pragma once
 #include <xrpl/protocol/HashPrefix.h>
 #include <xrpl/protocol/STVector256.h>
 #include <xrpl/protocol/Serializer.h>
