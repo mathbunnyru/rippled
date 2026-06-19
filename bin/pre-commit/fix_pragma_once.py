@@ -9,13 +9,13 @@ Usage: ./bin/pre-commit/fix_pragma_once.py <file1> <file2> ...
 import sys
 from pathlib import Path
 
-PRAGMA_ONCE = "#pragma once"
+PRAGMA_ONCE = "#pragma once\n\n"
 
 
 def fix_pragma_once(path: Path) -> bool:
     original = path.read_text(encoding="utf-8")
     if PRAGMA_ONCE not in original:
-        path.write_text(PRAGMA_ONCE + "\n" + original, encoding="utf-8")
+        path.write_text(PRAGMA_ONCE + original, encoding="utf-8")
         return False
     return True
 
