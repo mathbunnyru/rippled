@@ -82,9 +82,7 @@ if [ "${os}" = "linux" ] || [ "${os}" = "macos" ]; then
     check clang++
     check ClangBuildAnalyzer
     check curl
-    check dot
     check file
-    check git-lfs
     check less
     check make
     check netstat which netstat
@@ -99,10 +97,12 @@ if [ "${os}" = "linux" ] || [ "${os}" = "macos" ]; then
     # except when running in CI on macOS.
     if [ "${os}" = "linux" ] || [ -z "${CI:-}" ]; then
         check clang-format
+        check dot
         check doxygen
         check gcovr
         check gh
         check git-cliff
+        check git-lfs
         check gpg
         # pre-commit, or its alternative implementation prek
         check pre-commit sh -c 'pre-commit --version || prek --version'
