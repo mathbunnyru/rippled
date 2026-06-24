@@ -11,6 +11,7 @@
 #include <xrpl/beast/container/detail/aged_unordered_container.h>
 #include <xrpl/beast/unit_test/suite.h>
 
+#include <algorithm>
 #include <chrono>
 #include <cstddef>
 #include <functional>
@@ -655,7 +656,7 @@ AgedAssociativeContainerTestBase::checkUnorderedContentsRefRef(C&& c, Values con
         auto const last(c.end(i));
         for (auto iter(c.begin(i)); iter != last; ++iter)
         {
-            auto const match(std::find_if(v.begin(), v.end(), [iter](Values::value_type const& e) {
+            auto const match(std::ranges::find_if(v, [iter](Values::value_type const& e) {
                 return Traits::extract(*iter) == Traits::extract(e);
             }));
             BEAST_EXPECT(match != v.end());
