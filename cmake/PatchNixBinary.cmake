@@ -15,6 +15,8 @@
 
 include_guard(GLOBAL)
 
+include(CompilationEnv)
+
 # Provided by the Nix-based CI image; prints the system default ELF loader path.
 set(_loader_path_script "/tmp/loader-path.sh")
 
