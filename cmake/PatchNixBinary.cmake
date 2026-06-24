@@ -20,11 +20,7 @@ include(CompilationEnv)
 # Provided by the Nix-based CI image; prints the system default ELF loader path.
 set(_loader_path_script "/tmp/loader-path.sh")
 
-if(
-    is_linux
-    AND NOT SANITIZERS_ENABLED
-    AND EXISTS "${_loader_path_script}"
-)
+if(is_linux AND NOT SANITIZERS_ENABLED AND EXISTS "${_loader_path_script}")
     execute_process(
         COMMAND "${_loader_path_script}"
         OUTPUT_VARIABLE DEFAULT_LOADER_PATH
