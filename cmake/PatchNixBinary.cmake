@@ -21,7 +21,7 @@ include(CompilationEnv)
 set(_loader_path_script "/tmp/loader-path.sh")
 
 if(
-    CMAKE_SYSTEM_NAME STREQUAL "Linux"
+    is_linux
     AND NOT SANITIZERS_ENABLED
     AND EXISTS "${_loader_path_script}"
 )
