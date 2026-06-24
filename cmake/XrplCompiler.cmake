@@ -157,11 +157,10 @@ else()
     # On aarch64, libatomic is required for atomic operations. It is not needed on x86_64.
     # Linking it statically on Linux
     if(is_arm64 AND is_linux)
-        find_library(ATOMIC_STATIC_LIB NAMES libatomic.a)
-        if(NOT ATOMIC_STATIC_LIB)
-            message(FATAL_ERROR "libatomic.a not found")
-        endif()
-        target_link_libraries(common INTERFACE ${ATOMIC_STATIC_LIB})
+        target_link_options(
+            common
+            INTERFACE -Wl,--push-state -Wl,-Bstatic -latomic -Wl,--pop-state
+        )
     endif()
 
     # Keep -stdlib=libstdc++ off the compile commands, but preserve it for linking.
