@@ -14,7 +14,7 @@ on:
         description: "The URL of the Conan endpoint to use."
         required: false
         type: string
-        default: https://conan.ripplex.io
+        default: https://conan.xrplf.org/repository/conan/
 
     secrets:
       remote_username:
