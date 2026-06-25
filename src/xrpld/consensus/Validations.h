@@ -896,7 +896,7 @@ public:
             return (preferred->first >= minSeq) ? preferred->second : lcl.id();
 
         // Otherwise, rely on peer ledgers
-        auto it = std::max_element(peerCounts.begin(), peerCounts.end(), [](auto& a, auto& b) {
+        auto it = std::ranges::max_element(peerCounts, [](auto& a, auto& b) {
             // Prefer larger counts, then larger ids on ties
             // (max_element expects this to return true if a < b)
             return std::tie(a.second, a.first) < std::tie(b.second, b.first);
@@ -932,7 +932,7 @@ public:
         }
 
         // Count parent ledgers as fallback
-        return std::count_if(lastLedger_.begin(), lastLedger_.end(), [&ledgerID](auto const& it) {
+        return std::ranges::count_if(lastLedger_, [&ledgerID](auto const& it) {
             auto const& curr = it.second;
             return curr.seq() > Seq{0} && curr[curr.seq() - Seq{1}] == ledgerID;
         });

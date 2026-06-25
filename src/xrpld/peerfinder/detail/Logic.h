@@ -987,7 +987,7 @@ public:
         {
             auto const& address(iter->first.address());
             if (iter->second.when() <= now && squelches.find(address) == squelches.end() &&
-                std::none_of(slots.cbegin(), slots.cend(), [address](Slots::value_type const& v) {
+                std::ranges::none_of(slots, [address](Slots::value_type const& v) {
                     return address == v.first.address();
                 }))
             {
