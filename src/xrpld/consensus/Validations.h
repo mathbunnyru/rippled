@@ -895,7 +895,7 @@ public:
             return (preferred->first >= minSeq) ? preferred->second : lcl.id();
 
         // Otherwise, rely on peer ledgers
-        auto it = std::ranges::max_element(peerCounts, [](auto& a, auto& b) {
+        auto it = std::ranges::max_element(peerCounts, [](auto const& a, auto const& b) {
             // Prefer larger counts, then larger ids on ties
             // (max_element expects this to return true if a < b)
             return std::tie(a.second, a.first) < std::tie(b.second, b.first);
