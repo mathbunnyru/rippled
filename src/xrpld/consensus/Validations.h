@@ -817,16 +817,15 @@ public:
         if (!preferred)
         {
             // fall back to majority over acquiring ledgers
-            auto it = std::max_element(
-                acquiring_.begin(), acquiring_.end(), [](auto const& a, auto const& b) {
-                    std::pair<Seq, ID> const& aKey = a.first;
-                    typename hash_set<NodeID>::size_type const& aSize = a.second.size();
-                    std::pair<Seq, ID> const& bKey = b.first;
-                    typename hash_set<NodeID>::size_type const& bSize = b.second.size();
-                    // order by number of trusted peers validating that ledger
-                    // break ties with ledger ID
-                    return std::tie(aSize, aKey.second) < std::tie(bSize, bKey.second);
-                });
+            auto it = std::ranges::max_element(acquiring_, [](auto const& a, auto const& b) {
+                std::pair<Seq, ID> const& aKey = a.first;
+                typename hash_set<NodeID>::size_type const& aSize = a.second.size();
+                std::pair<Seq, ID> const& bKey = b.first;
+                typename hash_set<NodeID>::size_type const& bSize = b.second.size();
+                // order by number of trusted peers validating that ledger
+                // break ties with ledger ID
+                return std::tie(aSize, aKey.second) < std::tie(bSize, bKey.second);
+            });
             if (it != acquiring_.end())
                 return it->first;
             return std::nullopt;
