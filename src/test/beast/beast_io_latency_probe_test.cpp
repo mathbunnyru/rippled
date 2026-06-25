@@ -8,6 +8,7 @@
 #include <boost/asio/spawn.hpp>
 #include <boost/system/detail/error_code.hpp>
 
+#include <algorithm>
 #include <chrono>
 #include <condition_variable>  // IWYU pragma: keep
 #include <cstddef>

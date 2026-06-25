@@ -14,6 +14,7 @@
 #include <xrpl/protocol/XRPAmount.h>
 #include <xrpl/tx/invariants/InvariantCheck.h>
 
+#include <algorithm>
 #include <array>
 #include <cstddef>
 #include <exception>
