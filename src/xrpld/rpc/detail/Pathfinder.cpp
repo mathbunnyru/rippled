@@ -649,26 +649,14 @@ Pathfinder::getBestPaths(
         else if (extraPathsIterator->quality != pathsIterator->quality)
         {
             // Prefer the lower (better) quality value
-            if (extraPathsIterator->quality < pathsIterator->quality)
-            {
-                useExtraPath = true;
-            }
-            else
-            {
-                usePath = true;
-            }
+            useExtraPath = extraPathsIterator->quality < pathsIterator->quality;
+            usePath = !useExtraPath;
         }
         else if (extraPathsIterator->liquidity != pathsIterator->liquidity)
         {
             // Equal quality: prefer the higher liquidity
-            if (extraPathsIterator->liquidity > pathsIterator->liquidity)
-            {
-                useExtraPath = true;
-            }
-            else
-            {
-                usePath = true;
-            }
+            useExtraPath = extraPathsIterator->liquidity > pathsIterator->liquidity;
+            usePath = !useExtraPath;
         }
         else
         {
