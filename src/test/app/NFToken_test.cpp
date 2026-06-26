@@ -6351,60 +6351,44 @@ class NFTokenBaseUtil_test : public beast::unit_test::Suite
             // Bob owns no object
             BEAST_EXPECT(ownerCount(env, bob) == 0);
 
-            // Without fixNFTokenReserve amendment, when bob accepts an NFT sell
-            // offer, he can get the NFT free of reserve
-            if (!features[fixNFTokenReserve])
-            {
-                // Bob is able to accept the offer
-                env(token::acceptSellOffer(bob, sellOfferIndex));
-                env.close();
-
-                // Bob now owns an extra objects
-                BEAST_EXPECT(ownerCount(env, bob) == 1);
-
-                // This is the wrong behavior, since Bob should need at least
-                // one incremental reserve.
-            }
-            // With fixNFTokenReserve, bob can no longer accept the offer unless
+            // bob can no longer accept the offer unless
             // there is enough reserve. A detail to note is that NFTs(sell
             // offer) will not allow one to go below the reserve requirement,
             // because buyer's balance is computed after the transaction fee is
             // deducted. This means that the reserve requirement will be `base
             // fee` drops higher than normal.
-            else
-            {
-                // Bob is not able to accept the offer with only the account
-                // reserve (200,000,000 drops)
-                env(token::acceptSellOffer(bob, sellOfferIndex), Ter(tecINSUFFICIENT_RESERVE));
-                env.close();
 
-                // after prev transaction, Bob owns `200M - base fee` drops due
-                // to burnt tx fee
+            // Bob is not able to accept the offer with only the account
+            // reserve (200,000,000 drops)
+            env(token::acceptSellOffer(bob, sellOfferIndex), Ter(tecINSUFFICIENT_RESERVE));
+            env.close();
 
-                BEAST_EXPECT(ownerCount(env, bob) == 0);
+            // after prev transaction, Bob owns `200M - base fee` drops due
+            // to burnt tx fee
 
-                // Send bob an kIncrement reserve and base fee (to make up for
-                // the transaction fee burnt from the prev failed tx) Bob now
-                // owns 250,000,000 drops
-                env(pay(env.master, bob, incReserve + drops(baseFee)));
-                env.close();
+            BEAST_EXPECT(ownerCount(env, bob) == 0);
 
-                // However, this transaction will still fail because the reserve
-                // requirement is `base fee` drops higher
-                env(token::acceptSellOffer(bob, sellOfferIndex), Ter(tecINSUFFICIENT_RESERVE));
-                env.close();
+            // Send bob an kIncrement reserve and base fee (to make up for
+            // the transaction fee burnt from the prev failed tx) Bob now
+            // owns 250,000,000 drops
+            env(pay(env.master, bob, incReserve + drops(baseFee)));
+            env.close();
 
-                // Send bob `base fee * 2` drops
-                // Bob now owns `250M + base fee` drops
-                env(pay(env.master, bob, drops(baseFee * 2)));
-                env.close();
+            // However, this transaction will still fail because the reserve
+            // requirement is `base fee` drops higher
+            env(token::acceptSellOffer(bob, sellOfferIndex), Ter(tecINSUFFICIENT_RESERVE));
+            env.close();
 
-                // Bob is now able to accept the offer
-                env(token::acceptSellOffer(bob, sellOfferIndex));
-                env.close();
+            // Send bob `base fee * 2` drops
+            // Bob now owns `250M + base fee` drops
+            env(pay(env.master, bob, drops(baseFee * 2)));
+            env.close();
 
-                BEAST_EXPECT(ownerCount(env, bob) == 1);
-            }
+            // Bob is now able to accept the offer
+            env(token::acceptSellOffer(bob, sellOfferIndex));
+            env.close();
+
+            BEAST_EXPECT(ownerCount(env, bob) == 1);
         }
 
         // Now exercise the scenario when the buyer accepts
@@ -6423,83 +6407,63 @@ class NFTokenBaseUtil_test : public beast::unit_test::Suite
             env.fund(acctReserve + XRP(1), bob);
             env.close();
 
-            if (!features[fixNFTokenReserve])
+            // alice mints the first NFT and creates a sell offer for 0 XRP
+            auto const sellOfferIndex1 = mintAndCreateSellOffer(env, alice, XRP(0));
+
+            // Bob cannot accept this offer because he doesn't have the
+            // reserve for the NFT
+            env(token::acceptSellOffer(bob, sellOfferIndex1), Ter(tecINSUFFICIENT_RESERVE));
+            env.close();
+
+            // Give bob enough reserve
+            env(pay(env.master, bob, drops(incReserve)));
+            env.close();
+
+            BEAST_EXPECT(ownerCount(env, bob) == 0);
+
+            // Bob now owns his first NFT
+            env(token::acceptSellOffer(bob, sellOfferIndex1));
+            env.close();
+
+            BEAST_EXPECT(ownerCount(env, bob) == 1);
+
+            // alice now mints 31 more NFTs and creates an offer for each
+            // NFT, then sells to bob
+            for (size_t i = 0; i < 31; i++)
             {
-                // Bob can accept many NFTs without having a single reserve!
-                for (size_t i = 0; i < 200; i++)
-                {
-                    // alice mints an NFT and creates a sell offer for 0 XRP
-                    auto const sellOfferIndex = mintAndCreateSellOffer(env, alice, XRP(0));
+                // alice mints an NFT and creates a sell offer for 0 XRP
+                auto const sellOfferIndex = mintAndCreateSellOffer(env, alice, XRP(0));
 
-                    // Bob is able to accept the offer
-                    env(token::acceptSellOffer(bob, sellOfferIndex));
-                    env.close();
-                }
+                // Bob can accept the offer because the new NFT is stored in
+                // an existing NFTokenPage so no new reserve is required
+                env(token::acceptSellOffer(bob, sellOfferIndex));
+                env.close();
             }
-            else
-            {
-                // alice mints the first NFT and creates a sell offer for 0 XRP
-                auto const sellOfferIndex1 = mintAndCreateSellOffer(env, alice, XRP(0));
 
-                // Bob cannot accept this offer because he doesn't have the
-                // reserve for the NFT
-                env(token::acceptSellOffer(bob, sellOfferIndex1), Ter(tecINSUFFICIENT_RESERVE));
-                env.close();
+            BEAST_EXPECT(ownerCount(env, bob) == 1);
 
-                // Give bob enough reserve
-                env(pay(env.master, bob, drops(incReserve)));
-                env.close();
+            // alice now mints the 33rd NFT and creates an sell offer for 0
+            // XRP
+            auto const sellOfferIndex33 = mintAndCreateSellOffer(env, alice, XRP(0));
 
-                BEAST_EXPECT(ownerCount(env, bob) == 0);
+            // Bob fails to accept this NFT because he does not have enough
+            // reserve for a new NFTokenPage
+            env(token::acceptSellOffer(bob, sellOfferIndex33), Ter(tecINSUFFICIENT_RESERVE));
+            env.close();
 
-                // Bob now owns his first NFT
-                env(token::acceptSellOffer(bob, sellOfferIndex1));
-                env.close();
+            // Send bob incremental reserve
+            env(pay(env.master, bob, drops(incReserve)));
+            env.close();
 
-                BEAST_EXPECT(ownerCount(env, bob) == 1);
+            // Bob now has enough reserve to accept the offer and now
+            // owns one more NFTokenPage
+            env(token::acceptSellOffer(bob, sellOfferIndex33));
+            env.close();
 
-                // alice now mints 31 more NFTs and creates an offer for each
-                // NFT, then sells to bob
-                for (size_t i = 0; i < 31; i++)
-                {
-                    // alice mints an NFT and creates a sell offer for 0 XRP
-                    auto const sellOfferIndex = mintAndCreateSellOffer(env, alice, XRP(0));
-
-                    // Bob can accept the offer because the new NFT is stored in
-                    // an existing NFTokenPage so no new reserve is required
-                    env(token::acceptSellOffer(bob, sellOfferIndex));
-                    env.close();
-                }
-
-                BEAST_EXPECT(ownerCount(env, bob) == 1);
-
-                // alice now mints the 33rd NFT and creates an sell offer for 0
-                // XRP
-                auto const sellOfferIndex33 = mintAndCreateSellOffer(env, alice, XRP(0));
-
-                // Bob fails to accept this NFT because he does not have enough
-                // reserve for a new NFTokenPage
-                env(token::acceptSellOffer(bob, sellOfferIndex33), Ter(tecINSUFFICIENT_RESERVE));
-                env.close();
-
-                // Send bob incremental reserve
-                env(pay(env.master, bob, drops(incReserve)));
-                env.close();
-
-                // Bob now has enough reserve to accept the offer and now
-                // owns one more NFTokenPage
-                env(token::acceptSellOffer(bob, sellOfferIndex33));
-                env.close();
-
-                BEAST_EXPECT(ownerCount(env, bob) == 2);
-            }
+            BEAST_EXPECT(ownerCount(env, bob) == 2);
         }
 
         // Test the behavior when the seller accepts a buy offer.
-        // The behavior should not change regardless whether fixNFTokenReserve
-        // is enabled or not, since the ledger is able to guard against
-        // free NFTokenPages when buy offer is accepted. This is merely an
-        // additional test to exercise existing offer behavior.
         {
             Account const alice{"alice"};
             Account const bob{"bob"};
@@ -6544,10 +6508,6 @@ class NFTokenBaseUtil_test : public beast::unit_test::Suite
         }
 
         // Test the reserve behavior in brokered mode.
-        // The behavior should not change regardless whether fixNFTokenReserve
-        // is enabled or not, since the ledger is able to guard against
-        // free NFTokenPages in brokered mode. This is merely an
-        // additional test to exercise existing offer behavior.
         {
             Account const alice{"alice"};
             Account const bob{"bob"};
@@ -7211,9 +7171,7 @@ public:
     void
     run() override
     {
-        testWithFeats(
-            allFeatures_ - fixNFTokenReserve - featureNFTokenMintOffer - featureDynamicNFT -
-            fixCleanup3_1_3);
+        testWithFeats(allFeatures_ - featureNFTokenMintOffer - featureDynamicNFT - fixCleanup3_1_3);
     }
 };
 
@@ -7222,8 +7180,7 @@ class NFTokenDisallowIncoming_test : public NFTokenBaseUtil_test
     void
     run() override
     {
-        testWithFeats(
-            allFeatures_ - fixNFTokenReserve - featureNFTokenMintOffer - featureDynamicNFT);
+        testWithFeats(allFeatures_ - featureNFTokenMintOffer - featureDynamicNFT);
     }
 };
 
