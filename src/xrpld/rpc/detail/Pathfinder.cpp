@@ -815,11 +815,8 @@ Pathfinder::getPathsOut(
                 {
                     for (auto const& mpt : *mpts)
                     {
-                        if (pathAsset.get<MPTID>() != mpt.getMptID())
-                            continue;
-                        if (mpt.isZeroBalance() || mpt.isMaxedOut())
-                            continue;
-                        if (bAuthRequired)
+                        if (pathAsset.get<MPTID>() != mpt.getMptID() || mpt.isZeroBalance() ||
+                            mpt.isMaxedOut() || bAuthRequired)
                             continue;
                         if (isDstAsset && dstAccount == getMPTIssuer(mpt))
                         {
