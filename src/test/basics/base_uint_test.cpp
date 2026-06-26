@@ -136,9 +136,7 @@ struct base_uint_test : beast::unit_test::Suite
     {
         testcase("base_uint: general purpose tests");
 
-#ifdef NDEBUG
         testFromRawSizeMismatch();
-#endif
 
         static_assert(!std::is_constructible_v<test96, std::complex<double>>);
         static_assert(!std::is_assignable_v<test96&, std::complex<double>>);
