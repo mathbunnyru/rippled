@@ -60,7 +60,7 @@ NFTokenAcceptOffer::preclaim(PreclaimContext const& ctx)
             if (id->isZero())
                 return {nullptr, tecOBJECT_NOT_FOUND};
 
-            auto offerSLE = ctx.view.read(keylet::nftoffer(*id));
+            auto offerSLE = ctx.view.read(keylet::nftokenOffer(*id));
 
             if (!offerSLE)
                 return {nullptr, tecOBJECT_NOT_FOUND};
@@ -307,7 +307,7 @@ NFTokenAcceptOffer::preclaim(PreclaimContext const& ctx)
         if (ctx.view.rules().enabled(fixEnforceNFTokenTrustline) &&
             (nft::getFlags(tokenID) & nft::kFlagCreateTrustLines) == 0 &&
             nftMinter != amount.getIssuer() &&
-            !ctx.view.read(keylet::line(nftMinter, amount.get<Issue>())))
+            !ctx.view.read(keylet::trustLine(nftMinter, amount.get<Issue>())))
             return tecNO_LINE;
 
         // Check that the issuer is allowed to receive IOUs.
@@ -442,7 +442,7 @@ NFTokenAcceptOffer::doApply()
     auto const loadToken = [this](std::optional<uint256> const& id) {
         SLE::pointer sle;
         if (id)
-            sle = view().peek(keylet::nftoffer(*id));
+            sle = view().peek(keylet::nftokenOffer(*id));
         return sle;
     };
 
