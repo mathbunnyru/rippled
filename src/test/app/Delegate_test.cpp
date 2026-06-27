@@ -2747,7 +2747,9 @@ class Delegate_test : public beast::unit_test::Suite
         // DO NOT modify expectedDelegableCount unless all scenarios, including
         // edge cases, have been fully tested and verified.
         // ====================================================================
-        std::size_t const expectedDelegableCount = 51;
+        // Includes the five confidential MPT transaction types, which are
+        // explicitly marked Delegable in transactions.macro.
+        std::size_t const expectedDelegableCount = 56;
 
         BEAST_EXPECTS(
             delegableCount == expectedDelegableCount,

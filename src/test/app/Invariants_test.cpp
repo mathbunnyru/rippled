@@ -5176,6 +5176,254 @@ class Invariants_test : public beast::unit_test::Suite
         }
     }
 
+    void
+    testConfidentialMPTTransfer()
+    {
+        using namespace test::jtx;
+        testcase << "ValidConfidentialMPToken";
+
+        MPTID mptID;
+
+        // Generate an MPT with privacy, issue 100 tokens to A2.
+        // Perform a confidential conversion to populate encrypted state.
+        auto const precloseConfidential =
+            [&mptID](Account const& a1, Account const& a2, Env& env) -> bool {
+            MPTTester mpt(env, a1, {.holders = {a2}, .fund = false});
+            mpt.create({.flags = tfMPTCanTransfer | tfMPTCanHoldConfidentialBalance});
+            mptID = mpt.issuanceID();
+
+            mpt.authorize({.account = a2});
+            mpt.pay(a1, a2, 100);
+
+            mpt.generateKeyPair(a1);
+            mpt.set({.account = a1, .issuerPubKey = mpt.getPubKey(a1)});
+
+            mpt.generateKeyPair(a2);
+            mpt.convert({
+                .account = a2,
+                .amt = 100,
+                .holderPubKey = mpt.getPubKey(a2),
+            });
+            return true;
+        };
+
+        // badDelete
+        doInvariantCheck(
+            {"MPToken deleted with encrypted fields while COA > 0"},
+            [&mptID](Account const& a1, Account const& a2, ApplyContext& ac) {
+                auto sleToken = ac.view().peek(keylet::mptoken(mptID, a2.id()));
+                if (!sleToken)
+                    return false;
+                // Force an erase of the object while the COA remains 100
+                ac.view().erase(sleToken);
+                return true;
+            },
+            XRPAmount{},
+            STTx{ttMPTOKEN_AUTHORIZE, [](STObject&) {}},
+            {tecINVARIANT_FAILED, tefINVARIANT_FAILED},
+            precloseConfidential);
+
+        // badConsistency
+        doInvariantCheck(
+            {"MPToken encrypted field existence inconsistency"},
+            [&mptID](Account const& a1, Account const& a2, ApplyContext& ac) {
+                auto sleToken = ac.view().peek(keylet::mptoken(mptID, a2.id()));
+                if (!sleToken)
+                    return false;
+                // Remove one of the required encrypted fields to create a mismatch
+                sleToken->makeFieldAbsent(sfIssuerEncryptedBalance);
+                ac.view().update(sleToken);
+                return true;
+            },
+            XRPAmount{},
+            STTx{ttMPTOKEN_AUTHORIZE, [](STObject&) {}},
+            {tecINVARIANT_FAILED, tecINVARIANT_FAILED},
+            precloseConfidential);
+
+        doInvariantCheck(
+            {"MPToken encrypted field existence inconsistency"},
+            [&mptID](Account const& a1, Account const& a2, ApplyContext& ac) {
+                auto sleToken = ac.view().peek(keylet::mptoken(mptID, a2.id()));
+                if (!sleToken)
+                    return false;
+                sleToken->makeFieldAbsent(sfIssuerEncryptedBalance);
+                sleToken->makeFieldAbsent(sfConfidentialBalanceInbox);
+                sleToken->makeFieldAbsent(sfConfidentialBalanceSpending);
+                sleToken->setFieldVL(sfAuditorEncryptedBalance, Blob{0x00});
+                ac.view().update(sleToken);
+                return true;
+            },
+            XRPAmount{},
+            STTx{ttMPTOKEN_AUTHORIZE, [](STObject&) {}},
+            {tecINVARIANT_FAILED, tecINVARIANT_FAILED},
+            precloseConfidential);
+
+        // requiresPrivacyFlag
+        auto const precloseNoPrivacy = [&mptID](
+                                           Account const& a1, Account const& a2, Env& env) -> bool {
+            MPTTester mpt(env, a1, {.holders = {a2}, .fund = false});
+            // completely omitted the tfMPTCanHoldConfidentialBalance flag here.
+            mpt.create({.flags = tfMPTCanTransfer});
+            mptID = mpt.issuanceID();
+            mpt.authorize({.account = a2});
+            mpt.pay(a1, a2, 100);
+            return true;
+        };
+
+        doInvariantCheck(
+            {"MPToken has encrypted fields but Issuance does not have "
+             "lsfMPTCanHoldConfidentialBalance "
+             "set"},
+            [&mptID](Account const& a1, Account const& a2, ApplyContext& ac) {
+                auto sleToken = ac.view().peek(keylet::mptoken(mptID, a2.id()));
+                if (!sleToken)
+                    return false;
+                // Inject all three encrypted fields consistently (inbox+spending+issuer must be
+                // in sync or badConsistency fires first and masks requiresPrivacyFlag).
+                sleToken->setFieldVL(sfConfidentialBalanceInbox, Blob{0x00});
+                sleToken->setFieldVL(sfConfidentialBalanceSpending, Blob{0x00});
+                sleToken->setFieldVL(sfIssuerEncryptedBalance, Blob{0x00});
+                ac.view().update(sleToken);
+                return true;
+            },
+            XRPAmount{},
+            STTx{ttMPTOKEN_AUTHORIZE, [](STObject&) {}},
+            {tecINVARIANT_FAILED, tecINVARIANT_FAILED},
+            precloseNoPrivacy);
+
+        // badCOA
+        doInvariantCheck(
+            {"Confidential outstanding amount exceeds total outstanding amount"},
+            [&mptID](Account const& a1, Account const& a2, ApplyContext& ac) {
+                auto sleIssuance = ac.view().peek(keylet::mptokenIssuance(mptID));
+                if (!sleIssuance)
+                    return false;
+                // Total outstanding is natively 100; bloat the COA over 100
+                sleIssuance->setFieldU64(sfConfidentialOutstandingAmount, 200);
+                ac.view().update(sleIssuance);
+                return true;
+            },
+            XRPAmount{},
+            STTx{ttMPTOKEN_ISSUANCE_SET, [](STObject&) {}},
+            {tecINVARIANT_FAILED, tecINVARIANT_FAILED},
+            precloseConfidential);
+
+        // Conservation Violation
+        doInvariantCheck(
+            {"Token conservation violation for MPT"},
+            [&mptID](Account const& a1, Account const& a2, ApplyContext& ac) {
+                auto sleIssuance = ac.view().peek(keylet::mptokenIssuance(mptID));
+                if (!sleIssuance)
+                    return false;
+
+                sleIssuance->setFieldU64(
+                    sfConfidentialOutstandingAmount,
+                    sleIssuance->getFieldU64(sfConfidentialOutstandingAmount) - 10);
+                ac.view().update(sleIssuance);
+
+                return true;
+            },
+            XRPAmount{},
+            STTx{ttMPTOKEN_AUTHORIZE, [](STObject&) {}},
+            {tecINVARIANT_FAILED, tecINVARIANT_FAILED},
+            precloseConfidential);
+
+        // Send/MergeInbox must not change OutstandingAmount (coaDelta == 0)
+        doInvariantCheck(
+            {"Invariant failed: OutstandingAmount changed "
+             "by confidential transaction that should not "
+             "modify it for MPT"},
+            [&mptID](Account const& a1, Account const& a2, ApplyContext& ac) {
+                auto sleIssuance = ac.view().peek(keylet::mptokenIssuance(mptID));
+                if (!sleIssuance)
+                    return false;
+                sleIssuance->setFieldU64(
+                    sfOutstandingAmount, sleIssuance->getFieldU64(sfOutstandingAmount) + 1);
+                ac.view().update(sleIssuance);
+                return true;
+            },
+            XRPAmount{},
+            STTx{ttCONFIDENTIAL_MPT_SEND, [](STObject&) {}},
+            {tecINVARIANT_FAILED, tecINVARIANT_FAILED},
+            precloseConfidential);
+
+        // Send/MergeInbox and zero-COA-delta confidential transactions must not
+        // change public holder MPTAmount.
+        doInvariantCheck(
+            {"Invariant failed: MPTAmount changed by confidential "
+             "transaction that should not modify this field."},
+            [&mptID](Account const& a1, Account const& a2, ApplyContext& ac) {
+                auto sleToken = ac.view().peek(keylet::mptoken(mptID, a2.id()));
+                if (!sleToken)
+                    return false;
+                sleToken->setFieldU64(sfMPTAmount, sleToken->getFieldU64(sfMPTAmount) + 1);
+                ac.view().update(sleToken);
+                return true;
+            },
+            XRPAmount{},
+            STTx{ttCONFIDENTIAL_MPT_SEND, [](STObject&) {}},
+            {tecINVARIANT_FAILED, tecINVARIANT_FAILED},
+            precloseConfidential);
+
+        // badVersion
+        doInvariantCheck(
+            {"MPToken sfConfidentialBalanceVersion not updated when sfConfidentialBalanceSpending "
+             "changed"},
+            [&mptID](Account const& a1, Account const& a2, ApplyContext& ac) {
+                Blob const kChangedConfidentialSpending = {0xBA, 0xDD};
+                auto sleToken = ac.view().peek(keylet::mptoken(mptID, a2.id()));
+                if (!sleToken)
+                    return false;
+                sleToken->setFieldVL(sfConfidentialBalanceSpending, kChangedConfidentialSpending);
+
+                // DO NOT update sfConfidentialBalanceVersion
+                ac.view().update(sleToken);
+                return true;
+            },
+            XRPAmount{},
+            STTx{ttMPTOKEN_AUTHORIZE, [](STObject&) {}},
+            {tecINVARIANT_FAILED, tecINVARIANT_FAILED},
+            precloseConfidential);
+
+        // Skipping Deleted MPTs (Issuance deleted)
+        auto const precloseOrphan = [&mptID](
+                                        Account const& a1, Account const& a2, Env& env) -> bool {
+            MPTTester mpt(env, a1, {.holders = {a2}, .fund = false});
+            mpt.create({.flags = tfMPTCanTransfer | tfMPTCanHoldConfidentialBalance});
+            mptID = mpt.issuanceID();
+            mpt.authorize({.account = a2});
+
+            // Generate privacy keys and convert 0 amount so Bob has the encrypted fields
+            mpt.generateKeyPair(a1);
+            mpt.set({.account = a1, .issuerPubKey = mpt.getPubKey(a1)});
+            mpt.generateKeyPair(a2);
+            mpt.convert({
+                .account = a2,
+                .amt = 0,
+                .holderPubKey = mpt.getPubKey(a2),
+            });
+
+            // Immediately destroy the issuance. A2's empty, encrypted token object lives on.
+            mpt.destroy();
+            return true;
+        };
+
+        doInvariantCheck(
+            {},
+            [&mptID](Account const& a1, Account const& a2, ApplyContext& ac) {
+                auto sleToken = ac.view().peek(keylet::mptoken(mptID, a2.id()));
+                if (!sleToken)
+                    return false;
+                // Safely able to erase the deleted token.
+                ac.view().erase(sleToken);
+                return true;
+            },
+            XRPAmount{},
+            STTx{ttMPTOKEN_AUTHORIZE, [](STObject&) {}},
+            {tesSUCCESS, tesSUCCESS},
+            precloseOrphan);
+    }
+
 public:
     void
     run() override
@@ -5204,6 +5452,7 @@ public:
         testValidPseudoAccounts();
         testValidLoanBroker();
         testVault();
+        testConfidentialMPTTransfer();
         testMPT();
         testInvariantOverwrite(defaultAmendments());
         testInvariantOverwrite(defaultAmendments() - fixCleanup3_1_3);
