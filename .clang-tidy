@@ -45,6 +45,13 @@ Checks: "-*,
   llvm-namespace-comment,
 
   misc-*,
+  -misc-multiple-inheritance,
+  -misc-no-recursion,
+  -misc-non-private-member-variables-in-classes,
+  -misc-override-with-different-visibility,
+  -misc-unused-parameters,
+  -misc-use-anonymous-namespace,
+  -misc-use-internal-linkage,
 
   modernize-*,
   -modernize-avoid-bind,
