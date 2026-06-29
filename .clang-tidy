@@ -64,6 +64,7 @@ Checks: "-*,
   -misc-use-internal-linkage,
 
   modernize-*,
+  -modernize-use-integer-sign-comparison,
   -modernize-use-trailing-return-type,
 
   performance-*,
