@@ -64,6 +64,7 @@ Checks: "-*,
   -misc-use-internal-linkage,
 
   modernize-*,
+  -modernize-use-trailing-return-type,
 
   performance-*,
   -performance-avoid-endl,
