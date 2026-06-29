@@ -64,6 +64,7 @@ Checks: "-*,
   -misc-use-internal-linkage,
 
   modernize-*,
+  -modernize-return-braced-init-list,
   -modernize-use-integer-sign-comparison,
   -modernize-use-trailing-return-type,
 
