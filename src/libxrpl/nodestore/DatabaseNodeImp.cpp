@@ -2,7 +2,6 @@
 
 #include <xrpl/basics/Blob.h>
 #include <xrpl/basics/Log.h>
-#include <xrpl/basics/TaggedCache.ipp>
 #include <xrpl/basics/base_uint.h>
 #include <xrpl/basics/contract.h>
 #include <xrpl/nodestore/Database.h>

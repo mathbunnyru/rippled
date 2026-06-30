@@ -21,9 +21,9 @@
 #include <xrpl/protocol/RippleLedgerHash.h>
 #include <xrpl/protocol/jss.h>
 
-#include <org/xrpl/rpc/v1/get_ledger.pb.h>
-#include <org/xrpl/rpc/v1/get_ledger_data.pb.h>
-#include <org/xrpl/rpc/v1/get_ledger_entry.pb.h>
+#include <org/xrpl/rpc/v1/get_ledger.pb.h>        // IWYU pragma: keep
+#include <org/xrpl/rpc/v1/get_ledger_data.pb.h>   // IWYU pragma: keep
+#include <org/xrpl/rpc/v1/get_ledger_entry.pb.h>  // IWYU pragma: keep
 #include <org/xrpl/rpc/v1/ledger.pb.h>
 
 #include <cstdint>

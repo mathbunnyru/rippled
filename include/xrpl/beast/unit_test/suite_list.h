@@ -10,9 +10,6 @@
 #include <boost/assert.hpp>
 
 #include <set>
-#include <string>
-#include <typeindex>
-#include <unordered_set>
 
 namespace beast::unit_test {
 

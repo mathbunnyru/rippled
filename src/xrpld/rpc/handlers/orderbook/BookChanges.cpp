@@ -4,7 +4,7 @@
 #include <xrpld/rpc/detail/RPCLedgerHelpers.h>
 
 #include <xrpl/ledger/ReadView.h>
-#include <xrpl/protocol/STArray.h>
+#include <xrpl/protocol/STArray.h>  // IWYU pragma: keep
 
 #include <memory>
 
