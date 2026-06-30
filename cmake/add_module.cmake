@@ -45,6 +45,13 @@ function(add_module parent name)
         verify_headers
         AND NOT "${parent}/${name}" STREQUAL "xrpl/protocol_autogen"
     )
-        verify_module_headers(${target} ${parent} ${name})
+        verify_target_headers(
+            ${target}
+            "${CMAKE_CURRENT_SOURCE_DIR}/include/${parent}/${name}"
+        )
+        verify_target_headers(
+            ${target}
+            "${CMAKE_CURRENT_SOURCE_DIR}/src/lib${parent}/${name}"
+        )
     endif()
 endfunction()

@@ -48,9 +48,6 @@ endfunction()
 function(add_module parent name)
 endfunction()
 
-function(verify_module_headers target parent name)
-endfunction()
-
 function(verify_target_headers target headers_dir)
 endfunction()
 

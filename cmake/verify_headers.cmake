@@ -1,5 +1,3 @@
-include(isolate_headers)
-
 # Our normal build only ever compiles `.cpp` files, so a header is only ever
 # checked through whatever translation unit happens to include it. A header that
 # is missing an `#include` is never caught as long as every `.cpp` that uses it
@@ -18,58 +16,25 @@ include(isolate_headers)
 #
 # The objects are never linked anywhere; we build them only for these checks.
 
-# Verify the headers of an add_module library. The verify library compiles each
-# header exactly as the module does, inheriting the module's usage requirements
-# (its public include directories, the include directories of every module it
-# links, and its compile options) by linking the module. Private headers live
-# behind a PRIVATE include directory that does not propagate through linking, so
-# we re-isolate them on the verify library, mirroring `add_module`.
-#
-# verify_module_headers(target parent name)
-function(verify_module_headers target parent name)
-    set(verify ${target}.verify)
-    add_library(${verify} OBJECT EXCLUDE_FROM_ALL)
-    # A unity build would concatenate the headers into a single translation unit,
-    # where a header missing an include could be satisfied by one that precedes it
-    # in the blob - exactly the bug we want to catch.
-    set_target_properties(${verify} PROPERTIES UNITY_BUILD OFF)
-    # The link scope is PRIVATE because nothing links ${verify} in turn; linking
-    # an object library propagates its usage requirements, not its objects.
-    target_link_libraries(${verify} PRIVATE ${target})
-    isolate_headers(
-        ${verify}
-        "${CMAKE_CURRENT_SOURCE_DIR}/src"
-        "${CMAKE_CURRENT_SOURCE_DIR}/src/lib${parent}/${name}"
-        PRIVATE
-    )
-    _verify_add_headers(
-        ${verify}
-        "${CMAKE_CURRENT_SOURCE_DIR}/include/${parent}/${name}"
-    )
-    _verify_add_headers(
-        ${verify}
-        "${CMAKE_CURRENT_SOURCE_DIR}/src/lib${parent}/${name}"
-    )
-    add_dependencies(verify-headers ${verify})
-endfunction()
-
-# Verify the headers of a target that is not built with add_module - the xrpld
-# executable and the test binaries, whose headers share a single include root
-# rather than living in isolated per-module directories.
-#
-# This reuses ${target}'s own compile environment: its include directories,
-# compile options and definitions, and the libraries it links. An executable
-# cannot be linked, so we copy its resolved usage requirements through generator
-# expressions and link the same libraries it links (for their transitive include
-# directories and definitions). The verify library is created once; call this
-# repeatedly to add more header directories (e.g. src/xrpld and src/test both
-# belong to xrpld).
+# Verify that the headers under headers_dir compile on their own, using the
+# compile environment of an existing target so each header is compiled exactly as
+# that target compiles it. This works for both add_module libraries and the xrpld
+# and test binaries: a library's isolated public and private include directories
+# and a binary's `-I src` both live in its INCLUDE_DIRECTORIES, and the modules or
+# libraries it links live in its LINK_LIBRARIES. We copy those usage requirements
+# through generator expressions (rather than linking ${target}, which is
+# impossible for an executable), evaluated at generation time so they capture
+# requirements the caller adds after this runs. The verify library is created
+# once; call this repeatedly to add more header directories.
 #
 # verify_target_headers(target headers_dir)
 function(verify_target_headers target headers_dir)
     set(verify ${target}.verify)
     if(NOT TARGET ${verify})
         add_library(${verify} OBJECT EXCLUDE_FROM_ALL)
+        # A unity build would concatenate the headers into a single translation
+        # unit, where a header missing an include could be satisfied by one that
+        # precedes it in the blob - exactly the bug we want to catch.
         set_target_properties(${verify} PROPERTIES UNITY_BUILD OFF)
         target_include_directories(
             ${verify}
