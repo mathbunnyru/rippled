@@ -6,6 +6,11 @@
 #include <xrpl/proto/org/xrpl/rpc/v1/xrp_ledger.grpc.pb.h>
 
 #include <grpcpp/grpcpp.h>
+#include <grpcpp/security/credentials.h>
+#include <grpcpp/support/status.h>
+
+#include <memory>
+#include <string>
 
 namespace xrpl::test {
 

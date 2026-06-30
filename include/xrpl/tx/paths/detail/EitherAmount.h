@@ -1,9 +1,13 @@
 #pragma once
 
+#include <xrpl/basics/contract.h>
 #include <xrpl/protocol/Concepts.h>
 #include <xrpl/protocol/IOUAmount.h>
-#include <xrpl/protocol/STAmount.h>
 #include <xrpl/protocol/XRPAmount.h>
+
+#include <ostream>
+#include <stdexcept>
+#include <variant>
 
 namespace xrpl {
 

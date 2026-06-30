@@ -1,8 +1,11 @@
 #pragma once
 
+#include <xrpl/basics/base_uint.h>
 #include <xrpl/protocol/HashPrefix.h>
-#include <xrpl/protocol/STVector256.h>
 #include <xrpl/protocol/Serializer.h>
+
+#include <cstdint>
+#include <vector>
 
 namespace xrpl {
 

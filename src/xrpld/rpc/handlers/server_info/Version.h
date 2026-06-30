@@ -5,6 +5,7 @@
 #include <xrpld/rpc/Status.h>
 #include <xrpld/rpc/detail/Handler.h>
 
+#include <xrpl/json/json_value.h>
 #include <xrpl/protocol/ApiVersion.h>
 
 namespace xrpl::RPC {

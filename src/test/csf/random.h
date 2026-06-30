@@ -1,6 +1,8 @@
 #pragma once
 
 #include <algorithm>
+#include <cstddef>
+#include <iterator>
 #include <random>
 #include <vector>
 

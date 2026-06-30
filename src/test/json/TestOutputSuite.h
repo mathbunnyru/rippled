@@ -5,6 +5,9 @@
 #include <xrpl/json/Output.h>
 #include <xrpl/json/Writer.h>
 
+#include <memory>
+#include <string>
+
 namespace xrpl::test {
 
 class TestOutputSuite : public TestSuite

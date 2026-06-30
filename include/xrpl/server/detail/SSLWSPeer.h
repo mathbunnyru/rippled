@@ -1,6 +1,7 @@
 #pragma once
 
-#include <xrpl/server/WSSession.h>
+#include <xrpl/beast/utility/Journal.h>
+#include <xrpl/server/Port.h>
 #include <xrpl/server/detail/BaseHTTPPeer.h>
 #include <xrpl/server/detail/BaseWSPeer.h>
 
@@ -12,7 +13,9 @@
 #include <boost/beast/websocket/ssl.hpp>
 #include <boost/beast/websocket/stream.hpp>
 
+#include <chrono>
 #include <memory>
+#include <utility>
 
 namespace xrpl {
 

@@ -2,8 +2,12 @@
 
 #include <xrpl/basics/Log.h>
 #include <xrpl/beast/net/IPAddressConversion.h>
-#include <xrpl/beast/utility/instrumentation.h>
+#include <xrpl/beast/net/IPEndpoint.h>
+#include <xrpl/beast/utility/Journal.h>
+#include <xrpl/server/Handoff.h>
+#include <xrpl/server/Port.h>
 #include <xrpl/server/Session.h>
+#include <xrpl/server/Writer.h>
 #include <xrpl/server/detail/Spawn.h>
 #include <xrpl/server/detail/io_list.h>
 
@@ -20,9 +24,12 @@
 
 #include <atomic>
 #include <chrono>
+#include <cstddef>
+#include <cstring>
 #include <functional>
 #include <memory>
 #include <mutex>
+#include <string>
 #include <utility>
 #include <vector>
 
