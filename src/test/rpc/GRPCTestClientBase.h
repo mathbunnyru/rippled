@@ -7,8 +7,7 @@
 
 #include <grpcpp/grpcpp.h>
 
-namespace xrpl {
-namespace test {
+namespace xrpl::test {
 
 struct GRPCTestClientBase
 {
@@ -29,5 +28,4 @@ struct GRPCTestClientBase
     std::unique_ptr<org::xrpl::rpc::v1::XRPLedgerAPIService::Stub> stub;
 };
 
-}  // namespace test
-}  // namespace xrpl
+}  // namespace xrpl::test

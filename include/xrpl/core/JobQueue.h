@@ -112,7 +112,7 @@ public:
         resume();
 
         /** Returns true if the Coro is still runnable (has not returned). */
-        bool
+        [[nodiscard]] bool
         runnable() const;
 
         /** Once called, the Coro allows early exit without an assert. */

@@ -77,7 +77,7 @@ struct SubmitTx
 struct StartRound
 {
     //! The preferred ledger for the start of consensus
-    Ledger::ID bestLedger;
+    Ledger::ID bestLedger{};
 
     //! The prior ledger on hand
     Ledger prevLedger;
