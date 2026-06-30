@@ -392,7 +392,7 @@ BaseHTTPPeer<Handler, Impl>::write(void const* buf, std::size_t bytes)
     if ([&] {
             std::scoped_lock const lock(mutex_);
             wq_.emplace_back(buf, bytes);
-            return wq_.size() == 1 && wq2_.size() == 0;
+            return wq_.size() == 1 && wq2_.empty();
         }())
     {
         if (!strand_.running_in_this_thread())

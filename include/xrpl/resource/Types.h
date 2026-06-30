@@ -1,10 +1,8 @@
 #pragma once
 
-namespace xrpl {
-namespace Resource {
+namespace xrpl::Resource {
 
 struct Key;
 struct Entry;
 
-}  // namespace Resource
-}  // namespace xrpl
+}  // namespace xrpl::Resource
