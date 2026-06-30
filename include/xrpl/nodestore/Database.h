@@ -1,6 +1,7 @@
 #pragma once
 
 #include <xrpl/basics/Blob.h>
+#include <xrpl/basics/TaggedCache.ipp>  // IWYU pragma: keep
 #include <xrpl/basics/base_uint.h>
 #include <xrpl/beast/utility/Journal.h>
 #include <xrpl/beast/utility/instrumentation.h>

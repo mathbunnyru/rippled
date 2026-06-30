@@ -1,6 +1,7 @@
 #pragma once
 
 #include <xrpl/basics/SharedWeakCachePointer.h>
+#include <xrpl/basics/SharedWeakCachePointer.ipp>  // IWYU pragma: keep
 #include <xrpl/basics/UnorderedContainers.h>
 #include <xrpl/basics/hardened_hash.h>
 #include <xrpl/beast/clock/abstract_clock.h>

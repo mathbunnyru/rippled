@@ -4,6 +4,7 @@
 
 #pragma once
 
+#include <xrpl/beast/unit_test/global_suites.h>  // IWYU pragma: keep
 #include <xrpl/beast/unit_test/runner.h>
 
 #include <boost/filesystem.hpp>

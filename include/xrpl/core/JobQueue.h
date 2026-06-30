@@ -400,6 +400,8 @@ private:
 
 }  // namespace xrpl
 
+#include <xrpl/core/Coro.ipp>  // IWYU pragma: keep
+
 namespace xrpl {
 
 template <class F>
