@@ -3,6 +3,7 @@
 #include <xrpl/basics/chrono.h>
 #include <xrpl/beast/utility/Journal.h>
 
+#include <algorithm>
 #include <chrono>
 
 namespace xrpl {

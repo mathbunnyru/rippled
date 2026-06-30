@@ -9,6 +9,7 @@
 #include <xrpl/beast/container/aged_unordered_map.h>
 #include <xrpl/protocol/PublicKey.h>
 
+#include <algorithm>
 #include <mutex>
 #include <optional>
 #include <type_traits>

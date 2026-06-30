@@ -51,7 +51,10 @@ endfunction()
 function(verify_module_headers target parent name)
 endfunction()
 
-function(_verify_generate_wrappers target A B)
+function(verify_target_headers target headers_dir)
+endfunction()
+
+function(_verify_add_headers target dir)
 endfunction()
 
 function(setup_protocol_autogen)

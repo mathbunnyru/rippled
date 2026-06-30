@@ -6,6 +6,7 @@
 #include <xrpl/beast/container/aged_set.h>
 #include <xrpl/beast/utility/instrumentation.h>
 
+#include <algorithm>
 #include <utility>
 
 namespace xrpl::PeerFinder {

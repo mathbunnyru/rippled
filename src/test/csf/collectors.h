@@ -6,6 +6,7 @@
 
 #include <xrpl/basics/UnorderedContainers.h>
 
+#include <algorithm>
 #include <chrono>
 #include <optional>
 #include <ostream>

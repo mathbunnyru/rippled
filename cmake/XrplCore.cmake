@@ -297,17 +297,9 @@ if(xrpld)
     # The xrpld headers are not built with add_module, so verify them against
     # the executable's own compile environment.
     if(verify_headers)
-        verify_target_headers(
-            xrpld
-            "${CMAKE_CURRENT_SOURCE_DIR}/src"
-            "${CMAKE_CURRENT_SOURCE_DIR}/src/xrpld"
-        )
+        verify_target_headers(xrpld "${CMAKE_CURRENT_SOURCE_DIR}/src/xrpld")
         if(tests)
-            verify_target_headers(
-                xrpld
-                "${CMAKE_CURRENT_SOURCE_DIR}/src"
-                "${CMAKE_CURRENT_SOURCE_DIR}/src/test"
-            )
+            verify_target_headers(xrpld "${CMAKE_CURRENT_SOURCE_DIR}/src/test")
         endif()
     endif()
 endif()
