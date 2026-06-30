@@ -10,6 +10,7 @@
 #include <xrpl/basics/base_uint.h>
 #include <xrpl/basics/contract.h>
 #include <xrpl/json/json_value.h>
+#include <xrpl/json/json_writer.h>  // IWYU pragma: keep
 #include <xrpl/protocol/AccountID.h>
 #include <xrpl/protocol/ApiVersion.h>
 #include <xrpl/protocol/Asset.h>

@@ -1,5 +1,6 @@
 #pragma once
 
+#include <xrpld/app/main/Application.h>  // IWYU pragma: keep
 #include <xrpld/rpc/Context.h>
 #include <xrpld/rpc/Role.h>
 #include <xrpld/rpc/Status.h>

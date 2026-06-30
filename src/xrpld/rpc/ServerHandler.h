@@ -14,6 +14,7 @@
 #include <xrpl/resource/ResourceManager.h>
 #include <xrpl/server/Handoff.h>
 #include <xrpl/server/Port.h>
+#include <xrpl/server/Server.h>  // IWYU pragma: keep
 #include <xrpl/server/Session.h>
 #include <xrpl/server/WSSession.h>
 
