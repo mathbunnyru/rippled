@@ -4,7 +4,6 @@
 
 #pragma once
 
-#include <xrpl/beast/unit_test/global_suites.h>  // IWYU pragma: keep
 #include <xrpl/beast/unit_test/runner.h>
 
 #include <boost/filesystem.hpp>
@@ -637,6 +636,7 @@ Suite::run(Runner& r)
 #define BEAST_DEFINE_TESTSUITE_MANUAL_PRIO(Class, Module, Library, Priority)
 
 #else
+#include <xrpl/beast/unit_test/global_suites.h>  // IWYU pragma: keep
 #define BEAST_DEFINE_TESTSUITE(Class, Module, Library) \
     BEAST_DEFINE_TESTSUITE_INSERT(Class, Module, Library, false, 0)
 #define BEAST_DEFINE_TESTSUITE_MANUAL(Class, Module, Library) \

@@ -8,7 +8,7 @@
 #include <optional>
 #include <tuple>
 #include <utility>
-#include <version>
+#include <version>  // IWYU pragma: keep
 
 namespace xrpl {
 
