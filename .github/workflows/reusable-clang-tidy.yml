@@ -92,12 +92,7 @@ jobs:
         id: run_clang_tidy
         continue-on-error: true
         env:
-          # With -Dverify_headers=ON every header is a translation unit of its own
-          # in compile_commands.json, so clang-tidy (and misc-include-cleaner)
-          # checks each header directly. On a full run, "include" covers the
-          # public headers under include/; on a partial run a changed header
-          # matches its own entry, since cpp_changed_files includes headers.
-          TARGETS: ${{ needs.determine-files.outputs.need_full_run != 'true' && needs.determine-files.outputs.cpp_changed_files || 'src tests include' }}
+          TARGETS: ${{ needs.determine-files.outputs.need_full_run != 'true' && needs.determine-files.outputs.cpp_changed_files || 'include src tests' }}
         run: |
           set -o pipefail
           run-clang-tidy -j ${{ steps.nproc.outputs.nproc }} -p "${BUILD_DIR}" -quiet -fix -allow-no-checks ${TARGETS} 2>&1 | tee "${OUTPUT_FILE}"
