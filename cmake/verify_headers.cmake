@@ -56,6 +56,48 @@ function(verify_module_headers target parent name)
     add_dependencies(verify-headers ${verify})
 endfunction()
 
+# Verify the headers of a target that is not built with add_module - in
+# particular the xrpld executable and the test binaries, whose headers live
+# under a single include root rather than in isolated per-module directories.
+#
+# Unlike verify_module_headers, this reuses ${target}'s own compile environment:
+# its include directories, compile options and definitions, and the libraries it
+# links. An executable cannot be linked, so we copy its resolved usage
+# requirements through generator expressions and link the same libraries it
+# links (for their transitive include directories and definitions). The verify
+# library is created once; call this repeatedly to add more header directories
+# (e.g. src/xrpld and src/test both belong to xrpld).
+#
+# headers_root is the include root the headers are reached through, so the
+# include path is each header's path relative to headers_root.
+#
+# verify_target_headers(target headers_root headers_dir)
+function(verify_target_headers target headers_root headers_dir)
+    set(verify ${target}.verify)
+    if(NOT TARGET ${verify})
+        add_library(${verify} OBJECT EXCLUDE_FROM_ALL)
+        set_target_properties(${verify} PROPERTIES UNITY_BUILD OFF)
+        target_include_directories(
+            ${verify}
+            PRIVATE $<TARGET_PROPERTY:${target},INCLUDE_DIRECTORIES>
+        )
+        target_compile_definitions(
+            ${verify}
+            PRIVATE $<TARGET_PROPERTY:${target},COMPILE_DEFINITIONS>
+        )
+        target_compile_options(
+            ${verify}
+            PRIVATE $<TARGET_PROPERTY:${target},COMPILE_OPTIONS>
+        )
+        target_link_libraries(
+            ${verify}
+            PRIVATE $<TARGET_PROPERTY:${target},LINK_LIBRARIES>
+        )
+        add_dependencies(verify-headers ${verify})
+    endif()
+    _verify_generate_wrappers(${verify} "${headers_root}" "${headers_dir}")
+endfunction()
+
 # Generate one `#include`-only translation unit for every header found under B,
 # using the same relative include path C (from A to the header) that the rest of
 # the code base uses to include it. See `isolate_headers` for the A/B/C model.
