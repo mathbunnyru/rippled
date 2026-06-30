@@ -1,6 +1,7 @@
 #pragma once
 
 #include <xrpl/protocol/STAmount.h>
+#include <xrpl/protocol/SystemParameters.h>
 
 namespace xrpl {
 

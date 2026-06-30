@@ -1,5 +1,6 @@
 #pragma once
 
+#include <xrpld/peerfinder/PeerfinderManager.h>
 #include <xrpld/peerfinder/detail/Tuning.h>
 
 namespace xrpl::PeerFinder {

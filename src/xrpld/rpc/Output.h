@@ -2,6 +2,9 @@
 
 #include <boost/utility/string_ref.hpp>
 
+#include <functional>
+#include <string>
+
 namespace xrpl {
 namespace RPC {
 

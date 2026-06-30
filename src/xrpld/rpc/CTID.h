@@ -2,6 +2,7 @@
 
 #include <boost/regex.hpp>
 
+#include <iomanip>
 #include <optional>
 #include <regex>
 #include <sstream>

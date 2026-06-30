@@ -5,9 +5,11 @@
 
 #include <boost/container/flat_set.hpp>
 
+#include <algorithm>
 #include <chrono>
 #include <numeric>
 #include <random>
+#include <set>
 #include <vector>
 
 namespace xrpl::test::csf {
