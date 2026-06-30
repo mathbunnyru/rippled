@@ -240,7 +240,6 @@ xrpl.server > xrpl.json
 xrpl.server > xrpl.protocol
 xrpl.server > xrpl.rdb
 xrpl.server > xrpl.resource
-xrpl.server > xrpl.shamap
 xrpl.shamap > xrpl.basics
 xrpl.shamap > xrpl.nodestore
 xrpl.shamap > xrpl.protocol
