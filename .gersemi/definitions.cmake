@@ -48,6 +48,12 @@ endfunction()
 function(add_module parent name)
 endfunction()
 
+function(verify_module_headers target parent name)
+endfunction()
+
+function(_verify_generate_wrappers target A B)
+endfunction()
+
 function(setup_protocol_autogen)
 endfunction()
 

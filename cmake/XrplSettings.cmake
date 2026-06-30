@@ -30,6 +30,18 @@ if(tests)
     endif()
 endif()
 
+option(
+    verify_headers
+    "Compile every header on its own to verify it is self-contained."
+    OFF
+)
+if(verify_headers)
+    # Aggregate target that builds every per-module header-verification library
+    # created by add_module (see cmake/verify_headers.cmake). Build it with:
+    #   cmake --build . --target verify-headers
+    add_custom_target(verify-headers)
+endif()
+
 option(unity "Creates a build using UNITY support in cmake." OFF)
 if(unity)
     if(NOT is_ci)

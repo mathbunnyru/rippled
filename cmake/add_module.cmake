@@ -1,4 +1,5 @@
 include(isolate_headers)
+include(verify_headers)
 
 # Create an OBJECT library target named
 #
@@ -37,4 +38,13 @@ function(add_module parent name)
         "${CMAKE_CURRENT_SOURCE_DIR}/src/lib${parent}/${name}"
         PRIVATE
     )
+    # protocol_autogen contains generated headers that are deliberately exempt
+    # from clang-tidy (see ExcludeHeaderFilterRegex in .clang-tidy), so we do not
+    # verify them either.
+    if(
+        verify_headers
+        AND NOT "${parent}/${name}" STREQUAL "xrpl/protocol_autogen"
+    )
+        verify_module_headers(${target} ${parent} ${name})
+    endif()
 endfunction()
