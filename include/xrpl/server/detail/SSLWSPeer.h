@@ -2,6 +2,7 @@
 
 #include <xrpl/server/WSSession.h>
 #include <xrpl/server/detail/BaseHTTPPeer.h>
+#include <xrpl/server/detail/BaseWSPeer.h>
 
 #include <boost/asio/ip/tcp.hpp>
 #include <boost/asio/ssl/context.hpp>
@@ -9,6 +10,7 @@
 #include <boost/beast/core/tcp_stream.hpp>
 #include <boost/beast/ssl/ssl_stream.hpp>
 #include <boost/beast/websocket/ssl.hpp>
+#include <boost/beast/websocket/stream.hpp>
 
 #include <memory>
 

@@ -3,6 +3,7 @@
 #include <xrpl/ledger/PaymentSandbox.h>
 #include <xrpl/protocol/IOUAmount.h>
 #include <xrpl/protocol/XRPAmount.h>
+#include <xrpl/tx/paths/detail/EitherAmount.h>
 
 #include <boost/container/flat_map.hpp>
 

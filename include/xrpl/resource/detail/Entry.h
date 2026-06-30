@@ -4,6 +4,7 @@
 #include <xrpl/beast/clock/abstract_clock.h>
 #include <xrpl/beast/core/List.h>
 #include <xrpl/beast/utility/instrumentation.h>
+#include <xrpl/protocol/PublicKey.h>
 #include <xrpl/resource/detail/Key.h>
 #include <xrpl/resource/detail/Tuning.h>
 

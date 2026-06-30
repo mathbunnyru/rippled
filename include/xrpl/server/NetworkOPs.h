@@ -6,7 +6,6 @@
 #include <xrpl/protocol/TER.h>
 #include <xrpl/protocol/messages.h>
 #include <xrpl/server/InfoSub.h>
-#include <xrpl/shamap/SHAMap.h>
 
 #include <boost/asio.hpp>
 
@@ -25,6 +24,7 @@ class Transaction;
 class ValidatorKeys;
 class CanonicalTXSet;
 class RCLCxPeerPos;
+class SHAMap;
 
 // This is the primary interface into the "client" portion of the program.
 // Code that wants to do normal operations on the network such as
