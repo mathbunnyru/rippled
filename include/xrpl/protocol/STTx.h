@@ -96,9 +96,6 @@ public:
     [[nodiscard]] std::uint32_t
     getSeqValue() const;
 
-    [[nodiscard]] AccountID
-    getFeePayer() const;
-
     [[nodiscard]] boost::container::flat_set<AccountID>
     getMentionedAccounts() const;
 
@@ -166,13 +163,16 @@ private:
     [[nodiscard]] std::expected<void, std::string>
     checkBatchMultiSign(STObject const& batchSigner, Rules const& rules) const;
 
+    void
+    buildBatchTxnIds();
+
     STBase*
     copy(std::size_t n, void* buf) const override;
     STBase*
     move(std::size_t n, void* buf) override;
 
     friend class detail::STVar;
-    mutable std::vector<uint256> batchTxnIds_;
+    std::optional<std::vector<uint256>> batchTxnIds_;
 };
 
 bool
