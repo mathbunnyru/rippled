@@ -2829,7 +2829,8 @@ class Invariants_test : public beast::unit_test::Suite
             });
 
         doInvariantCheck(
-            {"vault updated by a wrong transaction type"},
+            {"vault updated by a wrong transaction type",
+             "deleted Vault without deleting its pseudo-account"},
             [&](Account const& a1, Account const& a2, ApplyContext& ac) {
                 auto const keylet = keylet::vault(a1.id(), ac.view().seq());
                 auto sleVault = ac.view().peek(keylet);
@@ -2840,7 +2841,7 @@ class Invariants_test : public beast::unit_test::Suite
             },
             XRPAmount{},
             STTx{ttPAYMENT, [](STObject&) {}},
-            {tecINVARIANT_FAILED, tecINVARIANT_FAILED},
+            {tecINVARIANT_FAILED, tefINVARIANT_FAILED},
             [&](Account const& a1, Account const& a2, Env& env) {
                 Vault const vault{env};
                 auto [tx, _] = vault.create({.owner = a1, .asset = xrpIssue()});
@@ -2877,6 +2878,7 @@ class Invariants_test : public beast::unit_test::Suite
                 auto const vaultPage = ac.view().dirInsert(
                     keylet::ownerDir(a1.id()), sleVault->key(), describeOwnerDir(a1.id()));
                 sleVault->setFieldU64(sfOwnerNode, *vaultPage);
+                sleVault->setAccountID(sfAccount, a1.id());
                 ac.view().insert(sleVault);
                 return true;
             },
@@ -2885,7 +2887,8 @@ class Invariants_test : public beast::unit_test::Suite
             {tecINVARIANT_FAILED, tecINVARIANT_FAILED});
 
         doInvariantCheck(
-            {"vault deleted by a wrong transaction type"},
+            {"vault deleted by a wrong transaction type",
+             "deleted Vault without deleting its pseudo-account"},
             [&](Account const& a1, Account const& a2, ApplyContext& ac) {
                 auto const keylet = keylet::vault(a1.id(), ac.view().seq());
                 auto sleVault = ac.view().peek(keylet);
@@ -2896,7 +2899,7 @@ class Invariants_test : public beast::unit_test::Suite
             },
             XRPAmount{},
             STTx{ttVAULT_SET, [](STObject&) {}},
-            {tecINVARIANT_FAILED, tecINVARIANT_FAILED},
+            {tecINVARIANT_FAILED, tefINVARIANT_FAILED},
             [&](Account const& a1, Account const& a2, Env& env) {
                 Vault const vault{env};
                 auto [tx, _] = vault.create({.owner = a1, .asset = xrpIssue()});
@@ -2905,7 +2908,8 @@ class Invariants_test : public beast::unit_test::Suite
             });
 
         doInvariantCheck(
-            {"vault operation updated more than single vault"},
+            {"vault operation updated more than single vault",
+             "deleted Vault without deleting its pseudo-account"},
             [&](Account const& a1, Account const& a2, ApplyContext& ac) {
                 {
                     auto const keylet = keylet::vault(a1.id(), ac.view().seq());
@@ -2925,7 +2929,7 @@ class Invariants_test : public beast::unit_test::Suite
             },
             XRPAmount{},
             STTx{ttVAULT_DELETE, [](STObject&) {}},
-            {tecINVARIANT_FAILED, tecINVARIANT_FAILED},
+            {tecINVARIANT_FAILED, tefINVARIANT_FAILED},
             [&](Account const& a1, Account const& a2, Env& env) {
                 Vault const vault{env};
                 {
@@ -2949,6 +2953,7 @@ class Invariants_test : public beast::unit_test::Suite
                     auto const vaultPage = ac.view().dirInsert(
                         keylet::ownerDir(a.id()), sleVault->key(), describeOwnerDir(a.id()));
                     sleVault->setFieldU64(sfOwnerNode, *vaultPage);
+                    sleVault->setAccountID(sfAccount, a.id());
                     ac.view().insert(sleVault);
                 };
                 insertVault(a1);
@@ -2960,7 +2965,8 @@ class Invariants_test : public beast::unit_test::Suite
             {tecINVARIANT_FAILED, tecINVARIANT_FAILED});
 
         doInvariantCheck(
-            {"deleted vault must also delete shares"},
+            {"deleted vault must also delete shares",
+             "deleted Vault without deleting its pseudo-account"},
             [&](Account const& a1, Account const& a2, ApplyContext& ac) {
                 auto const keylet = keylet::vault(a1.id(), ac.view().seq());
                 auto sleVault = ac.view().peek(keylet);
@@ -2971,7 +2977,7 @@ class Invariants_test : public beast::unit_test::Suite
             },
             XRPAmount{},
             STTx{ttVAULT_DELETE, [](STObject&) {}},
-            {tecINVARIANT_FAILED, tecINVARIANT_FAILED},
+            {tecINVARIANT_FAILED, tefINVARIANT_FAILED},
             [&](Account const& a1, Account const& a2, Env& env) {
                 Vault const vault{env};
                 auto [tx, _] = vault.create({.owner = a1, .asset = xrpIssue()});
@@ -5177,6 +5183,125 @@ class Invariants_test : public beast::unit_test::Suite
     }
 
     void
+    testObjectHasPseudoAccount()
+    {
+        testcase << "object has pseudo-account";
+        using namespace jtx;
+
+        auto const amendments = defaultAmendments() | fixCleanup3_3_0;
+
+        // Vault: object deleted without its pseudo-account
+        {
+            Keylet vaultKeylet = keylet::amendments();
+            doInvariantCheck(
+                Env{*this, amendments},
+                {{"deleted Vault without deleting its pseudo-account"}},
+                [&vaultKeylet](Account const&, Account const&, ApplyContext& ac) {
+                    auto sle = ac.view().peek(vaultKeylet);
+                    if (!sle)
+                        return false;
+                    ac.view().erase(sle);
+                    return true;
+                },
+                XRPAmount{},
+                STTx{ttVAULT_DELETE, [](STObject&) {}},
+                {tecINVARIANT_FAILED, tefINVARIANT_FAILED},
+                [&vaultKeylet](Account const& a1, Account const&, Env& env) {
+                    Vault const vault{env};
+                    auto [tx, keylet] = vault.create({.owner = a1, .asset = xrpIssue()});
+                    env(tx);
+                    vaultKeylet = keylet;
+                    return true;
+                });
+        }
+
+        // AMM: object deleted without its pseudo-account
+        {
+            uint256 ammID{};
+            Account const gw{"gw"};
+            doInvariantCheck(
+                Env{*this, amendments},
+                {{"deleted AMM without deleting its pseudo-account"}},
+                [&ammID](Account const&, Account const&, ApplyContext& ac) {
+                    auto sle = ac.view().peek(keylet::amm(ammID));
+                    if (!sle)
+                        return false;
+                    ac.view().erase(sle);
+                    return true;
+                },
+                XRPAmount{},
+                STTx{ttAMM_DELETE, [](STObject&) {}},
+                {tecINVARIANT_FAILED, tefINVARIANT_FAILED},
+                [&ammID, &gw](Account const&, Account const&, Env& env) {
+                    env.fund(XRP(1'000), gw);
+                    AMM const amm(env, gw, XRP(100), gw["USD"](100));
+                    ammID = amm.ammID();
+                    return true;
+                });
+        }
+
+        // LoanBroker: object deleted without its pseudo-account
+        {
+            Keylet loanBrokerKeylet = keylet::amendments();
+            doInvariantCheck(
+                Env{*this, amendments},
+                {{"deleted LoanBroker without deleting its pseudo-account"}},
+                [&loanBrokerKeylet](Account const&, Account const&, ApplyContext& ac) {
+                    auto sle = ac.view().peek(loanBrokerKeylet);
+                    if (!sle)
+                        return false;
+                    ac.view().erase(sle);
+                    return true;
+                },
+                XRPAmount{},
+                STTx{ttLOAN_BROKER_DELETE, [](STObject&) {}},
+                {tecINVARIANT_FAILED, tefINVARIANT_FAILED},
+                [&loanBrokerKeylet, this](Account const& a1, Account const&, Env& env) {
+                    PrettyAsset const xrpAsset{xrpIssue(), 1'000'000};
+                    loanBrokerKeylet = this->createLoanBroker(a1, env, xrpAsset);
+                    return BEAST_EXPECT(env.le(loanBrokerKeylet));
+                });
+        }
+
+        // Deleted object missing sfAccount field (defensive check).
+        // Manually construct the view to place a vault SLE without
+        // sfAccount into the base ledger, then erase it.
+        {
+            Env env{*this, amendments};
+            Account const a1{"A1"};
+            Account const a2{"A2"};
+            env.fund(XRP(1000), a1, a2);
+            env.close();
+
+            OpenView ov{*env.current()};
+
+            auto const vaultKeylet = keylet::vault(a1.id(), ov.seq());
+            auto sleVault = std::make_shared<SLE>(vaultKeylet);
+            sleVault->makeFieldAbsent(sfAccount);
+            ov.rawInsert(sleVault);
+
+            STTx const tx{ttVAULT_DELETE, [](STObject&) {}};
+            test::StreamSink sink{beast::Severity::Warning};
+            beast::Journal const jlog{sink};
+            ApplyContext ac{
+                env.app(), ov, tx, tesSUCCESS, env.current()->fees().base, TapNone, jlog};
+            CurrentTransactionRulesGuard const rulesGuard(ov.rules());
+
+            auto sle = ac.view().peek(vaultKeylet);
+            if (!BEAST_EXPECT(sle))
+                return;
+            ac.view().erase(sle);
+
+            auto transactor = makeTransactor(ac);
+            if (!BEAST_EXPECT(transactor))
+                return;
+            TER const result = transactor->checkInvariants(tesSUCCESS, XRPAmount{});
+            BEAST_EXPECT(result == tecINVARIANT_FAILED);
+            BEAST_EXPECT(sink.messages().str().contains("is missing pseudo-account field"));
+        }
+    }
+
+    void
     testConfidentialMPTTransfer()
     {
         using namespace test::jtx;
@@ -5458,6 +5583,7 @@ public:
         testInvariantOverwrite(defaultAmendments() - fixCleanup3_1_3);
         testVaultComputeCoarsestScale();
         testAMM();
+        testObjectHasPseudoAccount();
     }
 };
 
