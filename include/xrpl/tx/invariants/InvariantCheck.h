@@ -18,7 +18,6 @@
 #include <xrpl/tx/invariants/VaultInvariant.h>
 
 #include <cstdint>
-#include <memory>
 #include <set>
 #include <string>
 #include <tuple>
