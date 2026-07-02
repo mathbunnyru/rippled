@@ -5,18 +5,14 @@
 #include <test/jtx/noop.h>
 
 #include <xrpld/app/ledger/LedgerMaster.h>
-#include <xrpld/core/Config.h>
 
 #include <xrpl/basics/base_uint.h>
 #include <xrpl/beast/unit_test/suite.h>
 #include <xrpl/protocol/Feature.h>
 #include <xrpl/protocol/SField.h>
-#include <xrpl/protocol/STObject.h>
-#include <xrpl/protocol/STTx.h>
 
 #include <cstdint>
 #include <memory>
-#include <vector>
 
 namespace xrpl::test {
 

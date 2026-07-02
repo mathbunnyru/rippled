@@ -55,7 +55,7 @@ private:
 
         @param i index of the requested child
      */
-    std::optional<int>
+    [[nodiscard]] std::optional<int>
     getChildIndex(int i) const;
 
     /** Call the `f` callback for all 16 (branchFactor) branches - even if
@@ -91,37 +91,37 @@ public:
     void
     partialDestructor() override;
 
-    SHAMapTreeNodePtr
+    [[nodiscard]] SHAMapTreeNodePtr
     clone(std::uint32_t cowid) const override;
 
-    SHAMapNodeType
+    [[nodiscard]] SHAMapNodeType
     getType() const override
     {
         return SHAMapNodeType::TnInner;
     }
 
-    bool
+    [[nodiscard]] bool
     isLeaf() const override
     {
         return false;
     }
 
-    bool
+    [[nodiscard]] bool
     isInner() const override
     {
         return true;
     }
 
-    bool
+    [[nodiscard]] bool
     isEmpty() const;
 
-    bool
+    [[nodiscard]] bool
     isEmptyBranch(int m) const;
 
-    int
+    [[nodiscard]] int
     getBranchCount() const;
 
-    SHAMapHash const&
+    [[nodiscard]] SHAMapHash const&
     getChildHash(int m) const;
 
     void
@@ -140,7 +140,7 @@ public:
     canonicalizeChild(int branch, SHAMapTreeNodePtr node);
 
     // sync functions
-    bool
+    [[nodiscard]] bool
     isFullBelow(std::uint32_t generation) const;
 
     void
@@ -159,7 +159,7 @@ public:
     void
     serializeWithPrefix(Serializer&) const override;
 
-    std::string
+    [[nodiscard]] std::string
     getString(SHAMapNodeID const&) const override;
 
     void

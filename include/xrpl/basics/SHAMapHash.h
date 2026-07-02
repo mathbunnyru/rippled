@@ -14,7 +14,7 @@ namespace xrpl {
 
 class SHAMapHash
 {
-    uint256 hash_;
+    uint256 hash_{};
 
 public:
     SHAMapHash() = default;

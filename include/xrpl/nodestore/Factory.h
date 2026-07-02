@@ -51,7 +51,7 @@ public:
         @param context The context used by database.
         @return A pointer to the Backend object.
     */
-    virtual std::unique_ptr<Backend>
+    static virtual std::unique_ptr<Backend>
     createInstance(
         size_t keyBytes,
         Section const& parameters,

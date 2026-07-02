@@ -6,6 +6,7 @@
 
 #include <algorithm>
 #include <cstdint>
+#include <string>
 
 namespace xrpl::test {
 
@@ -14,7 +15,7 @@ class traffic_count_test : public beast::unit_test::Suite
 public:
     traffic_count_test() = default;
 
-    void
+    static void
     testCategorize()
     {
         testcase("categorize");
@@ -43,7 +44,7 @@ public:
         std::uint64_t expectedMessagesOut;
     };
 
-    void
+    static void
     testAddCount()
     {
         auto run = [&](TestCase const& tc) {
@@ -102,7 +103,7 @@ public:
             run(tc);
     }
 
-    void
+    static void
     testToString()
     {
         testcase("category-to-string");

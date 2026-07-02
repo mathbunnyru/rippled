@@ -4,7 +4,6 @@
 #include <xrpld/overlay/Peer.h>
 
 #include <memory>
-#include <set>
 
 namespace xrpl {
 

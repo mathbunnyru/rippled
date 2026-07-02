@@ -11,13 +11,10 @@
 #include <xrpld/app/ledger/LedgerReplayer.h>
 #include <xrpld/app/ledger/LedgerToJson.h>
 #include <xrpld/app/ledger/OpenLedger.h>
-#include <xrpld/app/ledger/OrderBookDBImpl.h>
 #include <xrpld/app/ledger/TransactionMaster.h>
 #include <xrpld/app/main/BasicApp.h>
 #include <xrpld/app/main/CollectorManager.h>
-#include <xrpld/app/main/GRPCServer.h>
 #include <xrpld/app/main/LoadManager.h>
-#include <xrpld/app/main/NodeIdentity.h>
 #include <xrpld/app/main/NodeStoreScheduler.h>
 #include <xrpld/app/misc/SHAMapStore.h>
 #include <xrpld/app/misc/TxQ.h>
@@ -29,11 +26,7 @@
 #include <xrpld/core/Config.h>
 #include <xrpld/core/NetworkIDServiceImpl.h>
 #include <xrpld/overlay/Cluster.h>
-#include <xrpld/overlay/PeerSet.h>
-#include <xrpld/overlay/make_Overlay.h>
 #include <xrpld/rpc/Context.h>
-#include <xrpld/rpc/RPCHandler.h>
-#include <xrpld/rpc/Role.h>
 #include <xrpld/rpc/ServerHandler.h>
 #include <xrpld/rpc/detail/PathRequestManager.h>
 #include <xrpld/rpc/detail/Pathfinder.h>
@@ -42,7 +35,6 @@
 #include <xrpl/basics/ByteUtilities.h>
 #include <xrpl/basics/Log.h>
 #include <xrpl/basics/MallocTrim.h>
-#include <xrpl/basics/ResolverAsio.h>
 #include <xrpl/basics/ToString.h>
 #include <xrpl/basics/base_uint.h>
 #include <xrpl/basics/chrono.h>
@@ -58,7 +50,6 @@
 #include <xrpl/config/Constants.h>
 #include <xrpl/core/ClosureCounter.h>
 #include <xrpl/core/HashRouter.h>
-#include <xrpl/core/Job.h>
 #include <xrpl/core/NetworkIDService.h>
 #include <xrpl/core/PeerReservationTable.h>
 #include <xrpl/core/PerfLog.h>
@@ -69,30 +60,22 @@
 #include <xrpl/json/json_value.h>
 #include <xrpl/ledger/AmendmentTable.h>
 #include <xrpl/ledger/Ledger.h>
-#include <xrpl/ledger/OpenView.h>
 #include <xrpl/ledger/PendingSaves.h>
 #include <xrpl/nodestore/Database.h>
 #include <xrpl/nodestore/DummyScheduler.h>
 #include <xrpl/nodestore/Manager.h>
 #include <xrpl/nodestore/NodeObject.h>
 #include <xrpl/protocol/AccountID.h>
-#include <xrpl/protocol/ApiVersion.h>
 #include <xrpl/protocol/BuildInfo.h>
-#include <xrpl/protocol/Feature.h>
 #include <xrpl/protocol/Indexes.h>
 #include <xrpl/protocol/Protocol.h>
 #include <xrpl/protocol/STParsedJSON.h>
-#include <xrpl/protocol/Serializer.h>
 #include <xrpl/protocol/SystemParameters.h>
 #include <xrpl/protocol/jss.h>
 #include <xrpl/rdb/DatabaseCon.h>
-#include <xrpl/resource/Charge.h>
-#include <xrpl/resource/Consumer.h>
-#include <xrpl/resource/Fees.h>
 #include <xrpl/resource/ResourceManager.h>
 #include <xrpl/server/LoadFeeTrack.h>
 #include <xrpl/server/NetworkOPs.h>
-#include <xrpl/server/Wallet.h>
 #include <xrpl/server/detail/ServerImpl.h>
 #include <xrpl/shamap/FullBelowCache.h>
 #include <xrpl/shamap/SHAMap.h>
@@ -131,7 +114,6 @@
 #include <string>
 #include <thread>
 #include <utility>
-#include <vector>
 
 namespace xrpl {
 
@@ -204,65 +186,65 @@ private:
 
 public:
     // NOLINTBEGIN(readability-identifier-naming)
-    std::unique_ptr<Config> config_;
-    std::unique_ptr<Logs> logs_;
-    std::unique_ptr<TimeKeeper> timeKeeper_;
+    std::unique_ptr<Config> config_{};
+    std::unique_ptr<Logs> logs_{};
+    std::unique_ptr<TimeKeeper> timeKeeper_{};
 
     std::uint64_t const instanceCookie_;
 
-    beast::Journal journal_;
-    std::unique_ptr<perf::PerfLog> perfLog_;
+    beast::Journal journal_{};
+    std::unique_ptr<perf::PerfLog> perfLog_{};
     Application::MutexType masterMutex_;
 
     // Required by the SHAMapStore
     TransactionMaster txMaster_;
 
-    std::unique_ptr<CollectorManager> collectorManager_;
-    std::unique_ptr<JobQueue> jobQueue_;
+    std::unique_ptr<CollectorManager> collectorManager_{};
+    std::unique_ptr<JobQueue> jobQueue_{};
     NodeStoreScheduler nodeStoreScheduler_;
-    std::unique_ptr<SHAMapStore> shaMapStore_;
+    std::unique_ptr<SHAMapStore> shaMapStore_{};
     PendingSaves pendingSaves_;
     std::optional<OpenLedger> openLedger_;
 
     NodeCache tempNodeCache_;
     CachedSLEs cachedSLEs_;
-    std::unique_ptr<NetworkIDService> networkIDService_;
+    std::unique_ptr<NetworkIDService> networkIDService_{};
     std::optional<std::pair<PublicKey, SecretKey>> nodeIdentity_;
     ValidatorKeys const validatorKeys_;
 
-    std::unique_ptr<Resource::Manager> resourceManager_;
+    std::unique_ptr<Resource::Manager> resourceManager_{};
 
-    std::unique_ptr<NodeStore::Database> nodeStore_;
+    std::unique_ptr<NodeStore::Database> nodeStore_{};
     NodeFamily nodeFamily_;
-    std::unique_ptr<OrderBookDB> orderBookDB_;
-    std::unique_ptr<PathRequestManager> pathRequestManager_;
-    std::unique_ptr<LedgerMaster> ledgerMaster_;
-    std::unique_ptr<LedgerCleaner> ledgerCleaner_;
-    std::unique_ptr<InboundLedgers> inboundLedgers_;
-    std::unique_ptr<InboundTransactions> inboundTransactions_;
-    std::unique_ptr<LedgerReplayer> ledgerReplayer_;
-    TaggedCache<uint256, AcceptedLedger> acceptedLedgerCache_;
-    std::unique_ptr<NetworkOPs> networkOPs_;
-    std::unique_ptr<Cluster> cluster_;
-    std::unique_ptr<PeerReservationTable> peerReservations_;
-    std::unique_ptr<ManifestCache> validatorManifests_;
-    std::unique_ptr<ManifestCache> publisherManifests_;
-    std::unique_ptr<ValidatorList> validators_;
-    std::unique_ptr<ValidatorSite> validatorSites_;
-    std::unique_ptr<ServerHandler> serverHandler_;
-    std::unique_ptr<AmendmentTable> amendmentTable_;
-    std::unique_ptr<LoadFeeTrack> feeTrack_;
-    std::unique_ptr<HashRouter> hashRouter_;
+    std::unique_ptr<OrderBookDB> orderBookDB_{};
+    std::unique_ptr<PathRequestManager> pathRequestManager_{};
+    std::unique_ptr<LedgerMaster> ledgerMaster_{};
+    std::unique_ptr<LedgerCleaner> ledgerCleaner_{};
+    std::unique_ptr<InboundLedgers> inboundLedgers_{};
+    std::unique_ptr<InboundTransactions> inboundTransactions_{};
+    std::unique_ptr<LedgerReplayer> ledgerReplayer_{};
+    TaggedCache<uint256, AcceptedLedger> acceptedLedgerCache_{};
+    std::unique_ptr<NetworkOPs> networkOPs_{};
+    std::unique_ptr<Cluster> cluster_{};
+    std::unique_ptr<PeerReservationTable> peerReservations_{};
+    std::unique_ptr<ManifestCache> validatorManifests_{};
+    std::unique_ptr<ManifestCache> publisherManifests_{};
+    std::unique_ptr<ValidatorList> validators_{};
+    std::unique_ptr<ValidatorSite> validatorSites_{};
+    std::unique_ptr<ServerHandler> serverHandler_{};
+    std::unique_ptr<AmendmentTable> amendmentTable_{};
+    std::unique_ptr<LoadFeeTrack> feeTrack_{};
+    std::unique_ptr<HashRouter> hashRouter_{};
     RCLValidations validations_;
-    std::unique_ptr<LoadManager> loadManager_;
-    std::unique_ptr<TxQ> txQ_;
+    std::unique_ptr<LoadManager> loadManager_{};
+    std::unique_ptr<TxQ> txQ_{};
     ClosureCounter<void, boost::system::error_code const&> waitHandlerCounter_;
     boost::asio::steady_timer sweepTimer_;
     boost::asio::steady_timer entropyTimer_;
 
     std::optional<SQLiteDatabase> relationalDatabase_;
-    std::unique_ptr<DatabaseCon> walletDB_;
-    std::unique_ptr<Overlay> overlay_;
+    std::unique_ptr<DatabaseCon> walletDB_{};
+    std::unique_ptr<Overlay> overlay_{};
     std::optional<uint256> trapTxID_;
 
     boost::asio::signal_set signals_;
@@ -271,11 +253,11 @@ public:
 
     std::atomic<bool> checkSigs_;
 
-    std::unique_ptr<ResolverAsio> resolver_;
+    std::unique_ptr<ResolverAsio> resolver_{};
 
     IOLatencySampler io_latency_sampler_;
 
-    std::unique_ptr<GRPCServer> grpcServer_;
+    std::unique_ptr<GRPCServer> grpcServer_{};
     // NOLINTEND(readability-identifier-naming)
 
     //--------------------------------------------------------------------------
@@ -854,13 +836,13 @@ public:
         return true;
     }
 
-    bool
-    initNodeStore() const
+    static bool
+    initNodeStore()
     {
         if (config_->doImport)
         {
             auto j = logs_->journal("NodeObject");
-            NodeStore::DummyScheduler dummyScheduler;
+            NodeStore::DummyScheduler const dummyScheduler;
             std::unique_ptr<NodeStore::Database> source =
                 NodeStore::Manager::instance().makeDatabase(
                     megabytes(config_->getValueFor(SizedItem::BurstSize, std::nullopt)),
@@ -1073,7 +1055,7 @@ public:
                 << "; size after: " << getLedgerReplayer().skipListsSize();
         }
         {
-            std::size_t const oldAcceptedLedgerSize = acceptedLedgerCache_.size();
+            std::size_t const oldAcceptedLedgerSize = acceptedLedgerCache_.size() = 0;
 
             acceptedLedgerCache_.sweep();
 
@@ -1082,7 +1064,7 @@ public:
                 << "; size after: " << acceptedLedgerCache_.size();
         }
         {
-            std::size_t const oldCachedSLEsSize = cachedSLEs_.size();
+            std::size_t const oldCachedSLEsSize = cachedSLEs_.size() = 0;
 
             cachedSLEs_.sweep();
 
@@ -1325,7 +1307,7 @@ ApplicationImp::setup(boost::program_options::variables_map const& cmdline)
         // Sections::kValidatorToken or Sections::kValidationSeed section.
 
         // masterKey for the configuration-file specified validator keys
-        std::optional<PublicKey> localSigningKey;
+        std::optional<PublicKey> const localSigningKey;
         if (validatorKeys_.keys)
             localSigningKey = validatorKeys_.keys->publicKey;
 

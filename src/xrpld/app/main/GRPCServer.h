@@ -22,7 +22,6 @@
 #include <string>
 #include <thread>
 #include <utility>
-#include <vector>
 
 namespace xrpl {
 
@@ -61,21 +60,21 @@ class GRPCServerImpl final
 private:
     // CompletionQueue returns events that have occurred, or events that have
     // been cancelled
-    std::unique_ptr<grpc::ServerCompletionQueue> cq_;
+    std::unique_ptr<grpc::ServerCompletionQueue> cq_{};
 
-    std::vector<std::shared_ptr<Processor>> requests_;
+    std::vector<std::shared_ptr<Processor>> requests_{};
 
     // The gRPC service defined by the .proto files
-    org::xrpl::rpc::v1::XRPLedgerAPIService::AsyncService service_;
+    org::xrpl::rpc::v1::XRPLedgerAPIService::AsyncService service_{};
 
-    std::unique_ptr<grpc::Server> server_;
+    std::unique_ptr<grpc::Server> server_{};
 
     Application& app_;
 
     std::string serverAddress_;
     std::uint16_t serverPort_ = 0;
 
-    std::vector<boost::asio::ip::address> secureGatewayIPs_;
+    std::vector<boost::asio::ip::address> secureGatewayIPs_{};
 
     // TLS certificate paths
     std::optional<std::string> sslCertPath_;
@@ -180,13 +179,13 @@ private:
         grpc::ServerAsyncResponseWriter<Response> responder_;
 
         // Function that creates a listener for specific request type
-        BindListener<Request, Response> bindListener_;
+        BindListener<Request, Response> bindListener_{};
 
         // Function that processes a request
-        Handler<Request, Response> handler_;
+        Handler<Request, Response> handler_{};
 
         // Function to call to forward to another server
-        Forward<Request, Response> forward_;
+        Forward<Request, Response> forward_{};
 
         // Condition required for this RPC
         RPC::Condition requiredCondition_;

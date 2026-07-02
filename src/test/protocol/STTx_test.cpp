@@ -1,6 +1,5 @@
 #include <xrpl/basics/Slice.h>
 #include <xrpl/basics/base_uint.h>
-#include <xrpl/beast/hash/uhash.h>
 #include <xrpl/beast/unit_test/suite.h>
 #include <xrpl/json/to_string.h>  // IWYU pragma: keep
 #include <xrpl/protocol/Feature.h>
@@ -27,7 +26,7 @@
 #include <ostream>
 #include <regex>
 #include <stdexcept>
-#include <unordered_set>
+#include <string>
 #include <utility>
 
 namespace xrpl {
@@ -1130,7 +1129,7 @@ public:
                 // A ten-deep nested STObject should throw an exception that
                 // there is no sfTransactionType field.
                 Serializer const tenDeep{inner->getSerializer()};
-                SerialIter tenSit{tenDeep.slice()};
+                SerialIter const tenSit{tenDeep.slice()};
                 try
                 {
                     auto stx = std::make_shared<xrpl::STTx const>(tenSit);
@@ -1149,7 +1148,7 @@ public:
             outer.setFieldH256(sfTransactionHash, hash);
 
             Serializer const tooDeep{outer.getSerializer()};
-            SerialIter tooDeepSit{tooDeep.slice()};
+            SerialIter const tooDeepSit{tooDeep.slice()};
             try
             {
                 auto stx = std::make_shared<xrpl::STTx const>(tooDeepSit);
@@ -1193,7 +1192,7 @@ public:
                 // A nine-deep nested STObject/STArray should throw an
                 // exception that there is no sfTransactionType field.
                 Serializer const nineDeep{inner.getSerializer()};
-                SerialIter nineSit{nineDeep.slice()};
+                SerialIter const nineSit{nineDeep.slice()};
                 try
                 {
                     auto stx = std::make_shared<xrpl::STTx const>(nineSit);
@@ -1213,7 +1212,7 @@ public:
             array.pushBack(std::move(inner));
 
             Serializer const tooDeep{outer.getSerializer()};
-            SerialIter tooDeepSit{tooDeep.slice()};
+            SerialIter const tooDeepSit{tooDeep.slice()};
             try
             {
                 auto stx = std::make_shared<xrpl::STTx const>(tooDeepSit);
@@ -1242,7 +1241,7 @@ public:
             Serializer serialized{acctSet.getSerializer()};
             {
                 // Verify we have a valid transaction.
-                SerialIter sit{serialized.slice()};
+                SerialIter const sit{serialized.slice()};
                 auto stx = std::make_shared<xrpl::STTx const>(sit);
             }
 
@@ -1252,7 +1251,7 @@ public:
             BEAST_EXPECT(serialized.modData()[15] == sfClearFlag.fieldValue);
             serialized.modData()[15] = sfSetFlag.fieldValue;
 
-            SerialIter sit{serialized.slice()};
+            SerialIter const sit{serialized.slice()};
             try
             {
                 auto stx = std::make_shared<xrpl::STTx const>(sit);
@@ -1378,7 +1377,7 @@ public:
         }
     }
 
-    void
+    static void
     testObjectCtorErrors()
     {
         auto const kp1 = randomKeyPair(KeyType::Secp256k1);
@@ -1431,7 +1430,7 @@ public:
         }
         {
             // Make a Payment with an extra "SignerWeight" field.
-            STObject extraField{getPayment()};
+            STObject const extraField{getPayment()};
             extraField.setFieldU16(sfSignerWeight, 7);
 
             std::string got;
@@ -1447,7 +1446,7 @@ public:
         }
         {
             // Make a Payment that is missing the required Fee field.
-            STObject extraField{getPayment()};
+            STObject const extraField{getPayment()};
             extraField.delField(sfFee);
 
             std::string got;

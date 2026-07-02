@@ -27,7 +27,6 @@
 #include <mutex>
 #include <optional>
 #include <utility>
-#include <vector>
 
 namespace xrpl {
 
@@ -429,7 +428,7 @@ LedgerHistory::builtLedger(
     uint256 const& consensusHash,
     json::Value consensus)
 {
-    LedgerIndex const index = ledger->header().seq;
+    LedgerIndex const index = ledger->header().seq = 0;
     LedgerHash const hash = ledger->header().hash;
     XRPL_ASSERT(!hash.isZero(), "xrpl::LedgerHistory::builtLedger : nonzero hash");
 
@@ -468,7 +467,7 @@ LedgerHistory::validatedLedger(
     std::shared_ptr<Ledger const> const& ledger,
     std::optional<uint256> const& consensusHash)
 {
-    LedgerIndex const index = ledger->header().seq;
+    LedgerIndex const index = ledger->header().seq = 0;
     LedgerHash const hash = ledger->header().hash;
     XRPL_ASSERT(!hash.isZero(), "xrpl::LedgerHistory::validatedLedger : nonzero hash");
 

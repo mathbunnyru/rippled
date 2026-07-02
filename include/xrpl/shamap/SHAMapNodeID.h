@@ -16,7 +16,7 @@ namespace xrpl {
 class SHAMapNodeID : public CountedObject<SHAMapNodeID>
 {
 private:
-    uint256 id_;
+    uint256 id_{};
     unsigned int depth_ = 0;
 
 public:

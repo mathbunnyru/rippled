@@ -1,6 +1,7 @@
 #include <test/jtx/Account.h>
 #include <test/jtx/Env.h>
 #include <test/jtx/Env_ss.h>
+#include <test/jtx/JTx.h>
 #include <test/jtx/amount.h>
 #include <test/jtx/balance.h>  // IWYU pragma: keep
 #include <test/jtx/check.h>
@@ -11,14 +12,9 @@
 #include <test/jtx/offer.h>
 #include <test/jtx/owners.h>
 #include <test/jtx/pay.h>
-#include <test/jtx/require.h>
-#include <test/jtx/rpc.h>
 #include <test/jtx/seq.h>
 #include <test/jtx/sig.h>
 #include <test/jtx/tags.h>
-#include <test/jtx/ter.h>
-
-#include <xrpld/app/ledger/LedgerMaster.h>
 
 #include <xrpl/basics/CountedObject.h>
 #include <xrpl/basics/SHAMapHash.h>
@@ -47,11 +43,9 @@
 #include <cassert>
 #include <chrono>
 #include <cstdint>
-#include <map>
 #include <memory>
 #include <optional>
 #include <string>
-#include <vector>
 
 namespace xrpl::test {
 
@@ -62,7 +56,7 @@ struct Regression_test : public beast::unit_test::Suite
     testOffer1()
     {
         using namespace jtx;
-        Env env(*this);
+        Env const env(*this);
         auto const gw = Account("gw");
         auto const usd = gw["USD"];
         env.fund(XRP(10000), "alice", gw);
@@ -198,7 +192,7 @@ struct Regression_test : public beast::unit_test::Suite
             cfg->fees.referenceFee = 10;
             return cfg;
         }));
-        EnvSs envs(env);
+        EnvSs const envs(env);
 
         auto const alice = Account("alice");
         env.fund(XRP(100000), alice);

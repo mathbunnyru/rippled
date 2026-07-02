@@ -106,7 +106,7 @@ fromString(RangeSet<T>& rs, std::string const& s)
 {
     std::vector<std::string> intervals;
     std::vector<std::string> tokens;
-    bool result{true};
+    bool const result{true};
 
     rs.clear();
     boost::split(tokens, s, boost::algorithm::is_any_of(","));

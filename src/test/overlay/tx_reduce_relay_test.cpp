@@ -4,7 +4,6 @@
 #include <xrpld/app/main/Application.h>
 #include <xrpld/core/Config.h>
 #include <xrpld/overlay/Message.h>
-#include <xrpld/overlay/Peer.h>
 #include <xrpld/overlay/detail/Handshake.h>
 #include <xrpld/overlay/detail/OverlayImpl.h>
 #include <xrpld/overlay/detail/PeerImp.h>
@@ -12,7 +11,6 @@
 #include <xrpld/peerfinder/Slot.h>
 
 #include <xrpl/basics/base_uint.h>
-#include <xrpl/basics/make_SSLContext.h>
 #include <xrpl/beast/net/IPEndpoint.h>
 #include <xrpl/beast/unit_test/suite.h>
 #include <xrpl/protocol/KeyType.h>
@@ -20,7 +18,6 @@
 #include <xrpl/protocol/SecretKey.h>
 #include <xrpl/protocol/Serializer.h>
 #include <xrpl/resource/Consumer.h>
-#include <xrpl/server/Handoff.h>
 
 #include <boost/asio/io_context.hpp>
 #include <boost/asio/ip/address.hpp>
@@ -37,11 +34,9 @@
 #include <cstdint>
 #include <functional>
 #include <memory>
-#include <set>
 #include <sstream>
 #include <string>
 #include <utility>
-#include <vector>
 
 namespace xrpl::test {
 
@@ -54,7 +49,7 @@ public:
     using shared_context = std::shared_ptr<boost::asio::ssl::context>;
 
 private:
-    void
+    static void
     doTest(std::string const& msg, bool log, std::function<void(bool)> f)
     {
         testcase(msg);
@@ -176,9 +171,7 @@ private:
     boost::beast::multi_buffer readBuf_;
 
 public:
-    tx_reduce_relay_test() : context_(makeSslContext("")), protocolVersion_{1, 7}
-    {
-    }
+    tx_reduce_relay_test() : context_(makeSslContext("")), protocolVersion_{1, 7} = default;
 
 private:
     void

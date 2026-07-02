@@ -2,18 +2,14 @@
 
 #include <xrpld/app/ledger/detail/TransactionAcquire.h>
 #include <xrpld/app/main/Application.h>
-#include <xrpld/overlay/PeerSet.h>
 
 #include <xrpl/basics/Log.h>
-#include <xrpl/basics/Slice.h>
-#include <xrpl/basics/UnorderedContainers.h>
 #include <xrpl/beast/insight/Collector.h>
 #include <xrpl/protocol/RippleLedgerHash.h>
 #include <xrpl/resource/Fees.h>
 #include <xrpl/server/NetworkOPs.h>
 #include <xrpl/shamap/SHAMap.h>
 #include <xrpl/shamap/SHAMapMissingNode.h>
-#include <xrpl/shamap/SHAMapNodeID.h>
 
 #include <xrpl.pb.h>
 
@@ -23,7 +19,6 @@
 #include <memory>
 #include <mutex>
 #include <utility>
-#include <vector>
 
 namespace xrpl {
 
@@ -241,7 +236,7 @@ private:
     std::recursive_mutex lock_;
 
     bool stopping_{false};
-    MapType map_;
+    MapType map_{};
     std::uint32_t seq_{0};
 
     // The empty transaction set whose hash is zero
@@ -249,7 +244,7 @@ private:
 
     std::function<void(std::shared_ptr<SHAMap> const&, bool)> gotSet_;
 
-    std::unique_ptr<PeerSetBuilder> peerSetBuilder_;
+    std::unique_ptr<PeerSetBuilder> peerSetBuilder_{};
 
     beast::Journal j_;
 };

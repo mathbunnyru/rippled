@@ -6,11 +6,8 @@
 
 #include <xrpl/basics/Log.h>
 #include <xrpl/basics/Slice.h>
-#include <xrpl/basics/UnorderedContainers.h>
 #include <xrpl/basics/base_uint.h>
-#include <xrpl/basics/hardened_hash.h>
 #include <xrpl/basics/random.h>
-#include <xrpl/beast/container/aged_unordered_map.h>
 #include <xrpl/beast/utility/Journal.h>
 #include <xrpl/beast/utility/instrumentation.h>
 #include <xrpl/core/ServiceRegistry.h>
@@ -26,12 +23,7 @@
 #include <functional>
 #include <iterator>
 #include <optional>
-#include <set>
 #include <sstream>
-#include <tuple>
-#include <unordered_map>
-#include <unordered_set>
-#include <vector>
 
 namespace xrpl::reduce_relay {
 
@@ -221,11 +213,11 @@ private:
         time_point lastMessage;  // time last message received
     };
 
-    std::unordered_map<id_t, PeerInfo> peers_;  // peer's data
+    std::unordered_map<id_t, PeerInfo> peers_{};  // peer's data
 
     // pool of peers considered as the source of messages
     // from validator - peers that reached kMinMessageThreshold
-    std::unordered_set<id_t> considered_;
+    std::unordered_set<id_t> considered_{};
 
     // number of peers that reached kMaxMessageThreshold
     std::uint16_t reachedThreshold_{0};
@@ -370,7 +362,7 @@ Slot<ClockType>::update(
 
         // squelch peers which are not selected and
         // not already squelched
-        std::stringstream str;
+        std::stringstream const str;
         for (auto& [k, v] : peers_)
         {
             v.count = 0;
@@ -702,7 +694,7 @@ private:
 
     std::atomic_bool reduceRelayReady_{false};
 
-    hash_map<PublicKey, Slot<ClockType>> slots_;
+    hash_map<PublicKey, Slot<ClockType>> slots_{};
     SquelchHandler const& handler_;  // squelch/unsquelch handler
     Logs& logs_;
     beast::Journal const journal_;

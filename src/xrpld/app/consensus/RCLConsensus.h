@@ -5,13 +5,11 @@
 #include <xrpld/app/consensus/RCLCxPeerPos.h>
 #include <xrpld/app/consensus/RCLCxTx.h>
 #include <xrpld/app/main/Application.h>
-#include <xrpld/app/misc/FeeVote.h>
 #include <xrpld/app/misc/NegativeUNLVote.h>
 #include <xrpld/consensus/Consensus.h>
 #include <xrpld/consensus/ConsensusParms.h>
 #include <xrpld/consensus/ConsensusTypes.h>
 
-#include <xrpl/basics/UnorderedContainers.h>
 #include <xrpl/basics/base_uint.h>
 #include <xrpl/basics/chrono.h>
 #include <xrpl/beast/utility/Journal.h>
@@ -28,13 +26,9 @@
 #include <chrono>
 #include <cstddef>
 #include <cstdint>
-#include <memory>
 #include <mutex>
 #include <optional>
-#include <set>
-#include <sstream>
 #include <string>
-#include <utility>
 
 namespace xrpl {
 
@@ -55,7 +49,7 @@ class RCLConsensus
     class Adaptor
     {
         Application& app_;
-        std::unique_ptr<FeeVote> feeVote_;
+        std::unique_ptr<FeeVote> feeVote_{};
         LedgerMaster& ledgerMaster_;
         LocalTxs& localTxs_;
         InboundTransactions& inboundTransactions_;
@@ -220,7 +214,7 @@ class RCLConsensus
             @param setId The transaction set ID associated with the proposal
             @return Optional set of transactions, seated if available.
        */
-        std::optional<RCLTxSet>
+        static std::optional<RCLTxSet>
         acquireTxSet(RCLTxSet::ID const& setId);
 
         /** Whether the open ledger has any transactions
@@ -532,7 +526,7 @@ class RclConsensusLogger
 {
     std::string header_;
     beast::Journal j_;
-    std::unique_ptr<std::stringstream> ss_;
+    std::unique_ptr<std::stringstream> ss_{};
     std::chrono::steady_clock::time_point start_;
 
 public:

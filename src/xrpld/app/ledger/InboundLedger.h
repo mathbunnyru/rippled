@@ -3,9 +3,7 @@
 #include <xrpld/app/ledger/detail/TimeoutCounter.h>
 #include <xrpld/app/main/Application.h>
 #include <xrpld/overlay/Peer.h>
-#include <xrpld/overlay/PeerSet.h>
 
-#include <xrpl/basics/CountedObject.h>
 #include <xrpl/basics/Slice.h>
 #include <xrpl/basics/base_uint.h>
 #include <xrpl/beast/clock/abstract_clock.h>
@@ -14,7 +12,6 @@
 #include <xrpl/nodestore/Database.h>
 #include <xrpl/shamap/SHAMap.h>
 #include <xrpl/shamap/SHAMapAddNode.h>
-#include <xrpl/shamap/SHAMapNodeID.h>
 
 #include <xrpl.pb.h>
 
@@ -23,10 +20,7 @@
 #include <cstdint>
 #include <memory>
 #include <mutex>
-#include <set>
 #include <string>
-#include <utility>
-#include <vector>
 
 namespace xrpl {
 
@@ -97,7 +91,7 @@ public:
 
     /** Return a json::ValueType::Object. */
     json::Value
-    getJson(int);
+    getJson(int) const;
 
     void
     runData();
@@ -154,10 +148,10 @@ private:
     receiveNode(protocol::TMLedgerData const& packet, SHAMapAddNode&);
 
     bool
-    takeTxRootNode(Slice const& data, SHAMapAddNode&);
+    takeTxRootNode(Slice const& data, SHAMapAddNode&) const;
 
     bool
-    takeAsRootNode(Slice const& data, SHAMapAddNode&);
+    takeAsRootNode(Slice const& data, SHAMapAddNode&) const;
 
     std::vector<uint256>
     neededTxHashes(int max, SHAMapSyncFilter const* filter) const;
@@ -177,16 +171,16 @@ private:
     std::uint32_t seq_;
     Reason const reason_;
 
-    std::set<uint256> recentNodes_;
+    std::set<uint256> recentNodes_{};
 
     SHAMapAddNode stats_;
 
     // Data we have received from peers
     std::mutex receivedDataLock_;
     std::vector<std::pair<std::weak_ptr<Peer>, std::shared_ptr<protocol::TMLedgerData>>>
-        receivedData_;
+        receivedData_{};
     bool receiveDispatched_{false};
-    std::unique_ptr<PeerSet> peerSet_;
+    std::unique_ptr<PeerSet> peerSet_{};
 };
 
 }  // namespace xrpl

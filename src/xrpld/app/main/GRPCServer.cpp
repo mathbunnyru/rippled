@@ -3,14 +3,12 @@
 #include <xrpld/app/ledger/LedgerMaster.h>  // IWYU pragma: keep
 #include <xrpld/app/main/Application.h>
 #include <xrpld/rpc/Context.h>
-#include <xrpld/rpc/GRPCHandlers.h>
 #include <xrpld/rpc/Role.h>
 #include <xrpld/rpc/detail/Handler.h>
 
 #include <xrpl/basics/FileUtilities.h>
 #include <xrpl/basics/Log.h>
 #include <xrpl/basics/contract.h>
-#include <xrpl/beast/core/CurrentThreadName.h>
 #include <xrpl/beast/net/IPAddressConversion.h>
 #include <xrpl/beast/net/IPEndpoint.h>
 #include <xrpl/beast/utility/instrumentation.h>
@@ -21,7 +19,6 @@
 #include <xrpl/protocol/ErrorCodes.h>
 #include <xrpl/resource/Charge.h>
 #include <xrpl/resource/Consumer.h>
-#include <xrpl/resource/Fees.h>
 #include <xrpl/server/InfoSub.h>
 
 #include <boost/algorithm/string/trim.hpp>
@@ -50,7 +47,6 @@
 #include <stdexcept>
 #include <string>
 #include <utility>
-#include <vector>
 
 namespace xrpl {
 
@@ -368,7 +364,7 @@ GRPCServerImpl::GRPCServerImpl(Application& app)
             try
             {
                 std::stringstream ss{*optSecureGateway};
-                std::string ip;
+                std::string const ip;
                 while (std::getline(ss, ip, ','))
                 {
                     boost::algorithm::trim(ip);
@@ -524,7 +520,7 @@ GRPCServerImpl::handleRpcs()
 }
 
 // create a CallData instance for each RPC
-std::vector<std::shared_ptr<Processor>>
+static std::vector<std::shared_ptr<Processor>>
 GRPCServerImpl::setupListeners()
 {
     using RPC::Condition;

@@ -1,7 +1,6 @@
 #include <xrpld/rpc/ServerHandler.h>
 
 #include <xrpld/app/main/Application.h>
-#include <xrpld/overlay/Overlay.h>
 #include <xrpld/rpc/RPCHandler.h>
 #include <xrpld/rpc/Role.h>
 #include <xrpld/rpc/detail/Tuning.h>
@@ -10,7 +9,6 @@
 #include <xrpl/basics/Log.h>
 #include <xrpl/basics/base64.h>
 #include <xrpl/basics/contract.h>
-#include <xrpl/basics/make_SSLContext.h>
 #include <xrpl/beast/net/IPAddress.h>
 #include <xrpl/beast/net/IPAddressConversion.h>
 #include <xrpl/beast/rfc2616.h>
@@ -35,7 +33,6 @@
 #include <xrpl/resource/Fees.h>
 #include <xrpl/resource/ResourceManager.h>
 #include <xrpl/server/Handoff.h>
-#include <xrpl/server/InfoSub.h>
 #include <xrpl/server/NetworkOPs.h>
 #include <xrpl/server/Port.h>
 #include <xrpl/server/Server.h>
@@ -61,7 +58,6 @@
 #include <cctype>
 #include <chrono>
 #include <exception>
-#include <map>
 #include <memory>
 #include <mutex>
 #include <ostream>
@@ -853,7 +849,7 @@ ServerHandler::processRequest(
         params[jss::command] = strMethod;
         JLOG(journal_.trace()) << "doRpcCommand:" << strMethod << ":" << params;
 
-        Resource::Charge loadType = Resource::kFeeReferenceRpc;
+        Resource::Charge const loadType = Resource::kFeeReferenceRpc;
 
         RPC::JsonContext context{
             {.j = journal_,
@@ -1134,7 +1130,7 @@ parsePorts(Config const& config, std::ostream& log)
         Throw<std::exception>();
     }
 
-    ParsedPort common;
+    ParsedPort const common;
     parsePort(common, config[Sections::kServer], log);
 
     auto const& names = config.section(Sections::kServer).values();

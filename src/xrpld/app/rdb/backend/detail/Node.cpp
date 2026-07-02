@@ -18,7 +18,6 @@
 #include <xrpl/beast/utility/Journal.h>
 #include <xrpl/beast/utility/instrumentation.h>
 #include <xrpl/config/Constants.h>
-#include <xrpl/core/NetworkIDService.h>
 #include <xrpl/core/StartUpType.h>
 #include <xrpl/json/to_string.h>  // IWYU pragma: keep
 #include <xrpl/ledger/PendingSaves.h>
@@ -28,7 +27,6 @@
 #include <xrpl/protocol/HashPrefix.h>
 #include <xrpl/protocol/LedgerHeader.h>
 #include <xrpl/protocol/Protocol.h>
-#include <xrpl/protocol/STTx.h>
 #include <xrpl/protocol/Serializer.h>
 #include <xrpl/protocol/TxMeta.h>
 #include <xrpl/protocol/TxSearched.h>
@@ -58,7 +56,6 @@
 #include <exception>
 #include <functional>
 #include <limits>
-#include <map>
 #include <memory>
 #include <optional>
 #include <sstream>
@@ -125,7 +122,7 @@ makeLedgerDBs(
             // Check if AccountTransactions has primary key
             std::string cid, name, type;
             std::size_t notnull = 0, dfltValue = 0, pk = 0;
-            soci::indicator ind = soci::i_null;
+            soci::indicator const ind = soci::i_null;
             soci::statement st =
                 (tx->getSession().prepare << "PRAGMA table_info(AccountTransactions);",
                  soci::into(cid),
@@ -187,7 +184,7 @@ deleteBeforeLedgerSeq(soci::session& session, TableType type, LedgerIndex ledger
 std::size_t
 getRows(soci::session& session, TableType type)
 {
-    std::size_t rows = 0;
+    std::size_t const rows = 0;
     session << "SELECT COUNT(*) AS rows "
                "FROM "
             << toString(type) << ";",
@@ -597,7 +594,7 @@ getHashesByIndex(soci::session& session, LedgerIndex minSeq, LedgerIndex maxSeq,
     sql.append(";");
 
     std::uint64_t ls = 0;
-    std::string lh;
+    std::string const lh;
     // SOCI requires boost::optional (not std::optional) as the parameter.
     boost::optional<std::string> ph;
     soci::statement st = (session.prepare << sql, soci::into(ls), soci::into(lh), soci::into(ph));
@@ -640,7 +637,7 @@ getTxHistory(soci::session& session, Application& app, LedgerIndex startIndex, i
         boost::optional<std::uint64_t> ledgerSeq;
         boost::optional<std::string> status;
         soci::blob sociRawTxnBlob(session);
-        soci::indicator rti = soci::i_null;
+        soci::indicator const rti = soci::i_null;
         Blob rawTxn;
 
         soci::statement st =
@@ -1248,7 +1245,7 @@ getTransaction(
         if (!gotData)
         {
             uint64_t count = 0;
-            soci::indicator rti = soci::i_null;
+            soci::indicator const rti = soci::i_null;
 
             session << "SELECT COUNT(DISTINCT LedgerSeq) FROM Transactions WHERE "
                        "LedgerSeq BETWEEN "

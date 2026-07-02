@@ -27,7 +27,7 @@ private:
     std::size_t count_{1};
     duration const period_;
     boost::asio::io_context& ios_;
-    boost::asio::basic_waitable_timer<std::chrono::steady_clock> timer_;
+    boost::asio::basic_waitable_timer<std::chrono::steady_clock> timer_{};
     bool cancel_{false};
 
 public:

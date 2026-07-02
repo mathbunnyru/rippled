@@ -1,6 +1,3 @@
-#include <xrpld/app/ledger/LedgerMaster.h>
-#include <xrpld/app/main/Application.h>
-#include <xrpld/app/misc/SHAMapStore.h>
 #include <xrpld/rpc/Context.h>
 
 #include <xrpl/basics/base_uint.h>
@@ -37,7 +34,7 @@ doCanDelete(RPC::JsonContext& context)
         }
         else
         {
-            std::string canDeleteStr = canDelete.asString();
+            std::string const canDeleteStr = canDelete.asString();
             boost::to_lower(canDeleteStr);
 
             if (canDeleteStr.find_first_not_of("0123456789") == std::string::npos)

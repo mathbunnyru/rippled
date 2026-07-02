@@ -17,7 +17,7 @@ namespace xrpl {
 class PathAsset
 {
 private:
-    std::variant<Currency, MPTID> easset_;
+    std::variant<Currency, MPTID> easset_{};
 
 public:
     PathAsset() = default;
@@ -34,8 +34,8 @@ public:
     [[nodiscard]] constexpr bool
     holds() const;
 
-    [[nodiscard]] constexpr bool
-    isXRP() const;
+    static [[nodiscard]] constexpr bool
+    isXRP();
 
     template <ValidPathAsset T>
     T const&
@@ -94,7 +94,7 @@ PathAsset::value() const
 }
 
 constexpr bool
-PathAsset::isXRP() const
+PathAsset::isXRP()
 {
     return visit(
         [&](Currency const& currency) { return xrpl::isXRP(currency); },

@@ -7,7 +7,6 @@
 #include <test/jtx/noop.h>
 
 #include <xrpld/app/ledger/LedgerHistory.h>
-#include <xrpld/app/ledger/LedgerMaster.h>
 
 #include <xrpl/basics/base_uint.h>
 #include <xrpl/basics/chrono.h>
@@ -22,7 +21,7 @@
 
 #include <cassert>
 #include <memory>
-#include <vector>
+#include <string>
 
 namespace xrpl::test {
 

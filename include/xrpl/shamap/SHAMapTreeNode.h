@@ -97,7 +97,7 @@ public:
         @return the ID of the SHAMap that owns this node, or 0 if the
        node is not owned by any SHAMap and is a candidate for sharing.
      */
-    std::uint32_t
+    [[nodiscard]] std::uint32_t
     cowid() const
     {
         return cowid_;
@@ -115,7 +115,7 @@ public:
     }
 
     /** Make a copy of this node, setting the owner. */
-    virtual SHAMapTreeNodePtr
+    [[nodiscard]] virtual SHAMapTreeNodePtr
     clone(std::uint32_t cowid) const = 0;
     /** @} */
 
@@ -124,22 +124,22 @@ public:
     updateHash() = 0;
 
     /** Return the hash of this node. */
-    SHAMapHash const&
+    [[nodiscard]] SHAMapHash const&
     getHash() const
     {
         return hash_;
     }
 
     /** Determines the type of node. */
-    virtual SHAMapNodeType
+    [[nodiscard]] virtual SHAMapNodeType
     getType() const = 0;
 
     /** Determines if this is a leaf node. */
-    virtual bool
+    [[nodiscard]] virtual bool
     isLeaf() const = 0;
 
     /** Determines if this is an inner node. */
-    virtual bool
+    [[nodiscard]] virtual bool
     isInner() const = 0;
 
     /** Serialize the node in a format appropriate for sending over the wire */
@@ -150,7 +150,7 @@ public:
     virtual void
     serializeWithPrefix(Serializer&) const = 0;
 
-    virtual std::string
+    [[nodiscard]] virtual std::string
     getString(SHAMapNodeID const&) const;
 
     virtual void

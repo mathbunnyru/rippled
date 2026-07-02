@@ -3,16 +3,13 @@
 #include <xrpld/app/ledger/InboundLedger.h>
 #include <xrpld/app/ledger/LedgerMaster.h>
 #include <xrpld/app/main/Application.h>
-#include <xrpld/overlay/PeerSet.h>
 
 #include <xrpl/basics/Blob.h>
 #include <xrpl/basics/DecayingSample.h>
 #include <xrpl/basics/Log.h>
 #include <xrpl/basics/Slice.h>
-#include <xrpl/basics/UnorderedContainers.h>
 #include <xrpl/basics/base_uint.h>
 #include <xrpl/basics/scope.h>
-#include <xrpl/beast/container/aged_map.h>
 #include <xrpl/beast/container/detail/aged_ordered_container.h>
 #include <xrpl/beast/insight/Collector.h>
 #include <xrpl/beast/utility/instrumentation.h>
@@ -22,9 +19,7 @@
 #include <xrpl/json/json_value.h>
 #include <xrpl/protocol/RippleLedgerHash.h>
 #include <xrpl/protocol/Serializer.h>
-#include <xrpl/protocol/jss.h>
 #include <xrpl/server/NetworkOPs.h>
-#include <xrpl/shamap/SHAMapTreeNode.h>
 
 #include <xrpl.pb.h>
 
@@ -35,10 +30,6 @@
 #include <functional>
 #include <memory>
 #include <mutex>
-#include <set>
-#include <string>
-#include <utility>
-#include <vector>
 
 namespace xrpl {
 
@@ -439,15 +430,15 @@ private:
 
     bool stopping_ = false;
     using MapType = hash_map<uint256, std::shared_ptr<InboundLedger>>;
-    MapType ledgers_;
+    MapType ledgers_{};
 
-    beast::aged_map<uint256, std::uint32_t> recentFailures_;
+    beast::aged_map<uint256, std::uint32_t> recentFailures_{};
 
     beast::insight::Counter counter_;
 
-    std::unique_ptr<PeerSetBuilder> peerSetBuilder_;
+    std::unique_ptr<PeerSetBuilder> peerSetBuilder_{};
 
-    std::set<uint256> pendingAcquires_;
+    std::set<uint256> pendingAcquires_{};
     std::mutex acquiresMutex_;
 };
 

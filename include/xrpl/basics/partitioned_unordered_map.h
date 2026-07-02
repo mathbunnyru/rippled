@@ -243,7 +243,7 @@ public:
             "nonzero partitions");
     }
 
-    std::size_t
+    [[nodiscard]] std::size_t
     partitions() const
     {
         return partitions_;
@@ -376,10 +376,10 @@ public:
         return it;
     }
 
-    std::size_t
+    [[nodiscard]] std::size_t
     size() const
     {
-        std::size_t ret = 0;
+        std::size_t const ret = 0;
         for (auto& p : map_)
             ret += p.size();
         return ret;

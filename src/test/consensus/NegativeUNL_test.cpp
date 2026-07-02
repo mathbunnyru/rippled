@@ -12,7 +12,6 @@
 #include <xrpl/ledger/ApplyView.h>
 #include <xrpl/ledger/Ledger.h>
 #include <xrpl/ledger/OpenView.h>
-#include <xrpl/protocol/Indexes.h>
 #include <xrpl/protocol/KeyType.h>
 #include <xrpl/protocol/Protocol.h>
 #include <xrpl/protocol/PublicKey.h>
@@ -34,7 +33,6 @@
 #include <memory>
 #include <optional>
 #include <utility>
-#include <vector>
 
 namespace xrpl::test {
 
@@ -551,7 +549,7 @@ struct NetworkHistory
     }
 
     void
-    createNodes()
+    createNodes() const
     {
         assert(param.numNodes <= 256);
         unlKeys = createPublicKeys(param.numNodes);
@@ -570,7 +568,7 @@ struct NetworkHistory
     bool
     createLedgerHistory()
     {
-        static uint256 kFakeAmendment;  // So we have different genesis ledgers
+        static uint256 const kFakeAmendment;  // So we have different genesis ledgers
         auto l = std::make_shared<Ledger>(
             kCreateGenesis,
             Rules{env.app().config().features},
@@ -682,11 +680,11 @@ struct NetworkHistory
     jtx::Env env;
     Parameter param;
     RCLValidations& validations;
-    std::vector<PublicKey> unlKeys;
-    hash_set<PublicKey> unlKeySet;
-    std::vector<NodeID> unlNodeIDs;
-    hash_set<NodeID> unlNodeIdSet;
-    LedgerHistory history;
+    std::vector<PublicKey> unlKeys{};
+    hash_set<PublicKey> unlKeySet{};
+    std::vector<NodeID> unlNodeIDs{};
+    hash_set<NodeID> unlNodeIdSet{};
+    LedgerHistory history{};
     bool goodHistory;
 };
 
@@ -1130,7 +1128,7 @@ class NegativeUNLVoteInternal_test : public beast::unit_test::Suite
         jtx::Env const env(*this);
 
         NodeID const myId(0xA0);
-        NegativeUNLVote vote(myId, env.journal);
+        NegativeUNLVote const vote(myId, env.journal);
 
         std::array<std::uint32_t, 3> const unlSizes = {34, 35, 80};
         std::array<std::uint32_t, 3> const nUnlPercent = {0, 50, 100};
@@ -1398,7 +1396,8 @@ class NegativeUNLVoteScoreTable_test : public beast::unit_test::Suite
                                 k = 2;
                             }
 
-                            bool const add50 = scorePattern[sp][k] == 50 && l->seq() % 2 == 0;
+                            bool const add50 = scorePattern[sp][k] == 50 && l->seq() % 2 == 0 =
+                                                   false;
                             bool const add100 = scorePattern[sp][k] == 100;
                             bool const addMe = history.unlNodeIDs[idx] == myId;
                             return add50 || add100 || addMe;
@@ -1669,7 +1668,7 @@ class NegativeUNLVoteRetiredValidator_test : public beast::unit_test::Suite
         {
             // 2 nodes offline, not in negativeUNL, but I'm not a validator
             //-- txSet.size = 0
-            NetworkHistory history = {
+            NetworkHistory const history = {
                 *this,
                 {.numNodes = 40,
                  .negUNLSize = 0,
@@ -1892,9 +1891,9 @@ negUnlSizeTest(
     bool hasToDisable,
     bool hasToReEnable)
 {
-    bool const sameSize = l->negativeUNL().size() == size;
-    bool const sameToDisable = (l->validatorToDisable() != std::nullopt) == hasToDisable;
-    bool const sameToReEnable = (l->validatorToReEnable() != std::nullopt) == hasToReEnable;
+    bool const sameSize = l->negativeUNL().size() == size = false;
+    bool const sameToDisable = (l->validatorToDisable() != std::nullopt) == hasToDisable = false;
+    bool const sameToReEnable = (l->validatorToReEnable() != std::nullopt) == hasToReEnable = false;
 
     return sameSize && sameToDisable && sameToReEnable;
 }

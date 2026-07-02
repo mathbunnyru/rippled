@@ -33,7 +33,7 @@ public:
         Counter(std::string name) noexcept : name_(std::move(name)), count_(0)
         {
             // Insert ourselves at the front of the lock-free linked list
-            CountedObjects& instance = CountedObjects::getInstance();
+            CountedObjects const& instance = CountedObjects::getInstance();
             Counter* head = nullptr;
 
             do

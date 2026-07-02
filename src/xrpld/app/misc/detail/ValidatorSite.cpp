@@ -1,7 +1,6 @@
 #include <xrpld/app/misc/ValidatorSite.h>
 
 #include <xrpld/app/main/Application.h>
-#include <xrpld/app/misc/ValidatorList.h>
 #include <xrpld/app/misc/detail/Work.h>
 #include <xrpld/app/misc/detail/WorkFile.h>
 #include <xrpld/app/misc/detail/WorkPlain.h>
@@ -9,7 +8,6 @@
 
 #include <xrpl/basics/Log.h>
 #include <xrpl/basics/StringUtilities.h>
-#include <xrpl/basics/chrono.h>
 #include <xrpl/beast/utility/Journal.h>
 #include <xrpl/beast/utility/instrumentation.h>
 #include <xrpl/json/json_reader.h>
@@ -34,12 +32,9 @@
 #include <memory>
 #include <mutex>
 #include <optional>
-#include <sstream>
 #include <stdexcept>
 #include <string>
-#include <tuple>
 #include <utility>
-#include <vector>
 
 namespace xrpl {
 
@@ -186,14 +181,14 @@ ValidatorSite::start()
 void
 ValidatorSite::join()
 {
-    std::unique_lock<std::mutex> lock{stateMutex_};
+    std::unique_lock<std::mutex> const lock{stateMutex_};
     cv_.wait(lock, [&] { return !pending_; });
 }
 
 void
 ValidatorSite::stop()
 {
-    std::unique_lock<std::mutex> lock{stateMutex_};
+    std::unique_lock<std::mutex> const lock{stateMutex_};
     stopping_ = true;
     // work::cancel() must be called before the
     // cv wait in order to kick any asio async operations
@@ -387,7 +382,7 @@ ValidatorSite::parseJsonResponse(
     std::scoped_lock<std::mutex> const& sitesLock)
 {
     json::Value const body = [&res, siteIdx, this]() {
-        json::Reader r;
+        json::Reader const r;
         json::Value body;
         if (!r.parse(res.data(), body))
         {
@@ -672,7 +667,7 @@ ValidatorSite::getJson() const
     using Int = json::Value::Int;
 
     json::Value jrr(json::ValueType::Object);
-    json::Value& jSites = (jrr[jss::validator_sites] = json::ValueType::Array);
+    json::Value const& jSites = (jrr[jss::validator_sites] = json::ValueType::Array);
     {
         std::scoped_lock const lock{sitesMutex_};
         for (Site const& site : sites_)

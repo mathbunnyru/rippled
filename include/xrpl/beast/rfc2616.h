@@ -201,8 +201,8 @@ class ListIterator
 {
     using iter_type = boost::string_ref::const_iterator;
 
-    iter_type it_;
-    iter_type end_;
+    iter_type it_{};
+    iter_type end_{};
     boost::string_ref value_;
 
 public:

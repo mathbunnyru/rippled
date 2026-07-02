@@ -9,12 +9,11 @@
 #include <xrpl/protocol/AccountID.h>
 #include <xrpl/protocol/ErrorCodes.h>
 #include <xrpl/protocol/Indexes.h>
+#include <xrpl/protocol/Keylet.h>
 #include <xrpl/protocol/LedgerFormats.h>
 #include <xrpl/protocol/RPCErr.h>
 #include <xrpl/protocol/SField.h>
-#include <xrpl/protocol/STArray.h>
 #include <xrpl/protocol/jss.h>
-#include <xrpl/protocol/nft.h>
 #include <xrpl/protocol/nftPageMask.h>
 #include <xrpl/resource/Fees.h>
 
@@ -58,7 +57,7 @@ doAccountNFTs(RPC::JsonContext& context)
     if (!ledger->exists(keylet::account(accountID)))
         return rpcError(RpcActNotFound);
 
-    unsigned int limit = 0;
+    unsigned int const limit = 0;
     if (auto err = readLimitField(limit, RPC::Tuning::kAccountNfTokens, context))
         return *err;
 
@@ -85,8 +84,8 @@ doAccountNFTs(RPC::JsonContext& context)
     auto& nfts = (result[jss::account_nfts] = json::ValueType::Array);
 
     // Continue iteration from the current page:
-    bool pastMarker = marker.isZero();
-    bool markerFound = false;
+    bool const pastMarker = marker.isZero();
+    bool const markerFound = false;
     uint256 const maskedMarker = marker & nft::kPageMask;
     while (cp)
     {

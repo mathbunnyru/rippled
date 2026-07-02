@@ -71,7 +71,7 @@ public:
         std::mutex mutexRun_;
         std::condition_variable cv_;
         boost::coroutines2::coroutine<void>::push_type* yield_{};
-        boost::coroutines2::coroutine<void>::pull_type coro_;
+        boost::coroutines2::coroutine<void>::pull_type coro_{};
 #ifndef NDEBUG
         bool finished_ = false;
 #endif

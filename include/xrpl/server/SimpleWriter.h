@@ -44,7 +44,7 @@ public:
         return true;
     }
 
-    std::vector<boost::asio::const_buffer>
+    static std::vector<boost::asio::const_buffer>
     data() override
     {
         auto const& buf = sb_.data();

@@ -6,10 +6,8 @@
 #include <xrpld/app/ledger/LedgerHolder.h>
 #include <xrpld/app/ledger/LedgerReplay.h>
 #include <xrpld/app/main/Application.h>
-#include <xrpld/core/TimeKeeper.h>
 
 #include <xrpl/basics/Blob.h>
-#include <xrpl/basics/RangeSet.h>
 #include <xrpl/basics/UptimeClock.h>
 #include <xrpl/basics/base_uint.h>
 #include <xrpl/basics/chrono.h>
@@ -36,7 +34,6 @@
 #include <optional>
 #include <string>
 #include <utility>
-#include <vector>
 
 namespace xrpl {
 
@@ -100,9 +97,9 @@ public:
     isCaughtUp(std::string& reason);
 
     std::uint32_t
-    getEarliestFetch();
+    getEarliestFetch() const;
 
-    bool
+    static bool
     storeLedger(std::shared_ptr<Ledger const> ledger);
 
     void
@@ -146,7 +143,7 @@ public:
     getHashBySeq(std::uint32_t index);
 
     /** Walk to a ledger's hash using the skip list */
-    std::optional<LedgerHash>
+    static std::optional<LedgerHash>
     walkHashBySeq(std::uint32_t index, InboundLedger::Reason reason);
 
     /** Walk the chain of ledger hashes to determine the hash of the
@@ -165,7 +162,7 @@ public:
     std::shared_ptr<Ledger const>
     getLedgerBySeq(std::uint32_t index);
 
-    std::shared_ptr<Ledger const>
+    static std::shared_ptr<Ledger const>
     getLedgerByHash(uint256 const& hash);
 
     void
@@ -330,17 +327,17 @@ private:
     std::shared_ptr<Ledger const> histLedger_;
 
     // Fully validated ledger, whether or not we have the ledger resident.
-    std::pair<uint256, LedgerIndex> lastValidLedger_{uint256(), 0};
+    std::pair<uint256, LedgerIndex> lastValidLedger{uint256(), 0};
 
     LedgerHistory ledgerHistory_;
 
     CanonicalTXSet heldTransactions_{uint256()};
 
     // A set of transactions to replay during the next close
-    std::unique_ptr<LedgerReplay> replayData_;
+    std::unique_ptr<LedgerReplay> replayData_{};
 
     std::recursive_mutex completeLock_;
-    RangeSet<std::uint32_t> completeLedgers_;
+    RangeSet<std::uint32_t> completeLedgers_{};
 
     // Publish thread is running.
     bool advanceThread_{false};
@@ -371,7 +368,7 @@ private:
 
     std::uint32_t const ledgerFetchSize_;
 
-    TaggedCache<uint256, Blob> fetchPacks_;
+    TaggedCache<uint256, Blob> fetchPacks_{};
 
     std::uint32_t fetchSeq_{0};
 
@@ -380,7 +377,7 @@ private:
     LedgerIndex const maxLedgerDifference_{1000000};
 
     // Time that the previous upgrade warning was issued.
-    TimeKeeper::time_point upgradeWarningPrevTime_;
+    TimeKeeper::time_point upgradeWarningPrevTime_{};
 
 private:
     struct Stats

@@ -148,7 +148,7 @@ template <class Handler>
 void
 PlainHTTPPeer<Handler>::doClose()
 {
-    boost::system::error_code ec;
+    boost::system::error_code const ec;
     socket_.shutdown(socket_type::shutdown_send, ec);
 }
 

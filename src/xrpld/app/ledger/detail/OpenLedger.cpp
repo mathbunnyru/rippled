@@ -2,24 +2,19 @@
 
 #include <xrpld/app/main/Application.h>
 #include <xrpld/app/misc/TxQ.h>
-#include <xrpld/core/TimeKeeper.h>
-#include <xrpld/overlay/Overlay.h>
 
 #include <xrpl/basics/Log.h>
 #include <xrpl/beast/utility/Journal.h>
 #include <xrpl/beast/utility/instrumentation.h>
-#include <xrpl/core/HashRouter.h>
 #include <xrpl/ledger/ApplyView.h>
 #include <xrpl/ledger/Ledger.h>
 #include <xrpl/ledger/OpenView.h>
 #include <xrpl/ledger/ReadView.h>
 #include <xrpl/protocol/Rules.h>
-#include <xrpl/protocol/SField.h>
 #include <xrpl/protocol/STObject.h>
 #include <xrpl/protocol/STTx.h>
 #include <xrpl/protocol/Serializer.h>
 #include <xrpl/protocol/TER.h>
-#include <xrpl/protocol/TxFlags.h>
 #include <xrpl/shamap/SHAMap.h>
 #include <xrpl/tx/apply.h>
 
@@ -34,7 +29,6 @@
 #include <string>
 #include <string_view>
 #include <utility>
-#include <vector>
 
 namespace xrpl {
 
@@ -193,7 +187,7 @@ OpenLedger::applyOne(
 std::string
 debugTxstr(std::shared_ptr<STTx const> const& tx)
 {
-    std::stringstream ss;
+    std::stringstream const ss;
     ss << tx->getTransactionID();
     return ss.str().substr(0, 4);
 }
@@ -201,7 +195,7 @@ debugTxstr(std::shared_ptr<STTx const> const& tx)
 std::string
 debugTostr(OrderedTxs const& set)
 {
-    std::stringstream ss;
+    std::stringstream const ss;
     for (auto const& item : set)
         ss << debugTxstr(item.second) << ", ";
     return ss.str();
@@ -215,7 +209,7 @@ debugTostr(SHAMap const& set)
     {
         try
         {
-            SerialIter sit(item.slice());
+            SerialIter const sit(item.slice());
             auto const tx = std::make_shared<STTx const>(sit);
             ss << debugTxstr(tx) << ", ";
         }
@@ -230,7 +224,7 @@ debugTostr(SHAMap const& set)
 std::string
 debugTostr(std::shared_ptr<ReadView const> const& view)
 {
-    std::stringstream ss;
+    std::stringstream const ss;
     for (auto const& item : view->txs)
         ss << debugTxstr(item.first) << ", ";
     return ss.str();

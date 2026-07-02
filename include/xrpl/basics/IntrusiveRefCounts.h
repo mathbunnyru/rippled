@@ -49,8 +49,8 @@ struct IntrusiveRefCounts
     void
     addWeakRef() const noexcept;
 
-    ReleaseStrongRefAction
-    releaseStrongRef() const;
+    [[nodiscard]] static ReleaseStrongRefAction
+    releaseStrongRef();
 
     // Same as:
     // {
@@ -58,21 +58,21 @@ struct IntrusiveRefCounts
     //   return releaseStrongRef;
     // }
     // done as one atomic operation
-    ReleaseStrongRefAction
-    addWeakReleaseStrongRef() const;
+    [[nodiscard]] static ReleaseStrongRefAction
+    addWeakReleaseStrongRef();
 
-    ReleaseWeakRefAction
-    releaseWeakRef() const;
+    [[nodiscard]] static ReleaseWeakRefAction
+    releaseWeakRef();
 
     // Returns true is able to checkout a strong ref. False otherwise
-    bool
-    checkoutStrongRefFromWeak() const noexcept;
+    [[nodiscard]] static bool
+    checkoutStrongRefFromWeak() noexcept;
 
-    bool
-    expired() const noexcept;
+    [[nodiscard]] static bool
+    expired() noexcept;
 
-    std::size_t
-    useCount() const noexcept;
+    [[nodiscard]] static std::size_t
+    useCount() noexcept;
 
     // This function MUST be called after a partial destructor finishes running.
     // Calling this function may cause other threads to delete the object
@@ -237,7 +237,7 @@ IntrusiveRefCounts::addWeakRef() const noexcept
 }
 
 inline ReleaseStrongRefAction
-IntrusiveRefCounts::releaseStrongRef() const
+IntrusiveRefCounts::releaseStrongRef()
 {
     // Subtract `strongDelta` from refCounts. If this releases the last strong
     // ref, set the `partialDestroyStarted` bit. It is important that the ref
@@ -285,7 +285,7 @@ IntrusiveRefCounts::releaseStrongRef() const
 }
 
 inline ReleaseStrongRefAction
-IntrusiveRefCounts::addWeakReleaseStrongRef() const
+IntrusiveRefCounts::addWeakReleaseStrongRef()
 {
     using enum ReleaseStrongRefAction;
 
@@ -338,7 +338,7 @@ IntrusiveRefCounts::addWeakReleaseStrongRef() const
 }
 
 inline ReleaseWeakRefAction
-IntrusiveRefCounts::releaseWeakRef() const
+IntrusiveRefCounts::releaseWeakRef()
 {
     auto prevIntVal = refCounts_.fetch_sub(kWeakDelta, std::memory_order_acq_rel);
     RefCountPair prev = prevIntVal;
@@ -365,7 +365,7 @@ IntrusiveRefCounts::releaseWeakRef() const
 }
 
 inline bool
-IntrusiveRefCounts::checkoutStrongRefFromWeak() const noexcept
+IntrusiveRefCounts::checkoutStrongRefFromWeak() noexcept
 {
     auto curValue = RefCountPair{1, 1}.combinedValue();
     auto desiredValue = RefCountPair{2, 1}.combinedValue();
@@ -382,14 +382,14 @@ IntrusiveRefCounts::checkoutStrongRefFromWeak() const noexcept
 }
 
 inline bool
-IntrusiveRefCounts::expired() const noexcept
+IntrusiveRefCounts::expired() noexcept
 {
     RefCountPair const val = refCounts_.load(std::memory_order_acquire);
     return val.strong == 0;
 }
 
 inline std::size_t
-IntrusiveRefCounts::useCount() const noexcept
+IntrusiveRefCounts::useCount() noexcept
 {
     RefCountPair const val = refCounts_.load(std::memory_order_acquire);
     return val.strong;

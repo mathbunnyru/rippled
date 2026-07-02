@@ -13,7 +13,6 @@
 #include <xrpld/overlay/detail/ZeroCopyStream.h>
 
 #include <xrpl/basics/Log.h>
-#include <xrpl/basics/Slice.h>
 #include <xrpl/basics/StringUtilities.h>
 #include <xrpl/basics/base_uint.h>
 #include <xrpl/basics/chrono.h>
@@ -347,7 +346,7 @@ public:
         return list;
     }
 
-    void
+    static void
     testProtocol()
     {
         auto thresh = beast::Severity::Info;

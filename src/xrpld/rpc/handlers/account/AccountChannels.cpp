@@ -17,7 +17,6 @@
 #include <xrpl/protocol/LedgerFormats.h>
 #include <xrpl/protocol/PublicKey.h>
 #include <xrpl/protocol/RPCErr.h>
-#include <xrpl/protocol/SField.h>
 #include <xrpl/protocol/jss.h>
 #include <xrpl/protocol/tokens.h>
 #include <xrpl/resource/Fees.h>
@@ -31,7 +30,6 @@
 #include <sstream>
 #include <string>
 #include <utility>
-#include <vector>
 
 namespace xrpl {
 
@@ -111,10 +109,10 @@ doAccountChannels(RPC::JsonContext& context)
     if (auto err = readLimitField(limit, RPC::Tuning::kAccountChannels, context))
         return *err;
 
-    json::Value jsonChannels{json::ValueType::Array};
+    json::Value const jsonChannels{json::ValueType::Array};
     struct VisitData
     {
-        std::vector<SLE::const_pointer> items;
+        std::vector<SLE::const_pointer> items{};
         AccountID const& accountID;
         std::optional<AccountID> const& raDstAccount;
     };
@@ -131,7 +129,7 @@ doAccountChannels(RPC::JsonContext& context)
         // Marker is composed of a comma separated index and start hint. The
         // former will be read as hex, and the latter using boost lexical cast.
         std::stringstream marker(params[jss::marker].asString());
-        std::string value;
+        std::string const value;
         if (!std::getline(marker, value, ','))
             return rpcError(RpcInvalidParams);
 

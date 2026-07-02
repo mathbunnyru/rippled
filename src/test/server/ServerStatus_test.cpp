@@ -42,8 +42,6 @@
 #include <random>
 #include <regex>
 #include <string>
-#include <utility>
-#include <vector>
 
 namespace xrpl::test {
 
@@ -105,7 +103,7 @@ class ServerStatus_test : public beast::unit_test::Suite, public beast::test::En
         req.insert("Upgrade", "websocket");
         {
             // not secure, but OK for a testing
-            std::random_device rd;
+            std::random_device const rd;
             std::mt19937 e{rd()};
             std::uniform_int_distribution<> d(0, 255);
             std::array<std::uint8_t, 16> key{};
@@ -206,7 +204,7 @@ class ServerStatus_test : public beast::unit_test::Suite, public beast::test::En
         return;
     }
 
-    void
+    static void
     doWSRequest(
         test::jtx::Env& env,
         boost::asio::yield_context& yield,
@@ -221,7 +219,7 @@ class ServerStatus_test : public beast::unit_test::Suite, public beast::test::En
         return;
     }
 
-    void
+    static void
     doHTTPRequest(
         test::jtx::Env& env,
         boost::asio::yield_context& yield,
@@ -377,7 +375,7 @@ class ServerStatus_test : public beast::unit_test::Suite, public beast::test::En
 
         // non-secure request
         {
-            boost::system::error_code ec;
+            boost::system::error_code const ec;
             boost::beast::http::response<boost::beast::http::string_body> resp;
             doWSRequest(env, yield, false, resp, ec);
             if (!BEAST_EXPECTS(!ec, ec.message()))
@@ -387,7 +385,7 @@ class ServerStatus_test : public beast::unit_test::Suite, public beast::test::En
 
         // secure request
         {
-            boost::system::error_code ec;
+            boost::system::error_code const ec;
             boost::beast::http::response<boost::beast::http::string_body> resp;
             doWSRequest(env, yield, true, resp, ec);
             if (!BEAST_EXPECTS(!ec, ec.message()))
@@ -409,7 +407,7 @@ class ServerStatus_test : public beast::unit_test::Suite, public beast::test::En
 
         // non-secure request
         {
-            boost::system::error_code ec;
+            boost::system::error_code const ec;
             boost::beast::http::response<boost::beast::http::string_body> resp;
             doHTTPRequest(env, yield, false, resp, ec);
             if (!BEAST_EXPECTS(!ec, ec.message()))
@@ -419,7 +417,7 @@ class ServerStatus_test : public beast::unit_test::Suite, public beast::test::En
 
         // secure request
         {
-            boost::system::error_code ec;
+            boost::system::error_code const ec;
             boost::beast::http::response<boost::beast::http::string_body> resp;
             doHTTPRequest(env, yield, true, resp, ec);
             if (!BEAST_EXPECTS(!ec, ec.message()))
@@ -443,7 +441,7 @@ class ServerStatus_test : public beast::unit_test::Suite, public beast::test::En
         auto const port = env.app().config()[Sections::kPortWs].get<std::uint16_t>(Keys::kPort);
         auto const ip = env.app().config()[Sections::kPortWs].get<std::string>(Keys::kIp);
 
-        boost::system::error_code ec;
+        boost::system::error_code const ec;
         response<string_body> resp;
         auto req = makeWSUpgrade(*ip, *port);  // NOLINT(bugprone-unchecked-optional-access)
 
@@ -488,7 +486,7 @@ class ServerStatus_test : public beast::unit_test::Suite, public beast::test::En
         Env env{*this, makeConfig(serverProtocol)};
 
         boost::beast::http::response<boost::beast::http::string_body> resp;
-        boost::system::error_code ec;
+        boost::system::error_code const ec;
         if (boost::starts_with(clientProtocol, "h"))
         {
             doHTTPRequest(env, yield, clientProtocol == "https", resp, ec);
@@ -519,11 +517,11 @@ class ServerStatus_test : public beast::unit_test::Suite, public beast::test::En
         json::Value jr;
         jr[jss::method] = "server_info";
         boost::beast::http::response<boost::beast::http::string_body> resp;
-        boost::system::error_code ec;
+        boost::system::error_code const ec;
         doHTTPRequest(env, yield, secure, resp, ec, to_string(jr));
         BEAST_EXPECT(resp.result() == boost::beast::http::status::forbidden);
 
-        MyFields auth;
+        MyFields const auth;
         auth.insert("Authorization", "");
         doHTTPRequest(env, yield, secure, resp, ec, to_string(jr), auth);
         BEAST_EXPECT(resp.result() == boost::beast::http::status::forbidden);
@@ -573,7 +571,7 @@ class ServerStatus_test : public beast::unit_test::Suite, public beast::test::En
         auto const ip = section.get<std::string>(Keys::kIp).value();
         // NOLINTEND(bugprone-unchecked-optional-access)
 
-        boost::system::error_code ec;
+        boost::system::error_code const ec;
         io_context& ios = getIoContext();
         ip::tcp::resolver r{ios};
 
@@ -604,7 +602,7 @@ class ServerStatus_test : public beast::unit_test::Suite, public beast::test::En
             ++connectionCount;
         }
 
-        int readCount = 0;
+        int const readCount = 0;
         for (auto& [soc, buf] : clients)
         {
             boost::beast::http::response<boost::beast::http::string_body> resp;
@@ -633,7 +631,7 @@ class ServerStatus_test : public beast::unit_test::Suite, public beast::test::En
         auto const ip = section.get<std::string>(Keys::kIp).value();
         // NOLINTEND(bugprone-unchecked-optional-access)
         boost::beast::http::response<boost::beast::http::string_body> resp;
-        boost::system::error_code ec;
+        boost::system::error_code const ec;
         doRequest(yield, makeWSUpgrade(ip, port), ip, port, true, resp, ec);
         BEAST_EXPECT(resp.result() == boost::beast::http::status::switching_protocols);
         BEAST_EXPECT(resp.contains("Upgrade") && resp["Upgrade"] == "websocket");
@@ -654,7 +652,7 @@ class ServerStatus_test : public beast::unit_test::Suite, public beast::test::En
         auto const ip = section.get<std::string>(Keys::kIp).value();
         // NOLINTEND(bugprone-unchecked-optional-access)
         boost::beast::http::response<boost::beast::http::string_body> resp;
-        boost::system::error_code ec;
+        boost::system::error_code const ec;
         // body content is required here to avoid being
         // detected as a status request
         doRequest(yield, makeHTTPRequest(ip, port, "foo", {}), ip, port, false, resp, ec);
@@ -783,7 +781,7 @@ class ServerStatus_test : public beast::unit_test::Suite, public beast::test::En
         auto const portWs = env.app().config()[Sections::kPortWs].get<std::uint16_t>(Keys::kPort);
         auto const ipWs = env.app().config()[Sections::kPortWs].get<std::string>(Keys::kIp);
 
-        boost::system::error_code ec;
+        boost::system::error_code const ec;
         response<string_body> resp;
 
         doRequest(
@@ -911,7 +909,7 @@ class ServerStatus_test : public beast::unit_test::Suite, public beast::test::En
         auto const portWs = env.app().config()[Sections::kPortWs].get<std::uint16_t>(Keys::kPort);
         auto const ipWs = env.app().config()[Sections::kPortWs].get<std::string>(Keys::kIp);
 
-        boost::system::error_code ec;
+        boost::system::error_code const ec;
         response<string_body> resp;
 
         doRequest(
@@ -1008,7 +1006,7 @@ class ServerStatus_test : public beast::unit_test::Suite, public beast::test::En
         using namespace test::jtx;
         Env env{*this};
 
-        boost::system::error_code ec;
+        boost::system::error_code const ec;
         {
             boost::beast::http::response<boost::beast::http::string_body> resp;
             doHTTPRequest(env, yield, false, resp, ec, "{}");
@@ -1125,7 +1123,7 @@ class ServerStatus_test : public beast::unit_test::Suite, public beast::test::En
         env.app().getFeeTrack().raiseLocalFee();
 
         boost::beast::http::response<boost::beast::http::string_body> resp;
-        boost::system::error_code ec;
+        boost::system::error_code const ec;
         doHTTPRequest(env, yield, false, resp, ec);
         BEAST_EXPECT(resp.result() == boost::beast::http::status::internal_server_error);
         std::regex const body{"Server cannot accept clients"};

@@ -22,7 +22,6 @@
 
 #include <cstdint>
 #include <memory>
-#include <vector>
 
 namespace xrpl {
 
@@ -54,7 +53,7 @@ appendNftOfferJson(Application const& app, SLE::const_ref offer, json::Value& of
 inline json::Value
 enumerateNFTOffers(RPC::JsonContext& context, uint256 const& nftId, Keylet const& directory)
 {
-    unsigned int limit = 0;
+    unsigned int const limit = 0;
     if (auto err = readLimitField(limit, RPC::Tuning::kNftOffers, context))
         return *err;
 

@@ -9,8 +9,6 @@
 #include <boost/asio/buffer.hpp>
 #include <boost/asio/buffers_iterator.hpp>
 
-#include <google/protobuf/message.h>
-
 #include <xrpl.pb.h>
 
 #include <cstddef>
@@ -18,9 +16,7 @@
 #include <memory>
 #include <optional>
 #include <string>
-#include <type_traits>
 #include <utility>
-#include <vector>
 
 namespace xrpl {
 

@@ -117,13 +117,13 @@ private:
     struct CvEntry
     {
         // Hash of locally built ledger
-        std::optional<LedgerHash> built;
+        std::optional<LedgerHash> built{};
         // Hash of the validated ledger
-        std::optional<LedgerHash> validated;
+        std::optional<LedgerHash> validated{};
         // Hash of locally accepted consensus transaction set
-        std::optional<uint256> builtConsensusHash;
+        std::optional<uint256> builtConsensusHash{};
         // Hash of validated consensus transaction set
-        std::optional<uint256> validatedConsensusHash;
+        std::optional<uint256> validatedConsensusHash{};
         // Consensus metadata of built ledger
         std::optional<json::Value> consensus;
     };

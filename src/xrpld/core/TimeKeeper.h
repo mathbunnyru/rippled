@@ -41,8 +41,8 @@ public:
               code. No rationale has been provided for this curious and
               annoying, but otherwise unimportant, choice.
     */
-    [[nodiscard]] time_point
-    now() const override
+    static [[nodiscard]] time_point
+    now() override
     {
         return adjust(std::chrono::system_clock::now());
     }
@@ -67,7 +67,7 @@ public:
     }
 
     /** Adjust the close time, based on the network's view of time. */
-    std::chrono::seconds
+    static std::chrono::seconds
     adjustCloseTime(std::chrono::seconds by)
     {
         using namespace std::chrono_literals;

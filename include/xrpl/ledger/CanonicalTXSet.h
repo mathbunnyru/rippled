@@ -78,8 +78,8 @@ private:
         }
 
     private:
-        uint256 account_;
-        uint256 txId_;
+        uint256 account_{};
+        uint256 txId_{};
         SeqProxy seqProxy_;
     };
 
@@ -154,10 +154,10 @@ public:
     }
 
 private:
-    std::map<Key, std::shared_ptr<STTx const>> map_;
+    std::map<Key, std::shared_ptr<STTx const>> map_{};
 
     // Used to salt the accounts so people can't mine for low account numbers
-    uint256 salt_;
+    uint256 salt_{};
 };
 
 }  // namespace xrpl

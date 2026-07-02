@@ -14,7 +14,6 @@
 #include <cstdint>
 #include <mutex>
 #include <optional>
-#include <vector>
 
 namespace xrpl {
 

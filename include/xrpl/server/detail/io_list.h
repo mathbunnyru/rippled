@@ -56,7 +56,7 @@ private:
     std::size_t n_ = 0;
     bool closed_ = false;
     std::condition_variable cv_;
-    boost::container::flat_map<Work*, std::weak_ptr<Work>> map_;
+    boost::container::flat_map<Work*, std::weak_ptr<Work>> map_{};
     std::function<void(void)> f_;
 
 public:
@@ -131,7 +131,7 @@ public:
     void
     close(Finisher&& f);
 
-    void
+    static void
     close()
     {
         close([] {});
@@ -164,7 +164,7 @@ IOList::Work::destroy()
 {
     if (!ios_)
         return;
-    std::function<void(void)> f;
+    std::function<void(void)> const f;
     {
         std::scoped_lock const lock(ios_->m_);
         ios_->map_.erase(this);

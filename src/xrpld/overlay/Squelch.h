@@ -47,7 +47,7 @@ public:
 private:
     /** Maintains the list of squelched relaying to downstream peers.
      * Expiration time is included in the TMSquelch message. */
-    hash_map<PublicKey, time_point> squelched_;
+    hash_map<PublicKey, time_point> squelched_{};
     beast::Journal const journal_;
 };
 

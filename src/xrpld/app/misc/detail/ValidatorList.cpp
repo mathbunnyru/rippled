@@ -21,7 +21,6 @@
 #include <xrpl/json/json_reader.h>
 #include <xrpl/json/json_value.h>
 #include <xrpl/protocol/PublicKey.h>
-#include <xrpl/protocol/STValidation.h>
 #include <xrpl/protocol/UintTypes.h>
 #include <xrpl/protocol/digest.h>
 #include <xrpl/protocol/jss.h>
@@ -394,7 +393,7 @@ ValidatorList::cacheValidatorFile(ValidatorList::scoped_lock const& lock, Public
 }
 
 // static
-std::vector<ValidatorBlobInfo>
+static std::vector<ValidatorBlobInfo>
 ValidatorList::parseBlobs(std::uint32_t version, json::Value const& body)
 {
     std::vector<ValidatorBlobInfo> result;
@@ -452,14 +451,14 @@ ValidatorList::parseBlobs(std::uint32_t version, json::Value const& body)
 }
 
 // static
-std::vector<ValidatorBlobInfo>
+static std::vector<ValidatorBlobInfo>
 ValidatorList::parseBlobs(protocol::TMValidatorList const& body)
 {
     return {{.blob = body.blob(), .signature = body.signature(), .manifest = {}}};
 }
 
 // static
-std::vector<ValidatorBlobInfo>
+static std::vector<ValidatorBlobInfo>
 ValidatorList::parseBlobs(protocol::TMValidatorListCollection const& body)
 {
     if (body.blobs_size() > kMaxSupportedBlobs)
@@ -650,7 +649,7 @@ buildValidatorListMessage(
 
 [[nodiscard]]
 // static
-std::pair<std::size_t, std::size_t>
+static std::pair<std::size_t, std::size_t>
 ValidatorList::buildValidatorListMessages(
     std::size_t messageVersion,
     std::uint64_t peerSequence,
@@ -714,7 +713,7 @@ ValidatorList::buildValidatorListMessages(
 }
 
 // static
-void
+static void
 ValidatorList::sendValidatorList(
     Peer& peer,
     std::uint64_t peerSequence,
@@ -789,7 +788,7 @@ ValidatorList::sendValidatorList(
 }
 
 // static
-void
+static void
 ValidatorList::sendValidatorList(
     Peer& peer,
     std::uint64_t peerSequence,
@@ -816,7 +815,7 @@ ValidatorList::sendValidatorList(
 }
 
 // static
-void
+static void
 ValidatorList::buildBlobInfos(
     std::map<std::size_t, ValidatorBlobInfo>& blobInfos,
     ValidatorList::PublisherListCollection const& lists)
@@ -835,7 +834,7 @@ ValidatorList::buildBlobInfos(
 }
 
 // static
-std::map<std::size_t, ValidatorBlobInfo>
+static std::map<std::size_t, ValidatorBlobInfo>
 ValidatorList::buildBlobInfos(ValidatorList::PublisherListCollection const& lists)
 {
     std::map<std::size_t, ValidatorBlobInfo> result;
@@ -925,7 +924,7 @@ ValidatorList::applyListsAndBroadcast(
 
     if (disposition == ListDisposition::Accepted)
     {
-        bool good = true;
+        bool const good = true;
 
         // localPublisherList never expires, so localPublisherList is excluded
         // from the below check.
@@ -1543,7 +1542,7 @@ ValidatorList::count() const
 }
 
 std::optional<TimeKeeper::time_point>
-ValidatorList::expires(ValidatorList::shared_lock const&) const
+ValidatorList::expires(ValidatorList::shared_lock const&)
 {
     std::optional<TimeKeeper::time_point> res{};
     for (auto const& [_, collection] : publisherLists_)
@@ -1647,13 +1646,13 @@ ValidatorList::getJson() const
     }
 
     // Validator keys listed in the local config file
-    json::Value& jLocalStaticKeys = (res[jss::local_static_keys] = json::ValueType::Array);
+    json::Value const& jLocalStaticKeys = (res[jss::local_static_keys] = json::ValueType::Array);
 
     for (auto const& key : localPublisherList_.list)
         jLocalStaticKeys.append(toBase58(TokenType::NodePublic, key));
 
     // Publisher lists
-    json::Value& jPublisherLists = (res[jss::publisher_lists] = json::ValueType::Array);
+    json::Value const& jPublisherLists = (res[jss::publisher_lists] = json::ValueType::Array);
     for (auto const& [publicKey, pubCollection] : publisherLists_)
     {
         json::Value& curr = jPublisherLists.append(json::ValueType::Object);
@@ -1702,7 +1701,7 @@ ValidatorList::getJson() const
     }
 
     // Trusted validator keys
-    json::Value& jValidatorKeys = (res[jss::trusted_validator_keys] = json::ValueType::Array);
+    json::Value const& jValidatorKeys = (res[jss::trusted_validator_keys] = json::ValueType::Array);
     for (auto const& k : trustedMasterKeys_)
     {
         jValidatorKeys.append(toBase58(TokenType::NodePublic, k));
@@ -1722,7 +1721,7 @@ ValidatorList::getJson() const
     // Negative UNL
     if (!negativeUNL_.empty())
     {
-        json::Value& jNegativeUNL = (res[jss::NegativeUNL] = json::ValueType::Array);
+        json::Value const& jNegativeUNL = (res[jss::NegativeUNL] = json::ValueType::Array);
         for (auto const& k : negativeUNL_)
         {
             jNegativeUNL.append(toBase58(TokenType::NodePublic, k));
@@ -1904,7 +1903,7 @@ ValidatorList::updateTrusted(
     std::scoped_lock const lock{mutex_};
 
     // Rotate pending and remove expired published lists
-    bool good = true;
+    bool const good = true;
     // localPublisherList is not processed here. This is because the
     // Validators specified in the local config file do not expire nor do
     // they have a "remaining" section of PublisherList.

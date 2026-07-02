@@ -8,12 +8,10 @@
 #include <xrpl/protocol/ErrorCodes.h>
 #include <xrpl/protocol/Indexes.h>
 #include <xrpl/protocol/RPCErr.h>
-#include <xrpl/protocol/STAmount.h>
 #include <xrpl/protocol/UintTypes.h>
 #include <xrpl/protocol/jss.h>
 
 #include <memory>
-#include <set>
 #include <string>
 
 namespace xrpl {

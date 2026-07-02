@@ -1,14 +1,13 @@
 #include <xrpld/rpc/Context.h>
-#include <xrpld/rpc/GRPCHandlers.h>
 #include <xrpld/rpc/detail/RPCLedgerHelpers.h>
 #include <xrpld/rpc/handlers/ledger/LedgerEntryHelpers.h>
 
+#include <xrpl/basics/Slice.h>
 #include <xrpl/basics/base_uint.h>
 #include <xrpl/basics/strHex.h>
 #include <xrpl/json/json_errors.h>
 #include <xrpl/json/json_value.h>
 #include <xrpl/ledger/ReadView.h>
-#include <xrpl/ledger/helpers/CredentialHelpers.h>
 #include <xrpl/protocol/AccountID.h>
 #include <xrpl/protocol/ErrorCodes.h>
 #include <xrpl/protocol/Indexes.h>
@@ -17,6 +16,7 @@
 #include <xrpl/protocol/Protocol.h>
 #include <xrpl/protocol/SField.h>
 #include <xrpl/protocol/STArray.h>
+#include <xrpl/protocol/STBase.h>
 #include <xrpl/protocol/STXChainBridge.h>
 #include <xrpl/protocol/UintTypes.h>
 #include <xrpl/protocol/jss.h>
@@ -109,7 +109,7 @@ parseAccountRoot(
     return LedgerEntryHelpers::invalidFieldError("malformedAddress", fieldName, "AccountID");
 }
 
-auto const parseAmendments = fixed(keylet::amendments());
+auto const kParseAmendments = fixed(keylet::amendments());
 
 static std::expected<uint256, json::Value>
 parseAMM(
@@ -434,7 +434,7 @@ parseEscrow(
     return keylet::escrow(*id, *seq).key;
 }
 
-auto const parseFeeSettings = fixed(keylet::feeSettings());
+auto const kParseFeeSettings = fixed(keylet::feeSettings());
 
 static std::expected<uint256, json::Value>
 parseFixed(
@@ -576,7 +576,7 @@ parseNFTokenPage(
     return parseObjectID(params, fieldName, "hex string");
 }
 
-auto const parseNegativeUNL = fixed(keylet::negativeUNL());
+auto const kParseNegativeUnl = fixed(keylet::negativeUNL());
 
 static std::expected<uint256, json::Value>
 parseOffer(
@@ -820,7 +820,7 @@ parseXChainOwnedCreateAccountClaimID(
 
 struct LedgerEntry
 {
-    json::StaticString fieldName;
+    json::StaticString fieldName{};
     FunctionType parseFunction;
     LedgerEntryType expectedType;
 };
@@ -854,7 +854,7 @@ doLedgerEntry(RPC::JsonContext& context)
     });
 
     auto const hasMoreThanOneMember = [&]() {
-        int count = 0;
+        int const count = 0;
 
         for (auto const& ledgerEntry : kLedgerEntryParsers)
         {
@@ -879,12 +879,12 @@ doLedgerEntry(RPC::JsonContext& context)
     if (!lpLedger)
         return jvResult;
 
-    uint256 uNodeIndex;
+    uint256 const uNodeIndex;
     LedgerEntryType expectedType = ltANY;
 
     try
     {
-        bool found = false;
+        bool const found = false;
         for (auto const& ledgerEntry : kLedgerEntryParsers)
         {
             if (context.params.isMember(ledgerEntry.fieldName))

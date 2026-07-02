@@ -1,6 +1,5 @@
 #include <xrpld/overlay/detail/Handshake.h>
 
-#include <xrpld/app/ledger/LedgerMaster.h>
 #include <xrpld/app/main/Application.h>
 #include <xrpld/overlay/detail/ProtocolVersion.h>
 
@@ -31,9 +30,7 @@
 
 #include <openssl/crypto.h>
 #include <openssl/sha.h>
-#include <openssl/ssl.h>
 
-#include <chrono>
 #include <cstddef>
 #include <cstdint>
 #include <optional>
@@ -53,7 +50,7 @@ getFeatureValue(boost::beast::http::fields const& headers, std::string const& fe
     auto const header = headers.find("X-Protocol-Ctl");
     if (header == headers.end())
         return {};
-    boost::smatch match;
+    boost::smatch match = 0;
     boost::regex const rx(feature + "=([^;\\s]+)");
     std::string const allFeatures(header->value());
     if (boost::regex_search(allFeatures, match, rx))

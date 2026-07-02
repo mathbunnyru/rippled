@@ -1,4 +1,3 @@
-#include <xrpld/app/ledger/LedgerMaster.h>
 #include <xrpld/rpc/Context.h>
 #include <xrpld/rpc/Role.h>
 #include <xrpld/rpc/detail/LegacyPathFind.h>
@@ -15,7 +14,6 @@
 #include <xrpl/resource/Fees.h>
 
 #include <memory>
-#include <utility>
 
 namespace xrpl {
 

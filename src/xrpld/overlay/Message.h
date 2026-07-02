@@ -11,10 +11,8 @@
 
 #include <cstddef>
 #include <cstdint>
-#include <memory>
 #include <mutex>
 #include <optional>
-#include <vector>
 
 namespace xrpl {
 
@@ -70,22 +68,22 @@ public:
     getBuffer(Compressed tryCompressed);
 
     /** Get the traffic category */
-    std::size_t
+    [[nodiscard]] std::size_t
     getCategory() const
     {
         return category_;
     }
 
     /** Get the validator's key */
-    std::optional<PublicKey> const&
+    [[nodiscard]] std::optional<PublicKey> const&
     getValidatorKey() const
     {
         return validatorKey_;
     }
 
 private:
-    std::vector<uint8_t> buffer_;
-    std::vector<uint8_t> bufferCompressed_;
+    std::vector<uint8_t> buffer_{};
+    std::vector<uint8_t> bufferCompressed_{};
     std::size_t category_;
     std::once_flag onceFlag_;
     std::optional<PublicKey> validatorKey_;
@@ -110,7 +108,7 @@ private:
      * Can be called concurrently by multiple peers but is compressed once.
      * If the message is not compressible then the serialized buffer_ is used.
      */
-    void
+    static void
     compress();
 
     /** Get the message type from the payload header.

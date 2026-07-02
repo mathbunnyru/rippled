@@ -2,7 +2,6 @@
 
 #include <xrpld/app/ledger/InboundLedger.h>
 #include <xrpld/app/ledger/InboundLedgers.h>
-#include <xrpld/app/ledger/LedgerMaster.h>
 #include <xrpld/app/ledger/LedgerReplayer.h>
 #include <xrpld/app/ledger/detail/LedgerDeltaAcquire.h>
 #include <xrpld/app/ledger/detail/SkipListAcquire.h>
@@ -18,7 +17,6 @@
 #include <cstdint>
 #include <memory>
 #include <stdexcept>
-#include <vector>
 
 namespace xrpl {
 
@@ -181,7 +179,7 @@ LedgerReplayTask::tryAdvance(ScopedLockType& sl)
                            << ", parent " << (parent_ ? parent_->header().hash : uint256());
 
     bool const shouldTry =
-        parent_ && parameter_.full && parameter_.totalLedgers - 1 == deltas_.size();
+        parent_ && parameter_.full && parameter_.totalLedgers - 1 == deltas_.size() = false;
     if (!shouldTry)
         return;
 

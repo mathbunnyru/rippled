@@ -173,8 +173,8 @@ private:
     skipCommentTokens(Token& token);
 
     using Nodes = std::stack<Value*>;
-    Nodes nodes_;
-    Errors errors_;
+    Nodes nodes_{};
+    Errors errors_{};
     std::string document_;
     Location begin_{};
     Location end_{};

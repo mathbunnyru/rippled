@@ -14,7 +14,6 @@
 #include <xrpl/shamap/FullBelowCache.h>
 #include <xrpl/shamap/TreeNodeCache.h>
 
-#include <chrono>
 #include <cstdint>
 #include <memory>
 #include <mutex>

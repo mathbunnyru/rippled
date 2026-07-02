@@ -27,13 +27,13 @@ public:
     SHAMapLeafNode&
     operator=(SHAMapLeafNode const&) = delete;
 
-    bool
+    [[nodiscard]] bool
     isLeaf() const final
     {
         return true;
     }
 
-    bool
+    [[nodiscard]] bool
     isInner() const final
     {
         return false;
@@ -43,7 +43,7 @@ public:
     invariants(bool isRoot = false) const final;
 
 public:
-    boost::intrusive_ptr<SHAMapItem const> const&
+    [[nodiscard]] boost::intrusive_ptr<SHAMapItem const> const&
     peekItem() const;
 
     /** Set the item that this node points to and update the node's hash.
@@ -55,7 +55,7 @@ public:
     bool
     setItem(boost::intrusive_ptr<SHAMapItem const> i);
 
-    std::string
+    [[nodiscard]] std::string
     getString(SHAMapNodeID const&) const final;
 };
 

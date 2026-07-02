@@ -3,20 +3,16 @@
 #include <xrpld/app/ledger/InboundLedger.h>
 #include <xrpld/app/ledger/LedgerReplayTask.h>
 #include <xrpld/app/main/Application.h>
-#include <xrpld/overlay/PeerSet.h>
 
 #include <xrpl/basics/base_uint.h>
 #include <xrpl/beast/utility/Journal.h>
 #include <xrpl/protocol/LedgerHeader.h>
-#include <xrpl/protocol/STTx.h>
 #include <xrpl/shamap/SHAMapItem.h>
 
 #include <cstddef>
 #include <cstdint>
-#include <map>
 #include <memory>
 #include <mutex>
-#include <vector>
 
 namespace xrpl {
 
@@ -132,13 +128,13 @@ public:
 
 private:
     mutable std::mutex mtx_;
-    std::vector<std::shared_ptr<LedgerReplayTask>> tasks_;
-    hash_map<uint256, std::weak_ptr<LedgerDeltaAcquire>> deltas_;
-    hash_map<uint256, std::weak_ptr<SkipListAcquire>> skipLists_;
+    std::vector<std::shared_ptr<LedgerReplayTask>> tasks_{};
+    hash_map<uint256, std::weak_ptr<LedgerDeltaAcquire>> deltas_{};
+    hash_map<uint256, std::weak_ptr<SkipListAcquire>> skipLists_{};
 
     Application& app_;
     InboundLedgers& inboundLedgers_;
-    std::unique_ptr<PeerSetBuilder> peerSetBuilder_;
+    std::unique_ptr<PeerSetBuilder> peerSetBuilder_{};
     beast::Journal j_;
 
     friend class test::LedgerReplayClient;

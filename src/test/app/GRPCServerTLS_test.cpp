@@ -2,14 +2,12 @@
 #include <test/jtx/envconfig.h>
 
 #include <xrpl/beast/unit_test/suite.h>
-#include <xrpl/config/Constants.h>
 #include <xrpl/proto/org/xrpl/rpc/v1/get_ledger.pb.h>
 #include <xrpl/proto/org/xrpl/rpc/v1/xrp_ledger.grpc.pb.h>
 
 #include <boost/filesystem/operations.hpp>
 
 #include <grpcpp/client_context.h>
-#include <grpcpp/create_channel.h>
 #include <grpcpp/grpcpp.h>
 #include <grpcpp/security/credentials.h>
 #include <grpcpp/support/status.h>
@@ -17,7 +15,6 @@
 #include <chrono>
 #include <filesystem>
 #include <fstream>
-#include <memory>
 #include <stdexcept>
 #include <string>
 #include <string_view>

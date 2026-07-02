@@ -125,7 +125,7 @@ private:
         {
         }
 
-        value_type value;
+        value_type value{};
         time_point when;
     };
 
@@ -497,7 +497,7 @@ private:
 
     private:
         float maxLoadFactor_;
-        vec_type vec_;
+        vec_type vec{};
     };
 
     template <class... Args>
@@ -1450,7 +1450,7 @@ private:
 private:
     ConfigT config_;
     Buckets buck_;
-    cont_type mutable cont_;
+    cont_type mutable cont_{};
 };
 
 //------------------------------------------------------------------------------

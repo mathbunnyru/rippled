@@ -7,7 +7,6 @@
 #include <xrpld/overlay/detail/ProtocolMessage.h>
 
 #include <xrpl/basics/Slice.h>
-#include <xrpl/basics/UnorderedContainers.h>
 #include <xrpl/basics/base64.h>
 #include <xrpl/basics/chrono.h>
 #include <xrpl/basics/strHex.h>
@@ -42,13 +41,11 @@
 #include <cstdint>
 #include <initializer_list>
 #include <limits>
-#include <map>
 #include <memory>
 #include <optional>
 #include <sstream>
 #include <string>
 #include <utility>
-#include <vector>
 
 namespace xrpl::test {
 
@@ -172,7 +169,7 @@ private:
         return res;
     }
 
-    void
+    static void
     checkResult(
         ValidatorList::PublisherListStats const& result,
         PublicKey pubKey,
@@ -2832,7 +2829,7 @@ private:
                 self,
                 publishers);
             BEAST_EXPECT(trustedKeys->getListThreshold() == 4);
-            int untrustedCount = 0;
+            int const untrustedCount = 0;
             for (auto const& p : publishers)
             {
                 bool const trusted = trustedKeys->trustedPublisher(p.pubKey);
@@ -2901,7 +2898,7 @@ private:
                 self,
                 publishers);
             BEAST_EXPECT(trustedKeys->getListThreshold() == 3);
-            int untrustedCount = 0;
+            int const untrustedCount = 0;
             for (auto const& p : publishers)
             {
                 bool const trusted = trustedKeys->trustedPublisher(p.pubKey);
@@ -2968,7 +2965,7 @@ private:
                 self,
                 publishers);
             BEAST_EXPECT(trustedKeys->getListThreshold() == 3);
-            int untrustedCount = 0;
+            int const untrustedCount = 0;
             for (auto const& p : publishers)
             {
                 bool const trusted = trustedKeys->trustedPublisher(p.pubKey);
@@ -3035,7 +3032,7 @@ private:
                 {},
                 publishers);
             BEAST_EXPECT(trustedKeys->getListThreshold() == 3);
-            int untrustedCount = 0;
+            int const untrustedCount = 0;
             for (auto const& p : publishers)
             {
                 bool const trusted = trustedKeys->trustedPublisher(p.pubKey);
@@ -3100,7 +3097,7 @@ private:
                 self,
                 publishers);
             BEAST_EXPECT(trustedKeys->getListThreshold() == 2);
-            int untrustedCount = 0;
+            int const untrustedCount = 0;
             for (auto const& p : publishers)
             {
                 bool const trusted = trustedKeys->trustedPublisher(p.pubKey);
@@ -3339,7 +3336,7 @@ private:
                 self,
                 publishers);
             BEAST_EXPECT(trustedKeys->getListThreshold() == 1);
-            int untrustedCount = 0;
+            int const untrustedCount = 0;
             for (auto const& p : publishers)
             {
                 bool const trusted = trustedKeys->trustedPublisher(p.pubKey);
@@ -3406,7 +3403,7 @@ private:
                 self,
                 publishers);
             BEAST_EXPECT(trustedKeys->getListThreshold() == 1);
-            int untrustedCount = 0;
+            int const untrustedCount = 0;
             for (auto const& p : publishers)
             {
                 bool const trusted = trustedKeys->trustedPublisher(p.pubKey);
@@ -3473,7 +3470,7 @@ private:
                 {},
                 publishers);
             BEAST_EXPECT(trustedKeys->getListThreshold() == 1);
-            int untrustedCount = 0;
+            int const untrustedCount = 0;
             for (auto const& p : publishers)
             {
                 bool const trusted = trustedKeys->trustedPublisher(p.pubKey);
@@ -3863,7 +3860,7 @@ private:
                 self,
                 publishers);
             BEAST_EXPECT(trustedKeys->getListThreshold() == 4);
-            int untrustedCount = 0;
+            int const untrustedCount = 0;
             for (auto const& p : publishers)
             {
                 bool const trusted = trustedKeys->trustedPublisher(p.pubKey);
@@ -3932,7 +3929,7 @@ private:
                 self,
                 publishers);
             BEAST_EXPECT(trustedKeys->getListThreshold() == 4);
-            int untrustedCount = 0;
+            int const untrustedCount = 0;
             for (auto const& p : publishers)
             {
                 bool const trusted = trustedKeys->trustedPublisher(p.pubKey);

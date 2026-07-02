@@ -120,16 +120,16 @@ public:
         return detail::visit(issue_, std::forward<Visitors>(visitors)...);
     }
 
-    [[nodiscard]] constexpr bool
-    native() const
+    static [[nodiscard]] constexpr bool
+    native()
     {
         return visit(
             [&](Issue const& issue) { return issue.native(); },
             [&](MPTIssue const&) { return false; });
     }
 
-    [[nodiscard]] bool
-    integral() const
+    static [[nodiscard]] bool
+    integral()
     {
         return visit(
             [&](Issue const& issue) { return issue.native(); },
@@ -201,16 +201,16 @@ Asset::value() const
     return issue_;
 }
 
-constexpr Asset::token_type
-Asset::token() const
+static constexpr Asset::token_type
+Asset::token()
 {
     return visit(
         [&](Issue const& issue) -> Asset::token_type { return issue.currency; },
         [&](MPTIssue const& issue) -> Asset::token_type { return issue.getMptID(); });
 }
 
-constexpr Asset::AmtType
-Asset::getAmountType() const
+static constexpr Asset::AmtType
+Asset::getAmountType()
 {
     return visit(
         [&](Issue const& issue) -> Asset::AmtType {

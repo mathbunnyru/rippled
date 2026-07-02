@@ -18,7 +18,6 @@
 #include <mutex>
 #include <optional>
 #include <string>
-#include <vector>
 
 namespace xrpl {
 
@@ -110,7 +109,7 @@ private:
 
     std::condition_variable cv_;
     std::weak_ptr<detail::Work> work_;
-    boost::asio::basic_waitable_timer<clock_type> timer_;
+    boost::asio::basic_waitable_timer<clock_type> timer_{};
 
     // A list is currently being fetched from a site
     std::atomic<bool> fetching_;
@@ -120,7 +119,7 @@ private:
     std::atomic<bool> stopping_;
 
     // The configured list of URIs for fetching lists
-    std::vector<Site> sites_;
+    std::vector<Site> sites_{};
 
     // time to allow for requests to complete
     std::chrono::seconds const requestTimeout_;

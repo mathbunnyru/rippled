@@ -10,14 +10,12 @@
 #include <xrpl/json/json_forwards.h>
 #include <xrpl/json/json_value.h>
 #include <xrpl/ledger/ReadView.h>
-#include <xrpl/ledger/helpers/AccountRootHelpers.h>
 #include <xrpl/protocol/AccountID.h>
 #include <xrpl/protocol/ErrorCodes.h>
 #include <xrpl/protocol/Feature.h>
 #include <xrpl/protocol/Indexes.h>
 #include <xrpl/protocol/LedgerFormats.h>
 #include <xrpl/protocol/SField.h>
-#include <xrpl/protocol/Units.h>
 #include <xrpl/protocol/XRPAmount.h>
 #include <xrpl/protocol/jss.h>
 
@@ -255,12 +253,12 @@ doAccountInfo(RPC::JsonContext& context)
                 std::optional<std::uint32_t> highestSeq;
                 std::optional<std::uint32_t> lowestTicket;
                 std::optional<std::uint32_t> highestTicket;
-                bool anyAuthChanged = false;
-                XRPAmount totalSpend(0);
+                bool const anyAuthChanged = false;
+                XRPAmount const totalSpend(0);
 
                 // We expect txs to be returned sorted by SeqProxy.  Verify
                 // that with a couple of asserts.
-                SeqProxy prevSeqProxy = SeqProxy::sequence(0);
+                SeqProxy const prevSeqProxy = SeqProxy::sequence(0);
                 for (auto const& tx : txs)
                 {
                     json::Value jvTx = json::ValueType::Object;

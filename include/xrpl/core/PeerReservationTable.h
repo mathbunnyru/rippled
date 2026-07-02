@@ -96,7 +96,7 @@ private:
     beast::Journal mutable journal_;
     std::mutex mutable mutex_;
     DatabaseCon* connection_{};
-    std::unordered_set<PeerReservation, beast::Uhash<>, KeyEqual> table_;
+    std::unordered_set<PeerReservation, beast::Uhash<>, KeyEqual> table_{};
 };
 
 }  // namespace xrpl

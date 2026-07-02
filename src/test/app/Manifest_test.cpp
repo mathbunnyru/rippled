@@ -3,7 +3,6 @@
 
 #include <xrpld/app/misc/ValidatorList.h>
 
-#include <xrpl/basics/Slice.h>
 #include <xrpl/basics/base64.h>
 #include <xrpl/basics/contract.h>
 #include <xrpl/basics/strHex.h>
@@ -20,7 +19,6 @@
 #include <xrpl/protocol/Sign.h>
 #include <xrpl/protocol/tokens.h>
 #include <xrpl/server/Manifest.h>
-#include <xrpl/server/Wallet.h>
 
 #include <boost/filesystem/operations.hpp>
 #include <boost/filesystem/path.hpp>
@@ -30,13 +28,11 @@
 #include <cassert>
 #include <cstdint>
 #include <exception>
-#include <limits>
 #include <memory>
 #include <optional>
 #include <stdexcept>
 #include <string>
 #include <utility>
-#include <vector>
 
 namespace xrpl::test {
 
@@ -133,7 +129,7 @@ public:
         return base64Encode(std::string(static_cast<char const*>(s.data()), s.size()));
     }
 
-    std::string
+    static std::string
     makeRevocationString(SecretKey const& sk, KeyType type, bool invalidSig = false)
     {
         auto const pk = derivePublicKey(type, sk);
@@ -152,7 +148,7 @@ public:
         return base64Encode(std::string(static_cast<char const*>(s.data()), s.size()));
     }
 
-    Manifest
+    static Manifest
     makeRevocation(SecretKey const& sk, KeyType type, bool invalidSig = false)
     {
         auto const pk = derivePublicKey(type, sk);
@@ -175,7 +171,7 @@ public:
         return *deserializeManifest(std::string{});  // Silence compiler warning.
     }
 
-    Manifest
+    static Manifest
     makeManifest(
         SecretKey const& sk,
         KeyType type,
@@ -363,7 +359,7 @@ public:
         auto const kp = randomKeyPair(KeyType::Secp256k1);
         auto const m = makeManifest(sk, KeyType::Ed25519, kp.second, KeyType::Secp256k1, 0);
 
-        STObject st(sfGeneric);
+        STObject const st(sfGeneric);
         st[sfSequence] = 0;
         st[sfPublicKey] = pk;
         st[sfSigningPubKey] = kp.first;
@@ -520,7 +516,7 @@ public:
         BEAST_EXPECT(!deserializeManifest(buildManifestObject(2001)));
     }
 
-    void
+    static void
     testManifestDeserialization()
     {
         std::array<KeyType, 2> const keyTypes{{KeyType::Ed25519, KeyType::Secp256k1}};

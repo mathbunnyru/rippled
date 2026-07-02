@@ -1,4 +1,3 @@
-#include <xrpld/app/ledger/LedgerMaster.h>
 #include <xrpld/rpc/Context.h>
 
 #include <xrpl/json/json_value.h>
@@ -6,7 +5,6 @@
 #include <xrpl/protocol/ErrorCodes.h>
 #include <xrpl/protocol/RPCErr.h>
 #include <xrpl/protocol/jss.h>
-#include <xrpl/server/NetworkOPs.h>
 
 #include <optional>
 #include <string>

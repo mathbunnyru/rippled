@@ -30,11 +30,11 @@ struct Port
     std::string name;
     boost::asio::ip::address ip;
     std::uint16_t port = 0;
-    std::set<std::string, boost::beast::iless> protocol;
-    std::vector<boost::asio::ip::network_v4> adminNetsV4;
-    std::vector<boost::asio::ip::network_v6> adminNetsV6;
-    std::vector<boost::asio::ip::network_v4> secureGatewayNetsV4;
-    std::vector<boost::asio::ip::network_v6> secureGatewayNetsV6;
+    std::set<std::string, boost::beast::iless> protocol{};
+    std::vector<boost::asio::ip::network_v4> adminNetsV4{};
+    std::vector<boost::asio::ip::network_v6> adminNetsV6{};
+    std::vector<boost::asio::ip::network_v4> secureGatewayNetsV4{};
+    std::vector<boost::asio::ip::network_v6> secureGatewayNetsV6{};
     std::string user;
     std::string password;
     std::string adminUser;
@@ -76,7 +76,7 @@ struct ParsedPort
     explicit ParsedPort() = default;
 
     std::string name;
-    std::set<std::string, boost::beast::iless> protocol;
+    std::set<std::string, boost::beast::iless> protocol{};
     std::string user;
     std::string password;
     std::string adminUser;
@@ -91,10 +91,10 @@ struct ParsedPort
 
     std::optional<boost::asio::ip::address> ip;
     std::optional<std::uint16_t> port;
-    std::vector<boost::asio::ip::network_v4> adminNetsV4;
-    std::vector<boost::asio::ip::network_v6> adminNetsV6;
-    std::vector<boost::asio::ip::network_v4> secureGatewayNetsV4;
-    std::vector<boost::asio::ip::network_v6> secureGatewayNetsV6;
+    std::vector<boost::asio::ip::network_v4> adminNetsV4{};
+    std::vector<boost::asio::ip::network_v6> adminNetsV6{};
+    std::vector<boost::asio::ip::network_v4> secureGatewayNetsV4{};
+    std::vector<boost::asio::ip::network_v6> secureGatewayNetsV6{};
 };
 
 void

@@ -10,7 +10,6 @@
 #include <cstddef>
 #include <cstdint>
 #include <string>
-#include <unordered_map>
 
 namespace xrpl {
 
@@ -195,7 +194,7 @@ public:
         bool inbound);
 
     /** Account for traffic associated with the given category */
-    void
+    static void
     addCount(Category cat, bool inbound, int bytes)
     {
         XRPL_ASSERT(

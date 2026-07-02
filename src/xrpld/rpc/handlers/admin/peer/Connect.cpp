@@ -1,6 +1,3 @@
-#include <xrpld/app/main/Application.h>
-#include <xrpld/core/Config.h>
-#include <xrpld/overlay/Overlay.h>
 #include <xrpld/rpc/Context.h>
 #include <xrpld/rpc/detail/Handler.h>
 

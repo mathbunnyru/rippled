@@ -43,8 +43,8 @@ protected:
     boost::asio::strand<boost::asio::io_context::executor_type> strand_;
     resolver_type resolver_;
     socket_type socket_;
-    request_type req_;
-    response_type res_;
+    request_type req_{};
+    response_type res_{};
     boost::beast::multi_buffer readBuf_;
     endpoint_type lastEndpoint_;
     bool lastStatus_;
@@ -168,7 +168,7 @@ WorkBase<Impl>::cancel()
                 strand_, std::bind(&WorkBase::cancel, impl().shared_from_this())));
     }
 
-    error_code ec;
+    error_code const ec;
     resolver_.cancel();
     socket_.cancel(ec);
 }
@@ -268,7 +268,7 @@ WorkBase<Impl>::close()
 {
     if (socket_.is_open())
     {
-        error_code ec;
+        error_code const ec;
         socket_.shutdown(boost::asio::socket_base::shutdown_send, ec);
         if (ec)
             return;

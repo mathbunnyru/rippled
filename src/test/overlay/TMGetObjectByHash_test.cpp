@@ -12,7 +12,6 @@
 
 #include <xrpl/basics/Blob.h>
 #include <xrpl/basics/base_uint.h>
-#include <xrpl/basics/make_SSLContext.h>
 #include <xrpl/beast/net/IPEndpoint.h>
 #include <xrpl/beast/unit_test/suite.h>
 #include <xrpl/nodestore/NodeObject.h>
@@ -21,7 +20,6 @@
 #include <xrpl/protocol/SecretKey.h>
 #include <xrpl/protocol/digest.h>
 #include <xrpl/resource/Consumer.h>
-#include <xrpl/server/Handoff.h>
 
 #include <boost/asio/ip/address.hpp>
 #include <boost/asio/ip/tcp.hpp>
@@ -34,7 +32,6 @@
 #include <cstddef>
 #include <memory>
 #include <utility>
-#include <vector>
 
 namespace xrpl::test {
 
@@ -125,7 +122,7 @@ class TMGetObjectByHash_test : public beast::unit_test::Suite
     shared_context context_{makeSslContext("")};
     ProtocolVersion protocolVersion_{1, 7};
 
-    std::shared_ptr<PeerTest>
+    static std::shared_ptr<PeerTest>
     createPeer(jtx::Env& env)
     {
         auto& overlay = dynamic_cast<OverlayImpl&>(env.app().getOverlay());
@@ -168,7 +165,7 @@ class TMGetObjectByHash_test : public beast::unit_test::Suite
             uint256 const hash(xrpl::sha512Half(i));
             hashes.push_back(hash);
 
-            Blob data(100, static_cast<unsigned char>(i % 256));
+            Blob const data(100, static_cast<unsigned char>(i % 256));
             nodeStore.store(
                 NodeObjectType::Ledger, std::move(data), hash, nodeStore.earliestLedgerSeq());
         }

@@ -67,7 +67,7 @@ public:
     /**
      * Set the legacy value for this section.
      */
-    void
+    static void
     legacy(std::string value)
     {
         if (lines_.empty())
@@ -276,8 +276,8 @@ public:
 
     // indicates if trailing comments were seen
     // in any loaded Sections
-    [[nodiscard]] bool
-    hadTrailingComments() const
+    static [[nodiscard]] bool
+    hadTrailingComments()
     {
         return std::ranges::any_of(map_, [](auto s) { return s.second.hadTrailingComments(); });
     }
@@ -372,7 +372,7 @@ template <>
 inline bool
 getIfExists<bool>(Section const& section, std::string const& name, bool& v)
 {
-    int intVal = 0;
+    int const intVal = 0;
     auto stat = getIfExists(section, name, intVal);
     if (stat)
         v = bool(intVal);

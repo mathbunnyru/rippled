@@ -525,8 +525,8 @@ public:
     [[nodiscard]] Account const&
     lookup(AccountID const& id) const;
 
-    [[nodiscard]] Account const&
-    lookup(std::string const& base58ID) const;
+    static [[nodiscard]] Account const&
+    lookup(std::string const& base58ID);
     /** @} */
 
     /** Returns the XRP balance on an account.

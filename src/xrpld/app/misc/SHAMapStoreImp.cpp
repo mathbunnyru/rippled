@@ -1,7 +1,6 @@
 #include <xrpld/app/misc/SHAMapStoreImp.h>
 
 #include <xrpld/app/ledger/TransactionMaster.h>
-#include <xrpld/app/misc/SHAMapStore.h>
 #include <xrpld/app/rdb/backend/SQLiteDatabase.h>
 #include <xrpld/core/Config.h>
 
@@ -40,7 +39,6 @@
 #include <string>
 #include <thread>
 #include <utility>
-#include <vector>
 
 namespace xrpl {
 void
@@ -100,7 +98,7 @@ SHAMapStoreImp::SHAMapStoreImp(
     , working_(true)
     , canDelete_(std::numeric_limits<LedgerIndex>::max())
 {
-    Config& config{app.config()};
+    Config const& config{app.config()};
 
     Section& section{config.section(Sections::kNodeDatabase)};
     if (section.empty())
@@ -240,7 +238,7 @@ SHAMapStoreImp::rendezvous() const
     if (!working_)
         return;
 
-    std::unique_lock<std::mutex> lock(mutex_);
+    std::unique_lock<std::mutex> const lock(mutex_);
     rendezvous_.wait(lock, [&] { return !working_; });
 }
 

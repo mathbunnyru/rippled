@@ -3,13 +3,11 @@
 #include <xrpld/core/TimeKeeper.h>
 #include <xrpld/overlay/Message.h>
 
-#include <xrpl/basics/UnorderedContainers.h>
 #include <xrpl/basics/base_uint.h>
 #include <xrpl/basics/chrono.h>
 #include <xrpl/beast/utility/Journal.h>
 #include <xrpl/json/json_value.h>
 #include <xrpl/protocol/PublicKey.h>
-#include <xrpl/protocol/UintTypes.h>
 #include <xrpl/server/Manifest.h>
 
 #include <boost/thread/shared_mutex.hpp>
@@ -18,7 +16,6 @@
 #include <cstddef>
 #include <cstdint>
 #include <functional>
-#include <map>
 #include <memory>
 #include <mutex>
 #include <optional>
@@ -26,7 +23,6 @@
 #include <string>
 #include <string_view>
 #include <utility>
-#include <vector>
 
 namespace protocol {
 class TMValidatorList;
@@ -101,8 +97,8 @@ struct TrustChanges
 {
     explicit TrustChanges() = default;
 
-    hash_set<NodeID> added;
-    hash_set<NodeID> removed;
+    hash_set<NodeID> added{};
+    hash_set<NodeID> removed{};
 };
 
 /** Used to represent the information stored in the blobs_v2 Json array */
@@ -168,11 +164,11 @@ class ValidatorList
     {
         explicit PublisherList() = default;
 
-        std::vector<PublicKey> list;
-        std::vector<std::string> manifests;
+        std::vector<PublicKey> list{};
+        std::vector<std::string> manifests{};
         std::size_t sequence{};
-        TimeKeeper::time_point validFrom;
-        TimeKeeper::time_point validUntil;
+        TimeKeeper::time_point validFrom{};
+        TimeKeeper::time_point validUntil{};
         std::string siteUri;
         // base-64 encoded JSON containing the validator list.
         std::string rawBlob;
@@ -227,13 +223,13 @@ class ValidatorList
     std::optional<std::size_t> minimumQuorum_;
 
     // Published lists stored by publisher master public key
-    hash_map<PublicKey, PublisherListCollection> publisherLists_;
+    hash_map<PublicKey, PublisherListCollection> publisherLists_{};
 
     // Listed master public keys with the number of lists they appear on
-    hash_map<PublicKey, std::size_t> keyListings_;
+    hash_map<PublicKey, std::size_t> keyListings_{};
 
     // The current list of trusted master keys
-    hash_set<PublicKey> trustedMasterKeys_;
+    hash_set<PublicKey> trustedMasterKeys_{};
 
     // Minimum number of lists on which a trusted validator must appear on
     std::size_t listThreshold_{1};
@@ -241,7 +237,7 @@ class ValidatorList
     // The current list of trusted signing keys. For those validators using
     // a manifest, the signing key is the ephemeral key. For the ones using
     // a seed, the signing key is the same as the master key.
-    hash_set<PublicKey> trustedSigningKeys_;
+    hash_set<PublicKey> trustedSigningKeys_{};
 
     std::optional<PublicKey> localPubKey_;
 
@@ -256,7 +252,7 @@ class ValidatorList
     PublisherList localPublisherList_;
 
     // The master public keys of the current negative UNL
-    hash_set<PublicKey> negativeUNL_;
+    hash_set<PublicKey> negativeUNL_{};
 
     // Currently supported versions of publisher list format
     static constexpr std::uint32_t kSupportedListVersions[]{1, 2};
@@ -296,7 +292,7 @@ public:
 
         // Tracks the dispositions of each processed list and how many times it
         // occurred
-        std::map<ListDisposition, std::size_t> dispositions;
+        std::map<ListDisposition, std::size_t> dispositions{};
         std::optional<PublicKey> publisherKey;
         PublisherStatus status = PublisherStatus::Unavailable;
         std::size_t sequence = 0;
@@ -656,8 +652,8 @@ public:
      *
      * @return quorum and keys.
      */
-    QuorumKeys
-    getQuorumKeys() const
+    static QuorumKeys
+    getQuorumKeys()
     {
         shared_lock const readLock{mutex_};
         return {quorum_, trustedSigningKeys_};
@@ -738,8 +734,8 @@ private:
     @par Thread Safety
     May be called concurrently
     */
-    std::optional<TimeKeeper::time_point>
-    expires(shared_lock const&) const;
+    static std::optional<TimeKeeper::time_point>
+    expires(shared_lock const&);
 
     /** Apply published list of public keys
 

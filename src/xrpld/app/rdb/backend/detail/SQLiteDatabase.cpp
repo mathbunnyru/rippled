@@ -7,7 +7,6 @@
 
 #include <xrpl/basics/Blob.h>
 #include <xrpl/basics/Log.h>
-#include <xrpl/basics/RangeSet.h>
 #include <xrpl/basics/base_uint.h>
 #include <xrpl/basics/contract.h>
 #include <xrpl/ledger/Ledger.h>
@@ -22,7 +21,6 @@
 #include <cstddef>
 #include <cstdint>
 #include <functional>
-#include <map>
 #include <memory>
 #include <optional>
 #include <stdexcept>
@@ -354,7 +352,7 @@ SQLiteDatabase::getOldestAccountTxs(AccountTxOptions const& options)
     if (!useTxTables_)
         return {};
 
-    LedgerMaster& ledgerMaster = registry_.get().getLedgerMaster();
+    LedgerMaster const& ledgerMaster = registry_.get().getLedgerMaster();
 
     if (existsTransaction())
     {
@@ -372,7 +370,7 @@ SQLiteDatabase::getNewestAccountTxs(AccountTxOptions const& options)
     if (!useTxTables_)
         return {};
 
-    LedgerMaster& ledgerMaster = registry_.get().getLedgerMaster();
+    LedgerMaster const& ledgerMaster = registry_.get().getLedgerMaster();
 
     if (existsTransaction())
     {

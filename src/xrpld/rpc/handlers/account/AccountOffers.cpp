@@ -28,7 +28,6 @@
 #include <optional>
 #include <sstream>
 #include <string>
-#include <vector>
 
 namespace xrpl {
 
@@ -99,7 +98,7 @@ doAccountOffers(RPC::JsonContext& context)
         // Marker is composed of a comma separated index and start hint. The
         // former will be read as hex, and the latter using boost lexical cast.
         std::stringstream marker(params[jss::marker].asString());
-        std::string value;
+        std::string const value;
         if (!std::getline(marker, value, ','))
             return RPC::invalidFieldError(jss::marker);
 

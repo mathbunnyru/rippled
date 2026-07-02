@@ -9,24 +9,18 @@
 #include <xrpl/core/JobQueue.h>
 #include <xrpl/core/ServiceRegistry.h>
 #include <xrpl/ledger/AcceptedLedgerTx.h>
-#include <xrpl/ledger/OrderBookDB.h>
 #include <xrpl/ledger/ReadView.h>
 #include <xrpl/protocol/Asset.h>
 #include <xrpl/protocol/Book.h>
-#include <xrpl/protocol/Issue.h>
-#include <xrpl/protocol/LedgerFormats.h>
-#include <xrpl/protocol/SField.h>
 #include <xrpl/protocol/UintTypes.h>
 #include <xrpl/server/NetworkOPs.h>
 #include <xrpl/shamap/SHAMapMissingNode.h>
 
-#include <exception>
 #include <memory>
 #include <mutex>
 #include <optional>
 #include <string>
 #include <utility>
-#include <vector>
 
 namespace xrpl {
 
@@ -113,7 +107,7 @@ OrderBookDBImpl::update(std::shared_ptr<ReadView const> const& ledger)
     JLOG(j_.debug()) << "Beginning update (" << ledger->seq() << ")";
 
     // walk through the entire ledger looking for orderbook/AMM entries
-    int cnt = 0;
+    int const cnt = 0;
 
     try
     {

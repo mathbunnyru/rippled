@@ -13,7 +13,6 @@
 #include <xrpld/rpc/ServerHandler.h>
 
 #include <xrpl/basics/Resolver.h>
-#include <xrpl/basics/UnorderedContainers.h>
 #include <xrpl/basics/UptimeClock.h>
 #include <xrpl/basics/base_uint.h>
 #include <xrpl/beast/insight/Collector.h>
@@ -46,11 +45,7 @@
 #include <memory>
 #include <mutex>
 #include <optional>
-#include <set>
 #include <string>
-#include <unordered_map>
-#include <utility>
-#include <vector>
 
 namespace xrpl {
 
@@ -82,7 +77,7 @@ private:
 
     struct Timer : Child, std::enable_shared_from_this<Timer>
     {
-        boost::asio::basic_waitable_timer<clock_type> timer;
+        boost::asio::basic_waitable_timer<clock_type> timer{};
         bool stopping{false};
 
         explicit Timer(OverlayImpl& overlay);
@@ -99,20 +94,20 @@ private:
 
     Application& app_;
     boost::asio::io_context& ioContext_;
-    std::optional<boost::asio::executor_work_guard<boost::asio::io_context::executor_type>> work_;
+    std::optional<boost::asio::executor_work_guard<boost::asio::io_context::executor_type>> work_{};
     boost::asio::strand<boost::asio::io_context::executor_type> strand_;
     mutable std::recursive_mutex mutex_;  // VFALCO use std::mutex
     std::condition_variable_any cond_;
     std::weak_ptr<Timer> timer_;
-    boost::container::flat_map<Child*, std::weak_ptr<Child>> list_;
+    boost::container::flat_map<Child*, std::weak_ptr<Child>> list_{};
     Setup setup_;
     beast::Journal const journal_;
     ServerHandler& serverHandler_;
     Resource::Manager& resourceManager_;
-    std::unique_ptr<PeerFinder::Manager> peerFinder_;
+    std::unique_ptr<PeerFinder::Manager> peerFinder_{};
     TrafficCount traffic_;
-    hash_map<std::shared_ptr<PeerFinder::Slot>, std::weak_ptr<PeerImp>> peers_;
-    hash_map<Peer::id_t, std::weak_ptr<PeerImp>> ids_;
+    hash_map<std::shared_ptr<PeerFinder::Slot>, std::weak_ptr<PeerImp>> peers_{};
+    hash_map<Peer::id_t, std::weak_ptr<PeerImp>> ids_{};
     Resolver& resolver_;
     std::atomic<Peer::id_t> nextId_;
     int timerCount_{0};
@@ -490,8 +485,8 @@ private:
         Reported through the /crawl API
         Controlled through the config section [crawl] overlay=[0|1]
     */
-    json::Value
-    getOverlayInfo() const;
+    static json::Value
+    getOverlayInfo();
 
     /** Returns information about the local server.
         Reported through the /crawl API
@@ -531,15 +526,15 @@ private:
     void
     stopChildren();
 
-    void
+    static void
     autoConnect();
 
-    void
+    static void
     sendEndpoints();
 
     /** Send once a second transactions' hashes aggregated by peers. */
-    void
-    sendTxQueue() const;
+    static void
+    sendTxQueue();
 
     /** Check if peers stopped relaying messages
      * and if slots stopped receiving messages from the validator */
@@ -549,8 +544,8 @@ private:
 private:
     struct TrafficGauges
     {
-        TrafficGauges(std::string const& name, beast::insight::Collector::ptr const& collector)
-            : name(name)
+        TrafficGauges(std::string name, beast::insight::Collector::ptr const& collector)
+            : name(std::move(name))
             , bytesIn(collector->makeGauge(name, "Bytes_In"))
             , bytesOut(collector->makeGauge(name, "Bytes_Out"))
             , messagesIn(collector->makeGauge(name, "Messages_In"))
@@ -578,7 +573,7 @@ private:
         }
 
         beast::insight::Gauge peerDisconnects;
-        std::unordered_map<TrafficCount::Category, TrafficGauges> trafficGauges;
+        std::unordered_map<TrafficCount::Category, TrafficGauges> trafficGauges{};
         beast::insight::Hook hook;
     };
 

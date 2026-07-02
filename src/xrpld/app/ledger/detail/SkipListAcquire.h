@@ -41,7 +41,7 @@ public:
     struct SkipListData
     {
         std::uint32_t const ledgerSeq;
-        std::vector<xrpl::uint256> const skipList;
+        std::vector<xrpl::uint256> const skipList{};
 
         SkipListData(std::uint32_t const ledgerSeq, std::vector<xrpl::uint256> skipList)
             : ledgerSeq(ledgerSeq), skipList(std::move(skipList))

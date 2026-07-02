@@ -23,9 +23,9 @@ class STObject;
 class STXChainBridge final : public STBase, public CountedObject<STXChainBridge>
 {
     STAccount lockingChainDoor_{sfLockingChainDoor};
-    STIssue lockingChainIssue_{sfLockingChainIssue};
+    STIssue lockingChainIssue{sfLockingChainIssue};
     STAccount issuingChainDoor_{sfIssuingChainDoor};
-    STIssue issuingChainIssue_{sfIssuingChainIssue};
+    STIssue issuingChainIssue{sfIssuingChainIssue};
 
 public:
     using value_type = STXChainBridge;

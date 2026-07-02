@@ -9,12 +9,10 @@
 #include <xrpld/overlay/Squelch.h>
 #include <xrpld/overlay/detail/OverlayImpl.h>
 #include <xrpld/overlay/detail/ProtocolVersion.h>
-#include <xrpld/peerfinder/PeerfinderManager.h>
 #include <xrpld/peerfinder/Slot.h>
 
 #include <xrpl/basics/Log.h>
 #include <xrpl/basics/Number.h>
-#include <xrpl/basics/UnorderedContainers.h>
 #include <xrpl/basics/UptimeClock.h>
 #include <xrpl/basics/base_uint.h>
 #include <xrpl/beast/net/IPEndpoint.h>
@@ -22,7 +20,6 @@
 #include <xrpl/beast/utility/WrappedSink.h>
 #include <xrpl/beast/utility/instrumentation.h>
 #include <xrpl/core/HashRouter.h>
-#include <xrpl/core/LoadEvent.h>
 #include <xrpl/json/json_value.h>
 #include <xrpl/protocol/Protocol.h>
 #include <xrpl/protocol/PublicKey.h>
@@ -31,7 +28,6 @@
 #include <xrpl/resource/Charge.h>
 #include <xrpl/resource/Consumer.h>
 #include <xrpl/resource/Fees.h>
-#include <xrpl/server/Handoff.h>
 
 #include <boost/circular_buffer.hpp>
 #include <boost/endian/conversion.hpp>
@@ -45,16 +41,11 @@
 #include <chrono>
 #include <cstddef>
 #include <cstdint>
-#include <iterator>
 #include <memory>
 #include <mutex>
 #include <optional>
-#include <queue>
 #include <shared_mutex>
 #include <string>
-#include <type_traits>
-#include <utility>
-#include <vector>
 
 namespace xrpl {
 
@@ -86,11 +77,11 @@ private:
     beast::WrappedSink pSink_;
     beast::Journal const journal_;
     beast::Journal const pJournal_;
-    std::unique_ptr<stream_type> streamPtr_;
+    std::unique_ptr<stream_type> streamPtr_{};
     socket_type& socket_;
     stream_type& stream_;
     boost::asio::strand<boost::asio::executor> strand_;
-    waitable_timer timer_;
+    waitable_timer timer_{};
 
     // Updated at each stage of the connection process to reflect
     // the current conditions as closely as possible.
@@ -175,7 +166,7 @@ private:
     };
 
     std::mutex mutable recentLock_;
-    protocol::TMStatusChange lastStatus_;
+    protocol::TMStatusChange lastStatus_{};
     Resource::Consumer usage_;
     ChargeWithContext fee_;
 
@@ -186,23 +177,23 @@ private:
     std::atomic<bool> chargeDisconnectFired_{false};
     std::shared_ptr<PeerFinder::Slot> const slot_;
     boost::beast::multi_buffer readBuffer_;
-    http_request_type request_;
-    http_response_type response_;
+    http_request_type request_{};
+    http_response_type response_{};
     boost::beast::http::fields const& headers_;
-    std::queue<std::shared_ptr<Message>> sendQueue_;
+    std::queue<std::shared_ptr<Message>> sendQueue_{};
     bool gracefulClose_ = false;
     int largeSendq_ = 0;
-    std::unique_ptr<LoadEvent> loadEvent_;
+    std::unique_ptr<LoadEvent> loadEvent_{};
     // The highest sequence of each PublisherList that has
     // been sent to or received from this peer.
-    hash_map<PublicKey, std::size_t> publisherListSequences_;
+    hash_map<PublicKey, std::size_t> publisherListSequences_{};
 
     Compressed compressionEnabled_ = Compressed::Off;
 
     // Queue of transactions' hashes that have not been
     // relayed. The hashes are sent once a second to a peer
     // and the peer requests missing transactions from the node.
-    hash_set<uint256> txQueue_;
+    hash_set<uint256> txQueue_{};
     // true if tx reduce-relay feature is enabled on the peer.
     bool txReduceRelayEnabled_ = false;
 
@@ -438,7 +429,7 @@ public:
     bool
     isHighLatency() const override;
 
-    void
+    static void
     fail(std::string const& reason);
 
     bool
@@ -466,7 +457,7 @@ private:
     void
     setTimer();
 
-    void
+    static void
     cancelTimer() noexcept;
 
     static std::string
@@ -611,7 +602,7 @@ private:
     //--------------------------------------------------------------------------
     // lockedRecentLock is passed as a reminder to callers that recentLock_
     // must be locked.
-    void
+    static void
     addLedger(uint256 const& hash, std::scoped_lock<std::mutex> const& lockedRecentLock);
 
     void

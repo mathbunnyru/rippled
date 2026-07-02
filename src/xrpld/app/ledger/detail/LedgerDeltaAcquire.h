@@ -4,20 +4,15 @@
 #include <xrpld/app/ledger/detail/TimeoutCounter.h>
 #include <xrpld/app/main/Application.h>
 
-#include <xrpl/basics/CountedObject.h>
 #include <xrpl/basics/base_uint.h>
 #include <xrpl/ledger/Ledger.h>
 #include <xrpl/protocol/LedgerHeader.h>
-#include <xrpl/protocol/STTx.h>
 
 #include <cstddef>
 #include <cstdint>
 #include <functional>
-#include <map>
 #include <memory>
 #include <optional>
-#include <set>
-#include <vector>
 
 namespace xrpl {
 class InboundLedgers;
@@ -122,7 +117,7 @@ private:
      *       first time, and (2) when a LedgerReplayTask with a new reason
      *       is added.
      */
-    void
+    static void
     onLedgerBuilt(ScopedLockType& sl, std::optional<InboundLedger::Reason> reason = {});
 
     /**
@@ -134,12 +129,12 @@ private:
 
     InboundLedgers& inboundLedgers_;
     std::uint32_t const ledgerSeq_;
-    std::unique_ptr<PeerSet> peerSet_;
+    std::unique_ptr<PeerSet> peerSet_{};
     std::shared_ptr<Ledger const> replayTemp_;
     std::shared_ptr<Ledger const> fullLedger_;
-    std::map<std::uint32_t, std::shared_ptr<STTx const>> orderedTxns_;
-    std::vector<OnDeltaDataCB> dataReadyCallbacks_;
-    std::set<InboundLedger::Reason> reasons_;
+    std::map<std::uint32_t, std::shared_ptr<STTx const>> orderedTxns_{};
+    std::vector<OnDeltaDataCB> dataReadyCallbacks_{};
+    std::set<InboundLedger::Reason> reasons_{};
     std::uint32_t noFeaturePeerCount_ = 0;
     bool fallBack_ = false;
 

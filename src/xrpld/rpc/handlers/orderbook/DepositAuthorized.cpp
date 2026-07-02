@@ -1,7 +1,6 @@
 #include <xrpld/rpc/Context.h>
 #include <xrpld/rpc/detail/RPCLedgerHelpers.h>
 
-#include <xrpl/basics/Slice.h>
 #include <xrpl/basics/base_uint.h>
 #include <xrpl/core/ServiceRegistry.h>
 #include <xrpl/json/json_value.h>
@@ -13,13 +12,10 @@
 #include <xrpl/protocol/LedgerFormats.h>
 #include <xrpl/protocol/Protocol.h>
 #include <xrpl/protocol/RPCErr.h>
-#include <xrpl/protocol/SField.h>
 #include <xrpl/protocol/jss.h>
 
 #include <memory>
-#include <set>
 #include <utility>
-#include <vector>
 
 namespace xrpl {
 

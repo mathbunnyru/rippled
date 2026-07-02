@@ -7,7 +7,6 @@
 #include <xrpl/beast/utility/Journal.h>
 #include <xrpl/config/BasicConfig.h>
 #include <xrpl/ledger/Ledger.h>
-#include <xrpl/nodestore/Backend.h>
 #include <xrpl/nodestore/Database.h>
 #include <xrpl/nodestore/DatabaseRotating.h>
 #include <xrpl/nodestore/Scheduler.h>
@@ -16,7 +15,6 @@
 #include <xrpl/server/State.h>
 #include <xrpl/shamap/FullBelowCache.h>
 #include <xrpl/shamap/SHAMapTreeNode.h>
-#include <xrpl/shamap/TreeNodeCache.h>
 
 #include <algorithm>
 #include <atomic>
@@ -69,9 +67,9 @@ private:
     Application& app_;
 
     // name of state database
-    std::string const dbName_ = "state";
+    std::string const dbName = "state";
     // prefix of on-disk nodestore backend instances
-    std::string const dbPrefix_ = "rippledb";  // cspell: disable-line
+    std::string const dbPrefix = "rippledb";  // cspell: disable-line
     // check health/stop status as records are copied
     std::uint64_t const checkHealthInterval_ = 1000;
     // minimum # of ledgers to maintain for health of network
@@ -99,13 +97,13 @@ private:
     std::uint32_t deleteInterval_ = 0;
     bool advisoryDelete_ = false;
     std::uint32_t deleteBatch_ = 100;
-    std::chrono::milliseconds backOff_{100};
-    std::chrono::seconds ageThreshold_{60};
+    std::chrono::milliseconds backOff{100};
+    std::chrono::seconds ageThreshold{60};
     /// If  the node is out of sync during an online_delete healthWait()
     /// call, sleep the thread for this time, and continue checking until
     /// recovery.
     /// See also: "recovery_wait_seconds" in xrpld-example.cfg
-    std::chrono::seconds recoveryWaitTime_{5};
+    std::chrono::seconds recoveryWaitTime{5};
 
     // these do not exist upon SHAMapStore creation, but do exist
     // as of run() or before

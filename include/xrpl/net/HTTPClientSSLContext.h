@@ -31,7 +31,7 @@ public:
         boost::asio::ssl::context_base::method method = boost::asio::ssl::context::sslv23)
         : sslContext_{method}, j_(j), verify_{sslVerify}
     {
-        boost::system::error_code ec;
+        boost::system::error_code const ec;
 
         if (sslVerifyFile.empty())
         {

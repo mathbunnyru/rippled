@@ -4,9 +4,7 @@
 #include <limits>
 #include <stdexcept>
 
-namespace beast {
-
-namespace detail {
+namespace beast::detail {
 
 template <class = void>
 class XorShiftEngine
@@ -83,7 +81,7 @@ XorShiftEngine<Unused>::murmurhash3(result_type x) -> result_type
     return x ^= x >> 33;
 }
 
-}  // namespace detail
+}  // namespace beast::detail
 
 /** XOR-shift Generator.
 
@@ -94,5 +92,3 @@ XorShiftEngine<Unused>::murmurhash3(result_type x) -> result_type
     does not accept seed==0
 */
 using xor_shift_engine = detail::XorShiftEngine<>;
-
-}  // namespace beast

@@ -1,7 +1,5 @@
 #pragma once
 
-#include <xrpld/app/ledger/LedgerMaster.h>
-#include <xrpld/app/misc/TxQ.h>
 #include <xrpld/rpc/Context.h>
 
 #include <xrpl/basics/chrono.h>
@@ -9,8 +7,6 @@
 #include <xrpl/ledger/ReadView.h>
 
 #include <optional>
-#include <utility>
-#include <vector>
 
 namespace xrpl {
 
@@ -39,7 +35,7 @@ struct LedgerFill
 
     ReadView const& ledger;
     int options;
-    std::vector<TxQ::TxDetails> txQueue;
+    std::vector<TxQ::TxDetails> txQueue{};
     RPC::Context const* context;
     std::optional<NetClock::time_point> closeTime;
 };

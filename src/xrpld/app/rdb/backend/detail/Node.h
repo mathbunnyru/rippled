@@ -37,9 +37,9 @@ constexpr int kTableTypeCount = 3;
 
 struct DatabasePairValid
 {
-    std::unique_ptr<DatabaseCon> ledgerDb;
-    std::unique_ptr<DatabaseCon> transactionDb;
-    bool valid;
+    std::unique_ptr<DatabaseCon> ledgerDb{};
+    std::unique_ptr<DatabaseCon> transactionDb{};
+    bool valid{};
 };
 
 /**

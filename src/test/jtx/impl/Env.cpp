@@ -16,10 +16,8 @@
 #include <test/jtx/utility.h>
 #include <test/unit_test/SuiteJournal.h>
 
-#include <xrpld/app/ledger/LedgerMaster.h>
 #include <xrpld/app/main/Application.h>
 #include <xrpld/core/Config.h>
-#include <xrpld/rpc/RPCCall.h>
 
 #include <xrpl/basics/Log.h>
 #include <xrpl/basics/Number.h>
@@ -32,6 +30,7 @@
 #include <xrpl/beast/utility/Journal.h>
 #include <xrpl/core/NetworkIDService.h>
 #include <xrpl/core/ServiceRegistry.h>
+#include <xrpl/json/json_value.h>
 #include <xrpl/json/to_string.h>
 #include <xrpl/net/HTTPClient.h>
 #include <xrpl/protocol/AccountID.h>
@@ -42,6 +41,7 @@
 #include <xrpl/protocol/Keylet.h>
 #include <xrpl/protocol/MPTIssue.h>
 #include <xrpl/protocol/SField.h>
+#include <xrpl/protocol/STObject.h>
 #include <xrpl/protocol/STTx.h>
 #include <xrpl/protocol/Serializer.h>
 #include <xrpl/protocol/TER.h>
@@ -189,7 +189,7 @@ Env::lookup(AccountID const& id) const
 }
 
 Account const&
-Env::lookup(std::string const& base58ID) const
+Env::lookup(std::string const& base58ID)
 {
     auto const account = parseBase58<AccountID>(base58ID);
     if (!account)

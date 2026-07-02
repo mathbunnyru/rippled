@@ -11,6 +11,7 @@
 #include <xrpl/json/json_value.h>
 #include <xrpl/protocol/ErrorCodes.h>
 #include <xrpl/protocol/RPCErr.h>
+#include <xrpl/protocol/STBase.h>
 #include <xrpl/protocol/STTx.h>
 #include <xrpl/protocol/Serializer.h>
 #include <xrpl/protocol/TER.h>
@@ -23,6 +24,7 @@
 #include <expected>
 #include <functional>
 #include <memory>
+#include <string>
 
 namespace xrpl {
 

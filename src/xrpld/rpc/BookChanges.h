@@ -131,7 +131,7 @@ computeBookChanges(std::shared_ptr<L const> const& lpAccepted)
             if (second < beast::kZero)
                 second = -second;
 
-            std::stringstream ss;
+            std::stringstream const ss;
             if (noswap)
             {
                 ss << g << "|" << p;

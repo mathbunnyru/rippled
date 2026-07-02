@@ -4,8 +4,6 @@
 
 #include <xrpl.pb.h>
 
-#include <unordered_map>
-
 namespace xrpl {
 
 std::unordered_map<protocol::MessageType, TrafficCount::Category> const kTypeLookup = {
@@ -27,7 +25,7 @@ std::unordered_map<protocol::MessageType, TrafficCount::Category> const kTypeLoo
     {protocol::mtSQUELCH, TrafficCount::Category::Squelch},
 };
 
-TrafficCount::Category
+static TrafficCount::Category
 TrafficCount::categorize(
     ::google::protobuf::Message const& message,
     protocol::MessageType type,

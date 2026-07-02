@@ -10,9 +10,6 @@
 #include <xrpl/core/JobQueue.h>
 #include <xrpl/json/json_value.h>
 #include <xrpl/ledger/ReadView.h>
-#include <xrpl/protocol/ErrorCodes.h>
-#include <xrpl/protocol/RPCErr.h>
-#include <xrpl/protocol/jss.h>
 #include <xrpl/resource/Consumer.h>
 #include <xrpl/server/InfoSub.h>
 
@@ -72,7 +69,7 @@ PathRequestManager::updateAll(std::shared_ptr<ReadView const> const& inLedger)
     }
 
     bool newRequests = app_.getLedgerMaster().isNewPathRequest();
-    bool mustBreak = false;
+    bool const mustBreak = false;
 
     JLOG(journal_.trace()) << "updateAll seq=" << cache->getLedger()->seq() << ", "
                            << requests.size() << " requests";

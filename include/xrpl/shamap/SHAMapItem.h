@@ -36,7 +36,7 @@ class SHAMapItem : public CountedObject<SHAMapItem>
     makeShamapitem(uint256 const& tag, Slice data);
 
 private:
-    uint256 const tag_;
+    uint256 const tag_{};
 
     // We use std::uint32_t to minimize the size; there's no SHAMapItem whose
     // size exceeds 4GB and there won't ever be (famous last words?), so this
@@ -70,25 +70,25 @@ public:
     SHAMapItem&
     operator=(SHAMapItem&&) = delete;
 
-    uint256 const&
+    [[nodiscard]] uint256 const&
     key() const
     {
         return tag_;
     }
 
-    std::size_t
+    [[nodiscard]] std::size_t
     size() const
     {
         return size_;
     }
 
-    void const*
+    [[nodiscard]] void const*
     data() const
     {
         return reinterpret_cast<std::uint8_t const*>(this) + sizeof(*this);
     }
 
-    Slice
+    [[nodiscard]] Slice
     slice() const
     {
         return {data(), size()};

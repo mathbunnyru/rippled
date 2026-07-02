@@ -11,7 +11,6 @@
 #include <xrpld/peerfinder/Slot.h>
 
 #include <xrpl/basics/Log.h>
-#include <xrpl/beast/net/IPAddressConversion.h>
 #include <xrpl/beast/utility/Journal.h>
 #include <xrpl/beast/utility/instrumentation.h>
 #include <xrpl/json/json_reader.h>
@@ -34,14 +33,12 @@
 #include <boost/beast/http/status.hpp>
 #include <boost/system/system_error.hpp>
 
-#include <chrono>
 #include <exception>
 #include <functional>
 #include <memory>
 #include <optional>
 #include <string>
 #include <utility>
-#include <vector>
 
 namespace xrpl {
 
@@ -398,7 +395,7 @@ ConnectAttempt::processResponse()
                     {
                         if (v.isString())
                         {
-                            error_code ec;
+                            error_code const ec;
                             auto const ep = parseEndpoint(v.asString(), ec);
                             if (!ec)
                                 eps.push_back(ep);

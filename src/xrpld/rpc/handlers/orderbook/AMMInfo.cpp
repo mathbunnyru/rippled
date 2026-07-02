@@ -1,4 +1,3 @@
-#include <xrpld/app/ledger/LedgerMaster.h>
 #include <xrpld/rpc/Context.h>
 #include <xrpld/rpc/detail/RPCLedgerHelpers.h>
 
@@ -25,7 +24,6 @@
 
 #include <date/date.h>
 
-#include <chrono>
 #include <expected>
 #include <memory>
 #include <optional>
@@ -200,7 +198,7 @@ doAMMInfo(RPC::JsonContext& context)
     lptAMMBalance.setJson(ammResult[jss::lp_token]);
     ammResult[jss::trading_fee] = (*amm)[sfTradingFee];
     ammResult[jss::account] = to_string(ammAccountID);
-    json::Value voteSlots(json::ValueType::Array);
+    json::Value const voteSlots(json::ValueType::Array);
     if (amm->isFieldPresent(sfVoteSlots))
     {
         for (auto const& voteEntry : amm->getFieldArray(sfVoteSlots))
@@ -231,7 +229,7 @@ doAMMInfo(RPC::JsonContext& context)
                 toIso8601(NetClock::time_point{NetClock::duration{auctionSlot[sfExpiration]}});
             if (auctionSlot.isFieldPresent(sfAuthAccounts))
             {
-                json::Value auth;
+                json::Value const auth;
                 for (auto const& acct : auctionSlot.getFieldArray(sfAuthAccounts))
                 {
                     json::Value jv;

@@ -2,14 +2,12 @@
 
 #include <xrpld/app/consensus/RCLCxPeerPos.h>
 #include <xrpld/app/consensus/RCLValidations.h>
-#include <xrpld/app/ledger/InboundLedgers.h>
 #include <xrpld/app/ledger/InboundTransactions.h>
 #include <xrpld/app/ledger/LedgerMaster.h>
 #include <xrpld/app/ledger/TransactionMaster.h>
 #include <xrpld/app/misc/Transaction.h>
 #include <xrpld/app/misc/ValidatorList.h>
 #include <xrpld/consensus/Validations.h>
-#include <xrpld/overlay/Cluster.h>
 #include <xrpld/overlay/ClusterNode.h>
 #include <xrpld/overlay/Peer.h>
 #include <xrpld/overlay/ReduceRelayCommon.h>
@@ -27,12 +25,9 @@
 #include <xrpl/basics/SHAMapHash.h>
 #include <xrpl/basics/Slice.h>
 #include <xrpl/basics/ToString.h>
-#include <xrpl/basics/UptimeClock.h>
-#include <xrpl/basics/base64.h>
 #include <xrpl/basics/base_uint.h>
 #include <xrpl/basics/chrono.h>
 #include <xrpl/basics/random.h>
-#include <xrpl/basics/safe_cast.h>
 #include <xrpl/basics/strHex.h>
 #include <xrpl/beast/utility/Journal.h>
 #include <xrpl/beast/utility/Zero.h>
@@ -47,7 +42,6 @@
 #include <xrpl/protocol/LedgerHeader.h>
 #include <xrpl/protocol/Protocol.h>
 #include <xrpl/protocol/PublicKey.h>
-#include <xrpl/protocol/SField.h>
 #include <xrpl/protocol/STTx.h>
 #include <xrpl/protocol/Serializer.h>
 #include <xrpl/protocol/TxFlags.h>
@@ -56,10 +50,8 @@
 #include <xrpl/protocol/tokens.h>
 #include <xrpl/resource/Charge.h>
 #include <xrpl/resource/Consumer.h>
-#include <xrpl/resource/Disposition.h>
 #include <xrpl/resource/Fees.h>
 #include <xrpl/resource/Gossip.h>
-#include <xrpl/server/LoadFeeTrack.h>
 #include <xrpl/server/NetworkOPs.h>
 #include <xrpl/shamap/SHAMapNodeID.h>
 #include <xrpl/tx/apply.h>
@@ -81,13 +73,11 @@
 #include <xrpl.pb.h>
 
 #include <algorithm>
-#include <atomic>
 #include <chrono>
 #include <cstddef>
 #include <cstdint>
 #include <exception>
 #include <functional>
-#include <map>
 #include <memory>
 #include <mutex>
 #include <numeric>
@@ -98,7 +88,6 @@
 #include <string_view>
 #include <tuple>
 #include <utility>
-#include <vector>
 
 using namespace std::chrono_literals;
 
@@ -380,7 +369,7 @@ PeerImp::charge(Resource::Charge const& fee, std::string const& context)
             // overcounting peerDisconnectsCharges_ and posting duplicate
             // shutdowns.  fail(std::string const&) self-posts to strand_
             // when invoked off-strand.
-            bool expected = false;
+            bool const expected = false;
             if (self->chargeDisconnectFired_.compare_exchange_strong(
                     expected, true, std::memory_order_acq_rel))
             {
@@ -944,7 +933,7 @@ PeerImp::onReadMessage(error_code ec, std::size_t bytesTransferred)
 
     while (readBuffer_.size() > 0)
     {
-        std::size_t bytesConsumed = 0;
+        std::size_t const bytesConsumed = 0;
 
         using namespace std::chrono_literals;
         std::tie(bytesConsumed, ec) = perf::measureDurationAndLog(
@@ -1182,7 +1171,7 @@ PeerImp::onMessage(std::shared_ptr<protocol::TMCluster> const& m)
     int const loadSources = m->loadsources().size();
     if (loadSources != 0)
     {
-        Resource::Gossip gossip;
+        Resource::Gossip const gossip;
         gossip.items.reserve(loadSources);
         for (int i = 0; i < m->loadsources().size(); ++i)
         {
@@ -2719,7 +2708,7 @@ PeerImp::onMessage(std::shared_ptr<protocol::TMTransactions> const& m)
     }
 }
 
-void
+static void
 PeerImp::onMessage(std::shared_ptr<protocol::TMSquelch> const& m)
 {
     dispatch(strand_, [self = shared_from_this(), m]() {
@@ -2912,7 +2901,7 @@ PeerImp::checkTransaction(
         {
             // Don't do anything with pseudo transactions except put them in the
             // TransactionMaster cache
-            std::string reason;
+            std::string const reason;
             auto tx = std::make_shared<Transaction>(stx, reason, app_);
             XRPL_ASSERT(
                 tx->getStatus() == TransStatus::NEW,

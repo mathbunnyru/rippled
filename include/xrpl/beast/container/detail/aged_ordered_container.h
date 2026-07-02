@@ -119,7 +119,7 @@ private:
         {
         }
 
-        value_type value;
+        value_type value{};
         time_point when;
     };
 
@@ -1164,7 +1164,7 @@ private:
 
 private:
     ConfigT config_;
-    cont_type mutable cont_;
+    cont_type mutable cont_{};
 };
 
 //------------------------------------------------------------------------------

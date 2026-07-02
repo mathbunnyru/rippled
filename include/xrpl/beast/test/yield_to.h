@@ -31,8 +31,9 @@ protected:
     boost::asio::io_context ios_;
 
 private:
-    boost::optional<boost::asio::executor_work_guard<boost::asio::io_context::executor_type>> work_;
-    std::vector<std::thread> threads_;
+    boost::optional<boost::asio::executor_work_guard<boost::asio::io_context::executor_type>>
+        work_{};
+    std::vector<std::thread> threads_{};
     std::mutex m_;
     std::condition_variable cv_;
     std::size_t running_ = 0;

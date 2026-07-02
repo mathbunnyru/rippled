@@ -186,7 +186,7 @@ public:
 
 private:
     ID ledgerID_;
-    Seq ledgerSeq_;
+    Seq ledgerSeq_{};
     std::vector<uint256> ancestors_;
     beast::Journal j_;
 };

@@ -96,7 +96,7 @@ public:
         std::shared_ptr<AssetCache> const&,
         bool fast,
         std::function<bool(void)> const& continueCallback = {});
-    InfoSub::pointer
+    [[nodiscard]] InfoSub::pointer
     getSubscriber() const;
     bool
     hasCompletion();

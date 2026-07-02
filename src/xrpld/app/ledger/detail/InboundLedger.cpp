@@ -1,14 +1,11 @@
 #include <xrpld/app/ledger/InboundLedger.h>
 
 #include <xrpld/app/ledger/AccountStateSF.h>
-#include <xrpld/app/ledger/InboundLedgers.h>
 #include <xrpld/app/ledger/LedgerMaster.h>
 #include <xrpld/app/ledger/TransactionStateSF.h>
 #include <xrpld/app/ledger/detail/TimeoutCounter.h>
 #include <xrpld/app/main/Application.h>
 #include <xrpld/overlay/Message.h>
-#include <xrpld/overlay/Overlay.h>
-#include <xrpld/overlay/PeerSet.h>
 
 #include <xrpl/basics/Blob.h>
 #include <xrpl/basics/Log.h>
@@ -16,18 +13,16 @@
 #include <xrpl/basics/base_uint.h>
 #include <xrpl/beast/utility/instrumentation.h>
 #include <xrpl/core/Job.h>
-#include <xrpl/core/JobQueue.h>
 #include <xrpl/json/json_value.h>
 #include <xrpl/nodestore/Database.h>
 #include <xrpl/nodestore/NodeObject.h>
 #include <xrpl/protocol/HashPrefix.h>
-#include <xrpl/protocol/Indexes.h>
-#include <xrpl/protocol/LedgerHeader.h>
 #include <xrpl/protocol/Rules.h>
 #include <xrpl/protocol/Serializer.h>
-#include <xrpl/protocol/SystemParameters.h>
 #include <xrpl/protocol/jss.h>
 #include <xrpl/resource/Fees.h>
+#include <xrpl/shamap/SHAMap.h>
+#include <xrpl/shamap/SHAMapAddNode.h>
 #include <xrpl/shamap/SHAMapNodeID.h>
 #include <xrpl/shamap/SHAMapSyncFilter.h>
 
@@ -36,7 +31,6 @@
 #include <xrpl.pb.h>
 
 #include <algorithm>
-#include <chrono>
 #include <cstddef>
 #include <cstdint>
 #include <exception>
@@ -44,12 +38,8 @@
 #include <mutex>
 #include <random>
 #include <sstream>
-#include <stdexcept>
 #include <string>
-#include <tuple>
-#include <unordered_map>
 #include <utility>
-#include <vector>
 
 namespace xrpl {
 
@@ -511,7 +501,7 @@ InboundLedger::trigger(std::shared_ptr<Peer> const& peer, TriggerReason reason)
             if (!need.empty())
             {
                 protocol::TMGetObjectByHash tmBH;
-                bool typeSet = false;
+                bool const typeSet = false;
                 tmBH.set_query(true);
                 tmBH.set_ledgerhash(hash_.begin(), hash_.size());
                 for (auto const& p : need)
@@ -915,7 +905,7 @@ InboundLedger::receiveNode(protocol::TMLedgerData const& packet, SHAMapAddNode& 
     Call with a lock
 */
 bool
-InboundLedger::takeAsRootNode(Slice const& data, SHAMapAddNode& san)
+InboundLedger::takeAsRootNode(Slice const& data, SHAMapAddNode& san) const
 {
     if (failed_ || haveState_)
     {
@@ -941,7 +931,7 @@ InboundLedger::takeAsRootNode(Slice const& data, SHAMapAddNode& san)
     Call with a lock
 */
 bool
-InboundLedger::takeTxRootNode(Slice const& data, SHAMapAddNode& san)
+InboundLedger::takeTxRootNode(Slice const& data, SHAMapAddNode& san) const
 {
     if (failed_ || haveTransactions_)
     {
@@ -963,7 +953,7 @@ InboundLedger::takeTxRootNode(Slice const& data, SHAMapAddNode& san)
 }
 
 std::vector<InboundLedger::neededHash_t>
-InboundLedger::getNeededHashes()
+InboundLedger::getNeededHashes() const
 {
     std::vector<neededHash_t> ret;
 
@@ -1103,7 +1093,7 @@ InboundLedger::processData(std::shared_ptr<Peer> peer, protocol::TMLedgerData co
             }
         }
 
-        SHAMapAddNode san;
+        SHAMapAddNode const san;
         receiveNode(packet, san);
 
         JLOG(journal_.debug()) << "Ledger "
@@ -1147,7 +1137,7 @@ struct PeerDataCounts
 
     // Prune all the peers that didn't return enough data.
     void
-    prune()
+    prune() const
     {
         // Remove all the peers that didn't return at least half as much data as
         // the best peer
@@ -1244,7 +1234,7 @@ InboundLedger::runData()
 }
 
 json::Value
-InboundLedger::getJson(int)
+InboundLedger::getJson(int) const
 {
     json::Value ret(json::ValueType::Object);
 
@@ -1273,7 +1263,7 @@ InboundLedger::getJson(int)
 
     if (haveHeader_ && !haveState_)
     {
-        json::Value hv(json::ValueType::Array);
+        json::Value const hv(json::ValueType::Array);
         for (auto const& h : neededStateHashes(16, nullptr))
         {
             hv.append(to_string(h));
@@ -1283,7 +1273,7 @@ InboundLedger::getJson(int)
 
     if (haveHeader_ && !haveTransactions_)
     {
-        json::Value hv(json::ValueType::Array);
+        json::Value const hv(json::ValueType::Array);
         for (auto const& h : neededTxHashes(16, nullptr))
         {
             hv.append(to_string(h));

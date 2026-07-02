@@ -23,7 +23,6 @@
 #include <xrpl/server/LoadFeeTrack.h>
 #include <xrpl/shamap/SHAMapMissingNode.h>
 
-#include <chrono>
 #include <condition_variable>
 #include <memory>
 #include <mutex>
@@ -231,7 +230,7 @@ private:
         while (true)
         {
             {
-                std::unique_lock<std::mutex> lock(mutex_);
+                std::unique_lock<std::mutex> const lock(mutex_);
                 state_ = State::NotCleaning;
                 wakeup_.wait(lock, [this]() { return (shouldExit_ || state_ == State::Cleaning); });
                 if (shouldExit_)

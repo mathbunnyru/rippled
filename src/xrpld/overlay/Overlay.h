@@ -19,11 +19,8 @@
 
 #include <cstddef>
 #include <cstdint>
-#include <functional>
 #include <memory>
 #include <optional>
-#include <set>
-#include <vector>
 
 namespace boost::asio::ssl {
 class context;

@@ -1,5 +1,6 @@
 #include <xrpld/overlay/detail/OverlayImpl.h>
 
+#include <xrpld/app/main/Application.h>
 #include <xrpld/app/misc/ValidatorList.h>
 #include <xrpld/app/misc/ValidatorSite.h>
 #include <xrpld/overlay/Cluster.h>
@@ -11,10 +12,8 @@
 #include <xrpld/overlay/detail/Tuning.h>
 #include <xrpld/peerfinder/PeerfinderManager.h>
 #include <xrpld/peerfinder/Slot.h>
-#include <xrpld/peerfinder/make_Manager.h>
 #include <xrpld/rpc/ServerHandler.h>
 #include <xrpld/rpc/handlers/admin/status/GetCounts.h>
-#include <xrpld/rpc/json_body.h>
 
 #include <xrpl/basics/Log.h>
 #include <xrpl/basics/Resolver.h>
@@ -24,7 +23,6 @@
 #include <xrpl/basics/chrono.h>
 #include <xrpl/basics/contract.h>
 #include <xrpl/basics/make_SSLContext.h>
-#include <xrpl/basics/random.h>
 #include <xrpl/basics/strHex.h>
 #include <xrpl/beast/core/LexicalCast.h>
 #include <xrpl/beast/insight/Collector.h>
@@ -32,6 +30,7 @@
 #include <xrpl/beast/net/IPAddressConversion.h>
 #include <xrpl/beast/net/IPEndpoint.h>
 #include <xrpl/beast/rfc2616.h>
+#include <xrpl/beast/utility/Journal.h>
 #include <xrpl/beast/utility/PropertyStream.h>
 #include <xrpl/beast/utility/WrappedSink.h>
 #include <xrpl/beast/utility/instrumentation.h>
@@ -40,9 +39,9 @@
 #include <xrpl/core/HashRouter.h>
 #include <xrpl/json/json_value.h>
 #include <xrpl/protocol/BuildInfo.h>
+#include <xrpl/protocol/PublicKey.h>
 #include <xrpl/protocol/STTx.h>
 #include <xrpl/protocol/Serializer.h>
-#include <xrpl/protocol/SystemParameters.h>
 #include <xrpl/protocol/jss.h>
 #include <xrpl/resource/ResourceManager.h>
 #include <xrpl/server/Handoff.h>
@@ -79,14 +78,10 @@
 #include <iomanip>
 #include <memory>
 #include <mutex>
-#include <optional>
-#include <set>
 #include <sstream>
 #include <stdexcept>
 #include <string>
 #include <string_view>
-#include <tuple>
-#include <unordered_map>
 #include <utility>
 #include <vector>
 
@@ -359,7 +354,7 @@ OverlayImpl::onHandoff(
 
 //------------------------------------------------------------------------------
 
-bool
+static bool
 OverlayImpl::isPeerUpgrade(http_request_type const& request)
 {
     if (!isUpgrade(request))
@@ -376,7 +371,7 @@ OverlayImpl::makePrefix(std::uint32_t id)
     return ss.str();
 }
 
-std::shared_ptr<Writer>
+static std::shared_ptr<Writer>
 OverlayImpl::makeRedirectResponse(
     std::shared_ptr<PeerFinder::Slot> const& slot,
     http_request_type const& request,
@@ -387,7 +382,7 @@ OverlayImpl::makeRedirectResponse(
     msg.result(boost::beast::http::status::service_unavailable);
     msg.insert("Server", BuildInfo::getFullVersionString());
     {
-        std::ostringstream ostr;
+        std::ostringstream const ostr;
         ostr << remoteAddress;
         msg.insert("Remote-Address", ostr.str());
     }
@@ -403,7 +398,7 @@ OverlayImpl::makeRedirectResponse(
     return std::make_shared<SimpleWriter>(msg);
 }
 
-std::shared_ptr<Writer>
+static std::shared_ptr<Writer>
 OverlayImpl::makeErrorResponse(
     std::shared_ptr<PeerFinder::Slot> const& slot,
     http_request_type const& request,
@@ -595,7 +590,7 @@ OverlayImpl::stop()
 {
     boost::asio::dispatch(strand_, std::bind(&OverlayImpl::stopChildren, this));
     {
-        std::unique_lock<decltype(mutex_)> lock(mutex_);
+        std::unique_lock<decltype(mutex_)> const lock(mutex_);
         cond_.wait(lock, [this] { return list_.empty(); });
     }
     peerFinder_->stop();
@@ -743,7 +738,7 @@ OverlayImpl::limit()
 }
 
 json::Value
-OverlayImpl::getOverlayInfo() const
+OverlayImpl::getOverlayInfo()
 {
     using namespace std::chrono;
     json::Value jv;
@@ -1157,14 +1152,14 @@ OverlayImpl::findPeerByPublicKey(PublicKey const& pubKey)
     return {};
 }
 
-void
+static void
 OverlayImpl::broadcast(protocol::TMProposeSet const& m)
 {
     auto const sm = std::make_shared<Message>(m, protocol::mtPROPOSE_LEDGER);
     forEach([&](std::shared_ptr<PeerImp> const& p) { p->send(sm); });
 }
 
-std::set<Peer::id_t>
+static std::set<Peer::id_t>
 OverlayImpl::relay(protocol::TMProposeSet const& m, uint256 const& uid, PublicKey const& validator)
 {
     if (auto const toSkip = app_.getHashRouter().shouldRelay(uid))
@@ -1179,14 +1174,14 @@ OverlayImpl::relay(protocol::TMProposeSet const& m, uint256 const& uid, PublicKe
     return {};
 }
 
-void
+static void
 OverlayImpl::broadcast(protocol::TMValidation const& m)
 {
     auto const sm = std::make_shared<Message>(m, protocol::mtVALIDATION);
     forEach([sm](std::shared_ptr<PeerImp> const& p) { p->send(sm); });
 }
 
-std::set<Peer::id_t>
+static std::set<Peer::id_t>
 OverlayImpl::relay(protocol::TMValidation const& m, uint256 const& uid, PublicKey const& validator)
 {
     if (auto const toSkip = app_.getHashRouter().shouldRelay(uid))
@@ -1252,9 +1247,9 @@ OverlayImpl::relay(
     }
 
     Overlay::PeerSequence peers = {};
-    std::size_t total = 0;
+    std::size_t const total = 0;
     std::size_t disabled = 0;
-    std::size_t enabledInSkip = 0;
+    std::size_t const enabledInSkip = 0;
 
     if (!relay)
     {
@@ -1388,7 +1383,7 @@ OverlayImpl::sendEndpoints()
 }
 
 void
-OverlayImpl::sendTxQueue() const
+OverlayImpl::sendTxQueue()
 {
     forEach([](auto const& p) {
         if (p->txReduceRelayEnabled())

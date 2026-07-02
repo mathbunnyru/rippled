@@ -48,7 +48,7 @@ defaultPrng()
 {
     // This is used to seed the thread-specific PRNGs on demand
     static beast::xor_shift_engine kSeeder = [] {
-        std::random_device rng;
+        std::random_device const rng;
         std::uniform_int_distribution<std::uint64_t> distribution{1};
         return beast::xor_shift_engine(distribution(rng));
     }();

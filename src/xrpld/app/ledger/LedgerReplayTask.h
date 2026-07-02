@@ -4,12 +4,10 @@
 #include <xrpld/app/ledger/detail/TimeoutCounter.h>
 #include <xrpld/app/main/Application.h>
 
-#include <xrpl/basics/CountedObject.h>
 #include <xrpl/basics/base_uint.h>
 
 #include <cstdint>
 #include <memory>
-#include <vector>
 
 namespace xrpl {
 class InboundLedgers;
@@ -36,7 +34,7 @@ public:
 
         // to be updated
         std::uint32_t finishSeq = 0;
-        std::vector<uint256> skipList;  // including the finishHash
+        std::vector<uint256> skipList{};  // including the finishHash
         uint256 startHash;
         std::uint32_t startSeq = 0;
         bool full = false;
@@ -153,7 +151,7 @@ private:
     std::shared_ptr<SkipListAcquire> skipListAcquirer_;
     std::shared_ptr<Ledger const> parent_;
     uint32_t deltaToBuild_ = 0;  // should not build until have parent
-    std::vector<std::shared_ptr<LedgerDeltaAcquire>> deltas_;
+    std::vector<std::shared_ptr<LedgerDeltaAcquire>> deltas_{};
 
     friend class test::LedgerReplayClient;
 };

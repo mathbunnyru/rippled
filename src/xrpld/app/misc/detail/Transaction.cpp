@@ -5,7 +5,6 @@
 #include <xrpld/rpc/CTID.h>
 
 #include <xrpl/basics/Blob.h>
-#include <xrpl/basics/RangeSet.h>
 #include <xrpl/basics/Slice.h>
 #include <xrpl/basics/safe_cast.h>
 #include <xrpl/beast/utility/instrumentation.h>
@@ -121,7 +120,7 @@ Transaction::load(uint256 const& id, Application& app, ErrorCodeI& ec)
     return load(id, app, std::nullopt, ec);
 }
 
-std::variant<std::pair<std::shared_ptr<Transaction>, std::shared_ptr<TxMeta>>, TxSearched>
+static std::variant<std::pair<std::shared_ptr<Transaction>, std::shared_ptr<TxMeta>>, TxSearched>
 Transaction::load(
     uint256 const& id,
     Application& app,
@@ -133,7 +132,7 @@ Transaction::load(
     return load(id, app, op{range}, ec);
 }
 
-std::variant<std::pair<std::shared_ptr<Transaction>, std::shared_ptr<TxMeta>>, TxSearched>
+static std::variant<std::pair<std::shared_ptr<Transaction>, std::shared_ptr<TxMeta>>, TxSearched>
 Transaction::load(
     uint256 const& id,
     Application& app,

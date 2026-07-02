@@ -4,8 +4,6 @@
 
 #include <xrpl.pb.h>
 
-#include <memory>
-
 namespace xrpl {
 class Application;
 class LedgerReplayer;

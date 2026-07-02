@@ -10,22 +10,19 @@
 #include <xrpl/protocol/AccountID.h>
 #include <xrpl/protocol/ErrorCodes.h>
 #include <xrpl/protocol/Indexes.h>
+#include <xrpl/protocol/Issue.h>
 #include <xrpl/protocol/LedgerFormats.h>
 #include <xrpl/protocol/MPTIssue.h>
 #include <xrpl/protocol/RPCErr.h>
 #include <xrpl/protocol/SField.h>
 #include <xrpl/protocol/STAmount.h>
-#include <xrpl/protocol/UintTypes.h>
 #include <xrpl/protocol/jss.h>
 #include <xrpl/resource/Fees.h>
 
-#include <map>
 #include <memory>
-#include <set>
 #include <stdexcept>
 #include <string>
 #include <utility>
-#include <vector>
 
 namespace xrpl {
 
@@ -235,7 +232,7 @@ doGatewayBalances(RPC::JsonContext& context)
 
     if (!sums.empty())
     {
-        json::Value j;
+        json::Value const j;
         for (auto const& [k, v] : sums)
         {
             j[to_string(k)] = v.getText();
@@ -248,7 +245,7 @@ doGatewayBalances(RPC::JsonContext& context)
                               json::StaticString const& name) {
         if (!array.empty())
         {
-            json::Value j;
+            json::Value const j;
             for (auto const& [accId, accBalances] : array)
             {
                 json::Value balanceArray;
@@ -272,7 +269,7 @@ doGatewayBalances(RPC::JsonContext& context)
     // Add total escrow to the result
     if (!locked.empty())
     {
-        json::Value j;
+        json::Value const j;
         for (auto const& [k, v] : locked)
         {
             j[to_string(k)] = v.getText();

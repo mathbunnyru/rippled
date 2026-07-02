@@ -13,16 +13,15 @@
 #include <xrpld/app/misc/TxQ.h>
 #include <xrpld/app/misc/ValidatorList.h>
 #include <xrpld/core/Config.h>
-#include <xrpld/core/TimeKeeper.h>
 #include <xrpld/overlay/Overlay.h>
 #include <xrpld/overlay/Peer.h>
 #include <xrpld/rpc/detail/PathRequestManager.h>
 
+#include <xrpl/basics/Blob.h>
 #include <xrpl/basics/Log.h>
 #include <xrpl/basics/MathUtilities.h>
 #include <xrpl/basics/RangeSet.h>
 #include <xrpl/basics/Slice.h>
-#include <xrpl/basics/UnorderedContainers.h>
 #include <xrpl/basics/UptimeClock.h>
 #include <xrpl/basics/base_uint.h>
 #include <xrpl/basics/chrono.h>
@@ -38,10 +37,8 @@
 #include <xrpl/ledger/AmendmentTable.h>
 #include <xrpl/ledger/Ledger.h>
 #include <xrpl/ledger/OrderBookDB.h>
-#include <xrpl/ledger/PendingSaves.h>
 #include <xrpl/ledger/View.h>
 #include <xrpl/nodestore/Database.h>
-#include <xrpl/protocol/BuildInfo.h>
 #include <xrpl/protocol/HashPrefix.h>
 #include <xrpl/protocol/LedgerHeader.h>
 #include <xrpl/protocol/Protocol.h>
@@ -70,14 +67,13 @@
 #include <functional>
 #include <iostream>
 #include <iterator>
-#include <map>
 #include <memory>
 #include <mutex>
 #include <optional>
 #include <ostream>
 #include <sstream>
+#include <string>
 #include <utility>
-#include <vector>
 
 namespace xrpl {
 
@@ -624,11 +620,11 @@ LedgerMaster::getValidatedRange(std::uint32_t& minVal, std::uint32_t& maxVal)
 
 // Get the earliest ledger we will let peers fetch
 std::uint32_t
-LedgerMaster::getEarliestFetch()
+LedgerMaster::getEarliestFetch() const
 {
     // The earliest ledger we will let people fetch is ledger zero,
     // unless that creates a larger range than allowed
-    std::uint32_t e = getClosedLedger()->header().seq;
+    std::uint32_t e = getClosedLedger()->header().seq = 0;
 
     if (e > fetchDepth_)
     {
@@ -728,7 +724,7 @@ LedgerMaster::getFetchPack(LedgerIndex missing, InboundLedger::Reason reason)
     // but biased in favor of Peers with low latency.
     std::shared_ptr<Peer> target;
     {
-        int maxScore = 0;
+        int const maxScore = 0;
         auto peerList = app_.getOverlay().getActivePeers();
         for (auto const& peer : peerList)
         {
@@ -1033,8 +1029,8 @@ LedgerMaster::checkAccept(std::shared_ptr<Ledger const> const& ledger)
             // Have not printed the warning before, check if need to print.
             auto const vals = app_.getValidations().getTrustedForLedger(
                 ledger->header().parentHash, ledger->header().seq - 1);
-            std::size_t higherVersionCount = 0;
-            std::size_t xrpldCount = 0;
+            std::size_t const higherVersionCount = 0;
+            std::size_t const xrpldCount = 0;
             for (auto const& v : vals)
             {
                 if (v->isFieldPresent(sfServerVersion))
@@ -1769,7 +1765,7 @@ LedgerMaster::takeReplay(std::unique_ptr<LedgerReplay> replay)
     replayData_ = std::move(replay);
 }
 
-std::unique_ptr<LedgerReplay>
+static std::unique_ptr<LedgerReplay>
 LedgerMaster::releaseReplay()
 {
     return std::move(replayData_);
@@ -1974,7 +1970,7 @@ LedgerMaster::addFetchPack(uint256 const& hash, std::shared_ptr<Blob> data)
 std::optional<Blob>
 LedgerMaster::getFetchPack(uint256 const& hash)
 {
-    Blob data;
+    Blob const data;
     if (fetchPacks_.retrieve(hash, data))
     {
         fetchPacks_.del(hash, false);

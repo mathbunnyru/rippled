@@ -60,7 +60,7 @@ public:
         Thread safety:
             Safe to call from any thread.
     */
-    std::size_t
+    [[nodiscard]] std::size_t
     size() const
     {
         return cache_.size();
@@ -102,7 +102,7 @@ public:
     }
 
     /** generation determines whether cached entry is valid */
-    std::uint32_t
+    [[nodiscard]] std::uint32_t
     getGeneration(void) const
     {
         return gen_;
@@ -123,7 +123,7 @@ public:
     }
 
 private:
-    CacheType cache_;
+    CacheType cache_{};
     std::atomic<std::uint32_t> gen_;
 };
 

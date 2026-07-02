@@ -14,6 +14,7 @@
 #include <xrpl/protocol/AccountID.h>
 #include <xrpl/protocol/ErrorCodes.h>
 #include <xrpl/protocol/Indexes.h>
+#include <xrpl/protocol/Issue.h>
 #include <xrpl/protocol/LedgerFormats.h>
 #include <xrpl/protocol/RPCErr.h>
 #include <xrpl/protocol/SField.h>
@@ -30,7 +31,6 @@
 #include <optional>
 #include <sstream>
 #include <string>
-#include <vector>
 
 namespace xrpl {
 
@@ -132,11 +132,11 @@ doAccountLines(RPC::JsonContext& context)
     json::Value& jsonLines(result[jss::lines] = json::ValueType::Array);
     struct VisitData
     {
-        std::vector<RPCTrustLine> items;
+        std::vector<RPCTrustLine> items{};
         AccountID const& accountID;
         std::optional<AccountID> const& raPeerAccount;
-        bool ignoreDefault;
-        uint32_t foundCount;
+        bool ignoreDefault{};
+        uint32_t foundCount{};
     };
     VisitData visitData = {
         .items = {},
@@ -155,7 +155,7 @@ doAccountLines(RPC::JsonContext& context)
         // Marker is composed of a comma separated index and start hint. The
         // former will be read as hex, and the latter using boost lexical cast.
         std::stringstream marker(params[jss::marker].asString());
-        std::string value;
+        std::string const value;
         if (!std::getline(marker, value, ','))
             return rpcError(RpcInvalidParams);
 

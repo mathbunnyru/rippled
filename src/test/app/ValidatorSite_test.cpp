@@ -6,29 +6,17 @@
 
 #include <xrpld/app/misc/ValidatorSite.h>
 
-#include <xrpl/basics/chrono.h>
-#include <xrpl/basics/strHex.h>
 #include <xrpl/beast/unit_test/suite.h>
 #include <xrpl/beast/utility/Journal.h>
-#include <xrpl/json/json_value.h>
-#include <xrpl/json/to_string.h>
-#include <xrpl/protocol/jss.h>
 
 #include <boost/algorithm/string/join.hpp>
 #include <boost/filesystem/directory.hpp>
 #include <boost/filesystem/operations.hpp>
 #include <boost/range/adaptor/transformed.hpp>
 
-#include <date/date.h>
-
 #include <chrono>
-#include <fstream>
 #include <memory>
-#include <ostream>
-#include <sstream>
 #include <string>
-#include <utility>
-#include <vector>
 
 namespace xrpl {
 namespace detail {
@@ -156,7 +144,7 @@ private:
         env.timeKeeper().set(env.timeKeeper().now() + 30s);
 
         test::StreamSink sink;
-        beast::Journal journal{sink};
+        beast::Journal const journal{sink};
 
         std::vector<std::string> const emptyCfgKeys;
         struct Publisher
@@ -165,7 +153,7 @@ private:
             {
             }
             std::shared_ptr<TrustedPublisherServer> server;
-            std::vector<Validator> list;
+            std::vector<Validator> list{};
             std::string uri;
             FetchListConfig const& cfg;
             bool isRetry{};
@@ -284,7 +272,7 @@ private:
         Env env(*this);
 
         test::StreamSink sink;
-        beast::Journal journal{sink};
+        beast::Journal const journal{sink};
 
         struct Publisher
         {

@@ -5,13 +5,11 @@
 #include <xrpld/overlay/detail/OverlayImpl.h>
 #include <xrpld/peerfinder/Slot.h>
 
-#include <xrpl/beast/net/IPAddressConversion.h>
 #include <xrpl/beast/net/IPEndpoint.h>
 #include <xrpl/beast/utility/Journal.h>
 #include <xrpl/beast/utility/WrappedSink.h>
 #include <xrpl/resource/Consumer.h>
 
-#include <chrono>
 #include <cstdint>
 #include <memory>
 #include <sstream>
@@ -41,14 +39,14 @@ private:
     endpoint_type remoteEndpoint_;
     Resource::Consumer usage_;
     boost::asio::strand<boost::asio::io_context::executor_type> strand_;
-    boost::asio::basic_waitable_timer<std::chrono::steady_clock> timer_;
-    std::unique_ptr<stream_type> streamPtr_;
+    boost::asio::basic_waitable_timer<std::chrono::steady_clock> timer_{};
+    std::unique_ptr<stream_type> streamPtr_{};
     socket_type& socket_;
     stream_type& stream_;
     boost::beast::multi_buffer readBuf_;
-    response_type response_;
+    response_type response_{};
     std::shared_ptr<PeerFinder::Slot> slot_;
-    request_type req_;
+    request_type req_{};
 
 public:
     ConnectAttempt(
@@ -79,7 +77,7 @@ private:
     fail(std::string const& name, error_code ec);
     void
     setTimer();
-    void
+    static void
     cancelTimer();
     void
     onTimer(error_code ec);

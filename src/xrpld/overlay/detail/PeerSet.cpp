@@ -16,9 +16,7 @@
 #include <cstddef>
 #include <functional>
 #include <memory>
-#include <set>
 #include <utility>
-#include <vector>
 
 namespace xrpl {
 
@@ -50,7 +48,7 @@ private:
     beast::Journal journal_;
 
     /** The identifiers of the peers we are tracking. */
-    std::set<Peer::id_t> peers_;
+    std::set<Peer::id_t> peers_{};
 };
 
 PeerSetImpl::PeerSetImpl(Application& app) : app_(app), journal_(app.getJournal("PeerSet"))
@@ -78,7 +76,7 @@ PeerSetImpl::addPeers(
     std::ranges::sort(
         pairs, [](ScoredPeer const& lhs, ScoredPeer const& rhs) { return lhs.first > rhs.first; });
 
-    std::size_t accepted = 0;
+    std::size_t const accepted = 0;
     for (auto const& pair : pairs)
     {
         auto const peer = pair.second;
@@ -90,7 +88,7 @@ PeerSetImpl::addPeers(
     }
 }
 
-void
+static void
 PeerSetImpl::sendRequest(
     ::google::protobuf::Message const& message,
     protocol::MessageType type,

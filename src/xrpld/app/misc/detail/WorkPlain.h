@@ -48,7 +48,7 @@ inline WorkPlain::WorkPlain(
 {
 }
 
-inline void
+static inline void
 WorkPlain::onConnect(error_code const& ec)
 {
     if (ec)

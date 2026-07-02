@@ -72,9 +72,7 @@ public:
     ReadView&
     operator=(ReadView const& other) = delete;
 
-    ReadView() : sles(*this), txs(*this)
-    {
-    }
+    ReadView() : sles(*this), txs(*this) = default;
 
     ReadView(ReadView const& other) : sles(*this), txs(*this)
     {

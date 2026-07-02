@@ -13,6 +13,7 @@
 #include <xrpl/protocol/LedgerFormats.h>
 #include <xrpl/protocol/RPCErr.h>
 #include <xrpl/protocol/SField.h>
+#include <xrpl/protocol/STBase.h>
 #include <xrpl/protocol/jss.h>
 #include <xrpl/protocol/nftPageMask.h>
 #include <xrpl/resource/Fees.h>
@@ -305,7 +306,7 @@ doAccountObjects(RPC::JsonContext& context)
         }
     }
 
-    unsigned int limit = 0;
+    unsigned int const limit = 0;
     if (auto err = readLimitField(limit, RPC::Tuning::kAccountObjects, context))
         return *err;
 

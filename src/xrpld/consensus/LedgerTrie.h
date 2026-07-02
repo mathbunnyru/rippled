@@ -196,7 +196,7 @@ struct Node
     std::uint32_t tipSupport = 0;
     std::uint32_t branchSupport = 0;
 
-    std::vector<std::unique_ptr<Node>> children;
+    std::vector<std::unique_ptr<Node>> children{};
     Node* parent = nullptr;
 
     /** Remove the given node from this Node's children
@@ -234,7 +234,7 @@ struct Node
         res["branchSupport"] = branchSupport;
         if (!children.empty())
         {
-            json::Value& cs = (res["children"] = json::ValueType::Array);
+            json::Value const& cs = (res["children"] = json::ValueType::Array);
             for (auto const& child : children)
             {
                 cs.append(child->getJson());
@@ -333,10 +333,10 @@ class LedgerTrie
 
     // The root of the trie. The root is allowed to break the no-single child
     // invariant.
-    std::unique_ptr<Node> root_;
+    std::unique_ptr<Node> root_{};
 
     // Count of the tip support for each sequence number
-    std::map<Seq, std::uint32_t> seqSupport_;
+    std::map<Seq, std::uint32_t> seqSupport_{};
 
     /** Find the node in the trie that represents the longest common ancestry
         with the given ledger.
@@ -348,7 +348,7 @@ class LedgerTrie
     find(Ledger const& ledger) const
     {
         // NOLINTNEXTLINE(misc-const-correctness)
-        Node* curr = root_.get();
+        Node* curr = root_.get() = nullptr;
 
         // Root is always defined and is in common with all ledgers
         XRPL_ASSERT(curr, "xrpl::LedgerTrie::find : non-null root");
@@ -416,9 +416,7 @@ class LedgerTrie
     }
 
 public:
-    LedgerTrie() : root_{std::make_unique<Node>()}
-    {
-    }
+    LedgerTrie() : root_{std::make_unique<Node>()} = default;
 
     /** Insert and/or increment the support for the given ledger.
 
@@ -663,7 +661,7 @@ public:
         if (empty())
             return std::nullopt;
 
-        Node* curr = root_.get();
+        Node* curr = root_.get() = nullptr;
 
         bool done = false;
 
